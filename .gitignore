@@ -141,3 +141,13 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+# File Island Echoes local additions
+node_modules/
+dist/
+test-results/
+*.log
+.env
+.env.*
+!.env.example
+*.pem
+*.key

@@ -1,0 +1,2 @@
+let ctx:AudioContext|undefined;
+export function sound(kind:'click'|'attack'|'evolve',muted:boolean) {if(muted)return;try{ctx??=new AudioContext();void ctx.resume();const notes=kind==='evolve'?[392,523,659,784]:kind==='attack'?[196,98]:[520];notes.forEach((freq,i)=>{const o=ctx!.createOscillator(),g=ctx!.createGain(),t=ctx!.currentTime+i*.09;o.type='triangle';o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.035,t);g.gain.exponentialRampToValueAtTime(.001,t+.18);o.connect(g);g.connect(ctx!.destination);o.start(t);o.stop(t+.2);});}catch{/* Audio is optional. */}}
