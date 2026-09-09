@@ -23,3 +23,5 @@ dialog{background:#1a2a2f;color:#e5e5d9;border:1px solid #89998d;border-top:3px 
 @media(max-width:760px){.battlefield:has(.enemy:only-child) .fighter.player{width:43%}.battlefield:has(.enemy:only-child) .enemy-group{width:56%}.player>.form-agumon{width:90px}.boss-clock{flex-wrap:wrap;max-width:95%}}
 
 .zone-index{padding:0;justify-content:stretch}.zone-index button{flex:1;border:0;border-bottom:2px solid transparent;border-radius:0;padding:10px 4px;font-size:11px;color:#bdc7be;background:#1223266b;min-height:54px}.zone-index button small{font-size:9px;margin-bottom:4px;opacity:.8}.zone-index button.current{border-bottom-color:#d2b381;color:#f4d09b;background:#213a379c}@media(max-width:360px){.zone-index button{font-size:10px}.section-heading{align-items:start;gap:8px}.section-heading>p{max-width:116px;line-height:1.6;text-align:right}}
+
+@media(max-width:760px){.title-copy h1 br{display:block}.title-copy h1 em{display:inline-block;white-space:nowrap;margin-left:0}}
