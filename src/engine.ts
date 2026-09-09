@@ -1,4 +1,4 @@
-import { CARDS, ENEMIES, EVOLUTIONS, FORMS, MAP, REWARD_POOL, START_DECK, STORIES } from './data';
+import { BOSS_RAGE, RECOVERY, CARDS, ENEMIES, EVOLUTIONS, FORMS, MAP, REWARD_POOL, START_DECK, STORIES } from './data';
 import type { CardId, Form, Intent, Run } from './types';
 
 export function newRun(seed=Date.now()>>>0):Run { return {seed:seed||1,screen:'map',row:0,path:[],node:null,hp:64,maxHp:64,form:'agumon',evoEnergy:0,bond:1,burden:0,corruption:0,supplies:2,deck:[...START_DECK],battle:null,rewards:[],won:false,battles:0,started:Date.now()}; }
@@ -8,7 +8,25 @@ export function nodeOf(r:Run) { return MAP.flat().find(n=>n.id===r.node); }
 function log(r:Run,msg:string) {if(r.battle) r.battle.log=[msg,...r.battle.log].slice(0,7);}
 function heal(r:Run,n:number) {r.hp=Math.min(r.maxHp,Math.max(0,r.hp+n));}
 export function draw(r:Run,n:number) {const b=r.battle;if(!b)return;for(let i=0;i<n;i++){if(!b.draw.length){b.draw=shuffle(r,b.discard);b.discard=[];} const c=b.draw.pop();if(c)b.hand.push(c);}}
-export function intent(r:Run,index:number):Intent {const e=r.battle!.enemies[index];const p=ENEMIES[e.id].pattern;const a={...p[e.step%p.length]};if(e.weak>0&&(a.type==='attack'||a.type==='drain'))a.value=Math.floor(a.value*.6);return a;}
+export function turnThreat(r:Run) {
+ const b=r.battle;
+ if(!b)return {incoming:0,recoil:0,blocked:0,damage:0};
+ const incoming=b.enemies.reduce((sum,e,i)=>sum+(e.hp>0&&['attack','drain'].includes(intent(r,i).type)?intent(r,i).value:0),0);
+ const recoil=r.corruption+(r.form==='skull'?2:0),blocked=Math.min(incoming,b.block);
+ return {incoming,recoil,blocked,damage:incoming-blocked+recoil};
+}
+export function bossRageBonus(turn:number) {
+ return turn<BOSS_RAGE.turn?0:(1+Math.floor((turn-BOSS_RAGE.turn)/BOSS_RAGE.interval))*BOSS_RAGE.damage;
+}
+export function intent(r:Run,index:number):Intent {
+ const e=r.battle!.enemies[index],pattern=ENEMIES[e.id].pattern;
+ const action={...pattern[e.step%pattern.length]};
+ const damaging=action.type==='attack'||action.type==='drain';
+ const rage=e.id==='devimon'?bossRageBonus(r.battle!.turn):0;
+ if(rage&&damaging){action.value+=rage;action.label='폭주 · '+action.label;}
+ if(e.weak>0&&damaging)action.value=Math.floor(action.value*.6);
+ return action;
+}
 export function enterNode(r:Run,id:string) {
  if(r.screen!=='map')return;const n=MAP[r.row]?.find(x=>x.id===id);if(!n)return;
  r.node=id;r.lastEvent=undefined;
@@ -48,12 +66,12 @@ export function endTurn(r:Run) {
  });
  resolve(r);if(r.screen!=='battle')return;b.turn++;b.energy=3;b.block=0;draw(r,5);
 }
-export function reward(r:Run,id?:CardId) {if(r.screen!=='reward')return;if(id&&!r.rewards.includes(id))return;if(id)r.deck.push(r.form!=='agumon'&&id==='flame'?'nova':id);heal(r,5);finishNode(r);}
+export function reward(r:Run,id?:CardId) {if(r.screen!=='reward')return;if(id&&!r.rewards.includes(id))return;if(id)r.deck.push(r.form!=='agumon'&&id==='flame'?'nova':id);finishNode(r);}
 export function chooseEvent(r:Run,index:number) {if(r.screen!=='event')return;const event=nodeOf(r)?.event;if(!event)return;const c=STORIES[event].choices[index];if(!c)return;
  heal(r,c.hp||0);r.evoEnergy+=c.energy||0;r.bond+=c.bond||0;r.burden=Math.max(0,r.burden+(c.burden||0));r.corruption=Math.max(0,r.corruption+(c.corruption||0));r.supplies+=c.supplies||0;if(c.card)r.deck.push(c.card);r.lastEvent=event;if(r.hp<=0){r.screen='result';r.won=false;}else finishNode(r);
 }
-export function rest(r:Run,kind:'rest'|'train') {if(r.screen!=='rest')return;if(kind==='rest'){heal(r,26);r.burden=Math.max(0,r.burden-4);r.corruption=Math.max(0,r.corruption-2);r.bond+=2;}else{heal(r,10);r.evoEnergy+=5;r.burden+=2;}finishNode(r);}
-export function useSupply(r:Run) {if(r.supplies<=0||!['map','battle','rest','event'].includes(r.screen)||r.hp===r.maxHp)return;heal(r,18);r.supplies--;log(r,'보급품 사용 · 체력 18 회복');}
+export function rest(r:Run,kind:'rest'|'train') {if(r.screen!=='rest')return;if(kind==='rest'){heal(r,RECOVERY.rest);r.burden=Math.max(0,r.burden-4);r.corruption=Math.max(0,r.corruption-2);r.bond+=2;}else{heal(r,RECOVERY.train);r.evoEnergy+=5;r.burden+=2;}finishNode(r);}
+export function useSupply(r:Run) {if(r.supplies<=0||!['map','battle','rest','event'].includes(r.screen)||r.hp===r.maxHp)return;heal(r,RECOVERY.supply);r.supplies--;log(r,`보급품 사용 · 체력 ${RECOVERY.supply} 회복`);}
 export function evolutionOptions(r:Run) {return EVOLUTIONS.filter(e=>e.from===r.form).map(e=>({
  form:e.to,ready:r.evoEnergy>=e.energy&&r.bond>=e.bond&&r.burden>=e.burden,cost:e.energy,condition:e.condition,
 }));}

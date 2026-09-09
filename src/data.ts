@@ -2,16 +2,16 @@ import type { Card, CardId, EnemyDef, Form, MapNode, Story } from './types';
 export const CARDS:Record<CardId,Card> = {
  flame:{name:'베이비 플레임',cost:1,kind:'attack',text:'적 하나에게 피해 7.',damage:7},
  guard:{name:'몸으로 막기',cost:1,kind:'guard',text:'방어도 7 획득.',block:7},
- cheer:{name:'태일의 응원',cost:0,kind:'support',text:'카드 1장 뽑기. 에너지 1 획득.',draw:1,energy:1},
- food:{name:'비상 식량',cost:1,kind:'support',text:'체력 7 회복.',heal:7},
- analysis:{name:'한솔의 분석',cost:1,kind:'support',text:'적 하나에게 약화 2턴. 카드 1장 뽑기. 약화: 공격 피해 40% 감소.',weak:2,draw:1},
+ cheer:{name:'태일의 응원',cost:0,kind:'support',text:'카드 1장 뽑기. 에너지를 소비하지 않습니다.',draw:1},
+ food:{name:'비상 식량',cost:1,kind:'support',text:'체력 5 회복.',heal:5},
+ analysis:{name:'한솔의 분석',cost:1,kind:'support',text:'적 하나에게 약화 1턴. 카드 1장 뽑기. 약화: 공격 피해 40% 감소.',weak:1,draw:1},
  sora:{name:'소라의 보호',cost:1,kind:'guard',text:'방어도 10 획득. 부담 1 감소.',block:10,relief:1},
  light:{name:'정화의 빛',cost:1,kind:'support',text:'오염 3 제거. 체력 5 회복.',cleanse:3,heal:5},
  courage:{name:'용기의 일격',cost:2,kind:'attack',text:'피해 19. 부담 1 증가.',damage:19,burden:1},
  claw:{name:'날카로운 발톱',cost:1,kind:'attack',text:'피해 9. 카드 1장 뽑기.',damage:9,draw:1},
  matt:{name:'매튜의 대비',cost:1,kind:'guard',text:'방어도 8 획득. 카드 1장 뽑기.',block:8,draw:1},
- mimi:{name:'미나의 돌봄',cost:1,kind:'support',text:'체력 10 회복. 오염 1 제거.',heal:10,cleanse:1},
- joe:{name:'정석의 보급',cost:0,kind:'support',text:'체력 4 회복. 카드 1장 뽑기.',heal:4,draw:1},
+ mimi:{name:'미나의 돌봄',cost:1,kind:'support',text:'체력 7 회복. 오염 1 제거.',heal:7,cleanse:1},
+ joe:{name:'정석의 보급',cost:0,kind:'support',text:'체력 3 회복. 에너지를 소비하지 않습니다.',heal:3},
  hope:{name:'리키의 희망',cost:1,kind:'guard',text:'방어도 12 획득. 부담 2 감소.',block:12,relief:2},
  nova:{name:'메가 플레임',cost:1,kind:'attack',text:'피해 12. 그레이몬의 강화 기술.',damage:12},
  missile:{name:'기가 디스트로이어',cost:2,kind:'attack',text:'모든 적에게 피해 22. 방어도 8 획득.',damage:22,block:8,all:true},
@@ -34,12 +34,12 @@ export const EVOLUTIONS:{from:Form;to:Form;energy:number;bond:number;burden:numb
 const hit=(value:number,label='공격')=>({type:'attack' as const,value,label});
 export const ENEMIES:Record<string,EnemyDef>={
  kuwaga:{name:'쿠가몬',hp:34,color:'#ed634c',shape:'beetle',description:'톱니바퀴에 흔들린 숲의 곤충형 디지몬. 방어 뒤 강한 공격을 준비한다.',pattern:[hit(7,'가위손'),{type:'defend',value:7,label:'갑각 방어'},hit(12,'급강하')]},
- elec:{name:'에렉몬',hp:28,color:'#f28283',shape:'beast',description:'방전과 재충전을 반복한다. 정화하면 다시 숲으로 돌아간다.',pattern:[hit(5,'전기 충격'),{type:'corrupt',value:1,label:'혼선'},hit(10,'스파클링 썬더')]},
- meramon:{name:'메라몬',hp:46,color:'#ff984a',shape:'flame',description:'오염된 열이 점점 커진다. 불꽃 공격과 데이터 오염을 반복한다.',pattern:[{type:'corrupt',value:2,label:'오염된 열'},hit(12,'버닝 피스트'),hit(16,'열 폭주')]},
- nume:{name:'워매몬',hp:33,color:'#9abc6b',shape:'slime',description:'낮은 공격력 대신 오염을 쌓고 몸을 숨긴다.',pattern:[{type:'corrupt',value:2,label:'오염 점액'},{type:'defend',value:10,label:'숨기'},hit(7,'들이받기')]},
- andromon:{name:'안드로몬',hp:70,color:'#a4bdce',shape:'robot',description:'공장의 명령 오류에 갇혔다. 장갑과 강한 공격을 번갈아 사용한다.',pattern:[{type:'defend',value:14,label:'장갑 전개'},hit(19,'스파이럴 소드'),hit(11,'개틀링 어택')]},
- ogre:{name:'우가몬',hp:58,color:'#94b36e',shape:'ogre',description:'힘으로 길을 가로막는다. 큰 일격 사이 방어의 틈을 노리자.',pattern:[hit(12,'곤봉'),hit(20,'패왕권'),{type:'defend',value:8,label:'자세 잡기'}]},
- devimon:{name:'데블몬',hp:148,color:'#b093d1',shape:'devil',description:'무한산에 모인 톱니바퀴를 조종한다. 오염, 연속 공격, 체력 흡수를 순환한다.',pattern:[{type:'corrupt',value:2,label:'검은 톱니바퀴'},hit(20,'데스 클로'),{type:'drain',value:15,label:'어둠의 흡수'},hit(25,'어둠의 파동')]},
+ elec:{name:'에렉몬',hp:34,color:'#f28283',shape:'beast',description:'방전과 재충전을 반복한다. 정화하면 다시 숲으로 돌아간다.',pattern:[hit(7,'전기 충격'),{type:'corrupt',value:1,label:'혼선'},hit(12,'스파클링 썬더')]},
+ meramon:{name:'메라몬',hp:64,color:'#ff984a',shape:'flame',description:'오염된 열이 점점 커진다. 불꽃 공격과 데이터 오염을 반복한다.',pattern:[{type:'corrupt',value:2,label:'오염된 열'},hit(16,'버닝 피스트'),hit(19,'열 폭주')]},
+ nume:{name:'워매몬',hp:42,color:'#9abc6b',shape:'slime',description:'낮은 공격력 대신 오염을 쌓고 몸을 숨긴다.',pattern:[{type:'corrupt',value:2,label:'오염 점액'},{type:'defend',value:10,label:'숨기'},hit(10,'들이받기')]},
+ andromon:{name:'안드로몬',hp:96,color:'#a4bdce',shape:'robot',description:'공장의 명령 오류에 갇혔다. 장갑과 강한 공격을 번갈아 사용한다.',pattern:[{type:'defend',value:14,label:'장갑 전개'},hit(24,'스파이럴 소드'),hit(16,'개틀링 어택')]},
+ ogre:{name:'우가몬',hp:88,color:'#94b36e',shape:'ogre',description:'힘으로 길을 가로막는다. 큰 일격 사이 방어의 틈을 노리자.',pattern:[hit(18,'곤봉'),hit(26,'패왕권'),{type:'defend',value:8,label:'자세 잡기'}]},
+ devimon:{name:'데블몬',hp:200,color:'#b093d1',shape:'devil',description:'무한산에 모인 톱니바퀴를 조종한다. 공격과 오염, 체력 흡수를 순환한다. 5턴부터 4턴마다 공격·흡수 피해가 6씩 증가한다.',pattern:[hit(20,'데스 클로'),{type:'corrupt',value:2,label:'검은 톱니바퀴'},{type:'drain',value:26,label:'어둠의 흡수'},hit(32,'어둠의 파동')]},
 };
 export const ZONES=['파일섬의 숲','버려진 공장','무한산'];
 export const zoneAt=(row:number)=>Math.min(2,Math.floor(row/4));
@@ -67,3 +67,7 @@ export const STORIES:Record<string,Story>={
  kari:{title:'검은 틈 사이의 빛',speaker:'신나리 · 가트몬',quote:'“오빠, 아구몬의 목소리를 들어 봐. 아직 빛이 남아 있어.”',body:'가트몬이 길목의 톱니바퀴를 부순다. 희미한 빛이 산 정상으로 이어진다.',choices:[{label:'아구몬과 나란히 빛을 따라간다',text:'오염 모두 제거 · 유대 +3 · 체력 +12 · 정화의 빛 획득',corruption:-99,bond:3,hp:12,card:'light'},{label:'정화 에너지를 나눠 받는다',text:'진화 에너지 +6 · 오염 -2 · 부담 -2',energy:6,corruption:-2,burden:-2}]},
  echo:{title:'다시 들려오는 약속',speaker:'신태일 · 아구몬',quote:'“내가 너무 서둘렀지?” “그래도 난 태일이를 믿어.”',body:'같은 바람, 같은 절벽. 이번에는 서로의 눈을 보며 앞으로 나아간다.',choices:[{label:'함께 속도를 맞춘다',text:'체력 +20 · 부담 -3 · 유대 +3',hp:20,burden:-3,bond:3},{label:'마지막 힘을 끌어낸다',text:'진화 에너지 +7 · 부담 +4 · 용기의 일격 획득',energy:7,burden:4,card:'courage'}]},
 };
+
+// Shared recovery rules keep interface descriptions and combat in sync.
+export const RECOVERY = { supply: 12, rest: 20, train: 6 } as const;
+export const BOSS_RAGE = { turn: 5, interval: 4, damage: 6 } as const;
