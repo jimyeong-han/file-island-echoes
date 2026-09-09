@@ -1,7 +1,7 @@
 {
   "name": "file-island-echoes",
   "description": "Small browser game prototype",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,8 @@
     "preview": "vite preview --host 127.0.0.1 --port 3001",
     "test": "vitest run",
     "art": "node scripts/export-art.mjs",
-    "check:pages": "node scripts/check-pages.mjs"
+    "check:pages": "node scripts/check-pages.mjs",
+    "art:ui": "node scripts/export-icons.mjs"
   },
   "devDependencies": {
     "typescript": "~5.9.3",

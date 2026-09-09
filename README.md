@@ -1,4 +1,6 @@
-# 디지몬 어드벤처 — 파일섬의 잔향
+# File Island Echoes — 파일섬의 잔향
+
+플레이: https://jimyeong-han.github.io/file-island-echoes/
 
 1999년 TV 애니메이션 기반의 **비공식 팬메이드 웹게임 첫 버전**입니다. 반복 현상, 사건, 육성 수치와 진화 조건은 이 게임의 창작 설정입니다. 원작 이미지·음원 추출물을 사용하지 않았습니다.
 
@@ -33,7 +35,7 @@ npm run preview  # http://127.0.0.1:3001/file-island-echoes/에서 dist 검증
 
 ## 저장소 구성과 GitHub Pages
 
-저장소의 구성은 다음과 같습니다. **코드 업로드와 Pages 사이트 공개는 별도 작업입니다.** Pages 공개 활성화는 사용자의 명시적인 요청 이후에만 수행합니다.
+2026-09-09 사용자의 명시적인 요청에 따라 GitHub Pages를 활성화했습니다. 저장소의 구성은 다음과 같습니다.
 
 | 항목 | 설정 |
 | --- | --- |
@@ -50,13 +52,13 @@ npm run preview  # http://127.0.0.1:3001/file-island-echoes/에서 dist 검증
 워크플로: [.github/workflows/pages.yml](.github/workflows/pages.yml). [GitHub의 Pages 공식 안내](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)에 따라 빌드와 배포 작업을 분리합니다.
 
 1. `main` push 또는 수동 실행으로 시작합니다. 수동으로 다른 브랜치를 선택하면 작업을 건너뜁니다.
-2. Node.js 24에서 `npm ci` → `npm test` → `npm run build` → `npm run check:pages`를 실행합니다. 기본적으로 이 검증만 수행합니다.
+2. Node.js 24에서 `npm ci` → `npm test` → `npm run build` → `npm run check:pages`를 실행합니다. 이 검증이 모두 성공해야 다음 단계로 진행합니다.
 3. 저장소 Actions 변수 `PAGES_ENABLED`를 명시적으로 `true`로 설정한 경우에만 Pages 구성, 성공한 `dist/` 아티팩트 업로드와 배포를 수행합니다. `deploy`는 성공한 `build`를 필요로 하며 `github-pages` 환경을 사용합니다. 실패한 빌드나 다른 브랜치는 배포하지 않습니다.
 4. 기본 권한은 소스 읽기이며 Pages/OIDC 쓰기 권한은 배포 작업에만 부여합니다. 별도 PAT·API 키·사용자 비밀번호를 브라우저 코드나 저장소에 넣지 않습니다.
 
-**나중에 사용자가 명시적으로 사이트 공개를 요청한 경우에만** Settings → Pages의 Source를 GitHub Actions로 설정하고, 저장소 Actions 변수 `PAGES_ENABLED=true`를 추가한 뒤 `main`의 워크플로를 수동 실행합니다. `github-pages` 환경의 허용 배포 브랜치도 `main`으로 제한합니다. 워크플로에는 Pages 자동 활성화 옵션이 없습니다. 공개 요청 전에는 코드 push만으로 사이트가 배포되지 않습니다.
+현재 Settings → Pages의 Source는 GitHub Actions, 저장소 Actions 변수는 `PAGES_ENABLED=true`입니다. `github-pages` 환경은 `main` 브랜치 배포만 허용합니다. 따라서 앞으로 main의 검증을 통과한 빌드는 같은 사이트에 자동 배포됩니다. 배포를 잠시 중지하려면 이 변수를 false로 바꿀 수 있습니다. 별도의 배포 API 키나 PAT를 코드에 추가할 필요가 없습니다.
 
-배포 후 예상 주소는 `https://jimyeong-han.github.io/file-island-echoes/`입니다. **공개 저장소의 코드와 배포된 사이트는 누구나 접근할 수 있습니다.** 소수에게만 URL을 전달하더라도 접근 인원이 제한되는 것은 아닙니다. 클라이언트에 가짜 비밀번호 화면을 만들지 않습니다.
+현재 배포 주소는 `https://jimyeong-han.github.io/file-island-echoes/`입니다. **공개 저장소의 코드와 배포된 사이트는 누구나 접근할 수 있습니다.** 소수에게만 URL을 전달하더라도 접근 인원이 제한되는 것은 아닙니다. 클라이언트에 가짜 비밀번호 화면을 만들지 않습니다.
 
 ## 검색 노출 최소화의 범위
 
@@ -98,16 +100,18 @@ GitHub 프로젝트 페이지에서는 이 파일이 `/file-island-echoes/robots
 | `src/engine.ts` | 화면과 독립된 전투·이벤트·보상·진화 규칙, 결정적 난수 |
 | `src/storage.ts` | 저장 검증·복구·도감 갱신 |
 | `src/main.ts` | 화면, 입력, 미리보기/경고, 상태와 화면 연결 |
-| `src/style.css` | 데스크톱/모바일, 모션 감소, 카드와 전투 연출 |
-| `src/art.ts`, `public/art/` | 에셋 경로와 직접 제작한 임시 SVG |
+| `src/style.css`, `src/visual.css` | 기본 배치, 셀 셰이딩 아트 표현, 모바일, 모션 감소, 전투·진화 연출 |
+| `src/asset-manifest.json`, `src/art.ts`, `public/assets/` | 이미지 23장 경로, 알파 WebP·초상화·배경, 이미지 실패 시 fallback |
+| `src/icons.ts` | 일관된 24px SVG 아이콘 원본 |
 | `src/audio.ts` | 입력 이후 Web Audio 짧은 효과음, 기본 음소거 |
 | `src/engine.test.ts` | 주요 위험과 전체 플레이 흐름 회귀 검사 |
 
-임시 아트는 `public/art/`에서 교체합니다. 자세한 방법은 [ASSETS.md](ASSETS.md), 제작 출처와 원본 요청은 [assets/ATTRIBUTION.md](assets/ATTRIBUTION.md), 실행 검증 기록은 [VALIDATION.md](VALIDATION.md)를 참조하세요.
+일러스트는 `public/assets/`에서 교체하고 매니페스트로 연결합니다. `public/art/`는 이미지 로드 실패용 SVG fallback입니다. 자세한 방법은 [ASSETS.md](ASSETS.md), 제작 출처와 원본 요청은 [assets/ATTRIBUTION.md](assets/ATTRIBUTION.md), 실행 검증 기록은 [VALIDATION.md](VALIDATION.md)를 참조하세요.
 
 ## 현재 제한
 
-- 임시 픽셀 아트와 간단한 효과음이며 별도 고해상도 일러스트, 성우, 배경음악은 없습니다.
+- 새로 생성한 전투 일러스트 11장, 지역 배경 4장, 인물 쌍 초상화 8장을 제공합니다. 캐릭터는 정지 포즈 1장과 CSS 효과로 움직이며 프레임별 전투 애니메이션·성우·배경음악은 없습니다.
+- 신규 WebP·UI 에셋은 약 2.19 MiB, 전체 배포의 예상 압축 전송량은 약 2.24 MiB입니다. 타이틀에서 처음 사용하는 이미지 3장과 HTML/JS/CSS는 약 0.43 MiB입니다. 나머지 이미지는 해당 화면에서 요청합니다.
 - 10–15분은 설계 목표이며 사람을 대상으로 한 소요 시간·난이도 조정은 아직 하지 않았습니다. 숙련 플레이는 더 짧을 수 있습니다.
 - 브라우저의 모바일 화면 크기로 검증했습니다. 실제 iOS Safari/Android 기기 검증은 별도로 필요합니다.
 - 클라우드 동기화, 계정, 멀티플레이, 추가 파트너/궁극체는 없습니다.
