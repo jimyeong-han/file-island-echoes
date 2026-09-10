@@ -1,5 +1,7 @@
 // Project-drawn interface symbols: one 24px grid, rounded 1.8px strokes, no emoji.
 export const iconPaths: Record<string,string> = {
+  'sound-on':'<path d="M3 9h4l5-4v14l-5-4H3Z"/><path d="M16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>',
+  'sound-off':'<path d="M3 9h4l5-4v14l-5-4H3Z"/><path d="m17 9 5 6m0-6-5 6"/>',
   "attack": "<path d=\"m5 19 3-3m-1-3 4 4m-1-5 9-9v6l-7 7M5 19l-2 2\"/>",
   "guard": "<path d=\"m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z\"/><path d=\"M12 7v10m-4-5h8\"/>",
   "heal": "<path d=\"M9 3h6v6h6v6h-6v6H9v-6H3V9h6Z\"/>",

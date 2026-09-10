@@ -145,3 +145,10 @@ SVG 생성 스크립트: `scripts/export-art.mjs`. 재생성: `npm run art`. 교
 ## 2026-09-10 · v0.5 직접 제작 오디오
 
 음악 12곡, 징글 17개, 효과음 41개를 이 프로젝트 전용 악보와 로컬 신시사이저로 새로 제작했습니다. 공식/외부 음원, 효과음 샘플, 보이스, 특정 곡이나 작곡가 모방 요청을 사용하지 않았습니다. 파일별 용도·길이·제작 방법과 재생성 소스는 [AUDIO.md](../AUDIO.md)에 기록했습니다. `public/assets/audio/`의 모든 OGG/MP3에 적용됩니다.
+
+
+## 2026-09-10 · v0.6 초상화와 서체
+
+- `public/assets/portraits/kari-gatomon-adventure.webp`: 캐릭터 선택·상세·스토리·엔딩·도감용. 내장 imagegen으로 프로젝트 자체 생성 초상화의 얼굴·체구를 다시 그린 뒤 사용자가 제공한 이미지의 의상 색과 구성만 참고하여 재편집. 640×640 WebP로 최적화. [연령 수정 프롬프트](prompts/v0.6/kari-gatomon-young.txt), [의상 수정 프롬프트](prompts/v0.6/kari-outfit.txt). 공식 캡처/추출물을 실제 에셋으로 재사용하거나 참고 이미지의 선화·자세·구도를 트레이싱하지 않았다. 참고 이미지 자체는 배포하지 않는다. 기존 `kari-gatomon.webp`를 대체하며 추가 교체 예정 없음.
+- `public/assets/fonts/galmuri11-bold.woff2`, `pretendard-variable.woff2`: 공식 공개 저장소에서 받은 SIL OFL 1.1 서체. 생성형 에셋이 아니며 각 저작자·원문 라이선스와 소스 커밋은 [TYPOGRAPHY.md](../TYPOGRAPHY.md)에 기록했다. 라이선스 원문은 파일 옆에 포함한다.
+- `src/icons.ts`의 `sound-on`, `sound-off`: 24px 격자/1.8px 선 굵기로 직접 작성한 인터페이스 SVG.

@@ -1,0 +1,22 @@
+[
+  {
+    "file": "galmuri11-bold.woff2",
+    "bytes": 166352,
+    "glyphs": 12695,
+    "modernHangulSyllables": 11172,
+    "axes": []
+  },
+  {
+    "file": "pretendard-variable.woff2",
+    "bytes": 2057688,
+    "glyphs": 14336,
+    "modernHangulSyllables": 11172,
+    "axes": [
+      {
+        "tag": "wght",
+        "min": 45.0,
+        "max": 930.0
+      }
+    ]
+  }
+]
