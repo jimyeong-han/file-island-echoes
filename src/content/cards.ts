@@ -107,3 +107,10 @@ add('kari','mercy','남아 있는 목소리',1,'support',{heal:5,cleanse:2,exhau
 add('kari','cat-resonant','공명하는 발톱',1,'attack',{damage:10,mark:1,stage:1,rarity:'evolved'},['표식']);
 add('kari','holy-arrow','홀리 애로우',2,'attack',{damage:20,block:5,dispel:true,all:true,stage:2,rarity:'evolved'},['빛']);
 export const COMMON_CARDS=['guard','cheer','food','light','claw'];
+
+// Audio IDs are presentation metadata; never used by combat calculations.
+const elements:Record<string,string>={tai:"attack-fire",matt:"attack-water",sora:"attack-fire",koushiro:"attack-electric",mimi:"attack-plant",joe:"attack-water",tk:"attack-light",kari:"attack-light"};
+for(const [id,c] of Object.entries(CARDS))if(c.damage)c.audioId=id==="zero"?"attack-dark":elements[c.owner||""]||"hit-normal";
+
+const techniqueAudio:Record<string,string>={blue:"attack-fire","blue-plus":"attack-fire",link:"hit-normal","wolf-claw":"hit-normal",wind:"card-attack",bubble:"card-attack",cat:"hit-normal",hammer:"attack-electric",harpoon:"hit-heavy","harpoon-plus":"hit-heavy",rush:"hit-heavy",courage:"hit-heavy"};
+for(const [id,audioId] of Object.entries(techniqueAudio))CARDS[id].audioId=audioId;

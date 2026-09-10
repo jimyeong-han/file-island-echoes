@@ -6,7 +6,7 @@ import {CHARACTER_IDS} from './types';
 import type {CharacterId,Run,Save} from './types';
 import {simulate,balanceReport} from '../scripts/balance-simulation';
 import manifest from './asset-manifest.json';
-const wrap=(r:Run):Save=>({version:2,run:r,archive:emptyArchive(),settings:{muted:true,reducedMotion:false,guide:true}});
+const wrap=(r:Run):Save=>({version:2,run:r,archive:emptyArchive(),settings:{masterVolume:.8,musicVolume:.65,sfxVolume:.8,muted:true,reducedMotion:false,guide:true}});
 function fight(id:CharacterId='tai',enemy='kuwaga'){const r=newRun(1,id);r.screen='map';enterNode(r,'0a');r.battle!.enemies=[makeEnemy(enemy)];return r;}
 function hand(r:Run,ids:string[]){r.battle!.hand=ids;r.battle!.draw=[];r.battle!.discard=[];r.battle!.energy=9;}
 describe('eight partners and content',()=>{

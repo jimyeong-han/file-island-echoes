@@ -1,7 +1,7 @@
 {
   "name": "file-island-echoes",
   "description": "Small browser game prototype",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,9 @@
     "art": "node scripts/export-art.mjs",
     "check:pages": "node scripts/check-pages.mjs",
     "art:ui": "node scripts/export-icons.mjs",
-    "balance": "node scripts/run-balance.mjs"
+    "balance": "node scripts/run-balance.mjs",
+    "audio:compose": "python scripts/compose-audio.py",
+    "audio:audit": "python scripts/audit-audio.py"
   },
   "devDependencies": {
     "typescript": "~5.9.3",

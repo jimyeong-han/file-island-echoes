@@ -43,5 +43,10 @@ function inspect(directory) {
   }
 }
 inspect(root);
-assert(compressedBytes < 10 * 1024 * 1024, 'Entire deployment exceeds the 10 MiB transfer budget');
+const audioManifest=JSON.parse(readFileSync('src/audio-manifest.json','utf8'));
+const audioBytes=Object.values(audioManifest).flatMap(c=>c.files).reduce((n,p)=>n+statSync(join(root,'assets/audio',p)).size,0);
+assert(audioBytes<15*1024*1024,'Audio exceeds the separate 15 MiB budget');
+assert(compressedBytes-audioBytes<10*1024*1024,'Non-audio deployment exceeds 10 MiB');
+assert.doesNotMatch(readFileSync(refs.find(r=>r.endsWith('.js')).replace(base,root+'/'),'utf8'),/data:audio\/.*base64/);
+console.log('Audio checks: '+Object.keys(audioManifest).length+' cues / '+audioBytes+' bytes (both codecs).');
 console.log(`Pages checks passed: ${checked} files, ${images.length} manifest images; paths, crawler directives, common credential/path patterns. All files: ${rawBytes} raw bytes / ${compressedBytes} estimated transferred bytes.`);

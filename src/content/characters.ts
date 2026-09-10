@@ -30,3 +30,5 @@ FORMS.skull={name:'스컬그레이몬',tag:'완전체 · 강제 진화',descript
 EVOLUTIONS.push({from:'greymon',to:'skull',energy:12,bond:0,burden:6,condition:'진화 에너지 12 · 부담 6 이상'});
 
 FORMS.metal.description+=" 방어 카드 방어도 +2.";
+
+for(const c of Object.values(CHARACTERS))c.ability.audioId="crest-"+c.id;

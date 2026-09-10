@@ -1,0 +1,1052 @@
+{
+  "music-title": {
+    "label": "물결 너머의 첫 신호",
+    "kind": "music",
+    "files": [
+      "music/music-title.ogg",
+      "music/music-title.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 65.45453125,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-selection": {
+    "label": "여덟 갈래의 작은 빛",
+    "kind": "music",
+    "files": [
+      "music/music-selection.ogg",
+      "music/music-selection.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 72.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-map": {
+    "label": "발자국을 잇는 지도",
+    "kind": "music",
+    "files": [
+      "music/music-map.ogg",
+      "music/music-map.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 70.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-forest": {
+    "label": "잎 사이로 흐르는 데이터",
+    "kind": "music",
+    "files": [
+      "music/music-forest.ogg",
+      "music/music-forest.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 64.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-factory": {
+    "label": "멈춘 기계의 작은 맥박",
+    "kind": "music",
+    "files": [
+      "music/music-factory.ogg",
+      "music/music-factory.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 68.5714375,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-mountain": {
+    "label": "바람이 남긴 좌표",
+    "kind": "music",
+    "files": [
+      "music/music-mountain.ogg",
+      "music/music-mountain.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 70.24390625,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-battle": {
+    "label": "서로의 다음 한 수",
+    "kind": "music",
+    "files": [
+      "music/music-battle.ogg",
+      "music/music-battle.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 66.20690625,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-elite": {
+    "label": "흔들리지 않는 발걸음",
+    "kind": "music",
+    "files": [
+      "music/music-elite.ogg",
+      "music/music-elite.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 64.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-boss": {
+    "label": "어둠 너머로 건네는 신호",
+    "kind": "music",
+    "files": [
+      "music/music-boss.ogg",
+      "music/music-boss.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 64.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-boss-etemon": {
+    "label": "뒤틀린 방송을 넘어",
+    "kind": "music",
+    "files": [
+      "music/music-boss-etemon.ogg",
+      "music/music-boss-etemon.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 64.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-boss-myotismon": {
+    "label": "새벽을 기다리는 신호",
+    "kind": "music",
+    "files": [
+      "music/music-boss-myotismon.ogg",
+      "music/music-boss-myotismon.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 64.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "music-story": {
+    "label": "말하지 못했던 마음",
+    "kind": "music",
+    "files": [
+      "music/music-story.ogg",
+      "music/music-story.mp3"
+    ],
+    "volume": 0.72,
+    "loop": true,
+    "duration": 75.78946875,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.65
+  },
+  "crest-ready": {
+    "label": "문장 준비 완료",
+    "kind": "stinger",
+    "files": [
+      "stingers/crest-ready.ogg",
+      "stingers/crest-ready.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 1.5,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "evolution-start": {
+    "label": "새로운 형태로 모이는 마음",
+    "kind": "stinger",
+    "files": [
+      "stingers/evolution-start.ogg",
+      "stingers/evolution-start.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 6.5,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "evolution-complete": {
+    "label": "함께 닿은 새 모습",
+    "kind": "stinger",
+    "files": [
+      "stingers/evolution-complete.ogg",
+      "stingers/evolution-complete.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 2.5,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "evolution-forced": {
+    "label": "균열 속의 힘",
+    "kind": "stinger",
+    "files": [
+      "stingers/evolution-forced.ogg",
+      "stingers/evolution-forced.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 6.5,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "battle-victory": {
+    "label": "열린 길",
+    "kind": "stinger",
+    "files": [
+      "stingers/battle-victory.ogg",
+      "stingers/battle-victory.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 2.8,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "battle-defeat": {
+    "label": "다시 손을 잡고",
+    "kind": "stinger",
+    "files": [
+      "stingers/battle-defeat.ogg",
+      "stingers/battle-defeat.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 3.2,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "card-acquire": {
+    "label": "기억한 기술",
+    "kind": "stinger",
+    "files": [
+      "stingers/card-acquire.ogg",
+      "stingers/card-acquire.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 1.3,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "chapter-complete": {
+    "label": "서로에게 돌아오는 목소리",
+    "kind": "stinger",
+    "files": [
+      "stingers/chapter-complete.ogg",
+      "stingers/chapter-complete.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 5.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "archive-unlock": {
+    "label": "새로운 기록",
+    "kind": "stinger",
+    "files": [
+      "stingers/archive-unlock.ogg",
+      "stingers/archive-unlock.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 1.6,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "crest-tai": {
+    "label": "용기 · 금속의 도약",
+    "kind": "stinger",
+    "files": [
+      "stingers/crest-tai.ogg",
+      "stingers/crest-tai.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 1.9,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "crest-matt": {
+    "label": "우정 · 맞닿은 두 음색",
+    "kind": "stinger",
+    "files": [
+      "stingers/crest-matt.ogg",
+      "stingers/crest-matt.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 2.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "crest-sora": {
+    "label": "사랑 · 따뜻한 공명",
+    "kind": "stinger",
+    "files": [
+      "stingers/crest-sora.ogg",
+      "stingers/crest-sora.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 2.2,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "crest-koushiro": {
+    "label": "지식 · 정돈된 신호",
+    "kind": "stinger",
+    "files": [
+      "stingers/crest-koushiro.ogg",
+      "stingers/crest-koushiro.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 1.6,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "crest-mimi": {
+    "label": "순수 · 잎 끝의 반짝임",
+    "kind": "stinger",
+    "files": [
+      "stingers/crest-mimi.ogg",
+      "stingers/crest-mimi.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 2.0,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "crest-joe": {
+    "label": "성실 · 단단한 약속",
+    "kind": "stinger",
+    "files": [
+      "stingers/crest-joe.ogg",
+      "stingers/crest-joe.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 1.8,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "crest-tk": {
+    "label": "희망 · 작은 상승",
+    "kind": "stinger",
+    "files": [
+      "stingers/crest-tk.ogg",
+      "stingers/crest-tk.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 2.3,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "crest-kari": {
+    "label": "빛 · 맑아지는 울림",
+    "kind": "stinger",
+    "files": [
+      "stingers/crest-kari.ogg",
+      "stingers/crest-kari.mp3"
+    ],
+    "volume": 0.78,
+    "loop": false,
+    "duration": 2.3,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "ui-confirm": {
+    "label": "버튼 누르기",
+    "kind": "sfx",
+    "files": [
+      "sfx/ui-confirm.ogg",
+      "sfx/ui-confirm.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.26,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "ui-select": {
+    "label": "선택 변경",
+    "kind": "sfx",
+    "files": [
+      "sfx/ui-select.ogg",
+      "sfx/ui-select.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.29,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "ui-cancel": {
+    "label": "뒤로 가기",
+    "kind": "sfx",
+    "files": [
+      "sfx/ui-cancel.ogg",
+      "sfx/ui-cancel.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.32,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "ui-denied": {
+    "label": "불가능한 행동",
+    "kind": "sfx",
+    "files": [
+      "sfx/ui-denied.ogg",
+      "sfx/ui-denied.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.39,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "node-select": {
+    "label": "지도 이동",
+    "kind": "sfx",
+    "files": [
+      "sfx/node-select.ogg",
+      "sfx/node-select.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.54,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "reward-reveal": {
+    "label": "보상 펼치기",
+    "kind": "sfx",
+    "files": [
+      "sfx/reward-reveal.ogg",
+      "sfx/reward-reveal.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.84,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "card-draw": {
+    "label": "카드 드로우",
+    "kind": "sfx",
+    "files": [
+      "sfx/card-draw.ogg",
+      "sfx/card-draw.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.28,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "card-select": {
+    "label": "카드 선택",
+    "kind": "sfx",
+    "files": [
+      "sfx/card-select.ogg",
+      "sfx/card-select.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.22,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "card-attack": {
+    "label": "공격 카드",
+    "kind": "sfx",
+    "files": [
+      "sfx/card-attack.ogg",
+      "sfx/card-attack.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.37,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "card-guard": {
+    "label": "방어 카드",
+    "kind": "sfx",
+    "files": [
+      "sfx/card-guard.ogg",
+      "sfx/card-guard.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.44,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "card-support": {
+    "label": "지원 카드",
+    "kind": "sfx",
+    "files": [
+      "sfx/card-support.ogg",
+      "sfx/card-support.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.54,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "card-evolved": {
+    "label": "진화 기술 카드",
+    "kind": "sfx",
+    "files": [
+      "sfx/card-evolved.ogg",
+      "sfx/card-evolved.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.74,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "card-discard": {
+    "label": "카드 버림",
+    "kind": "sfx",
+    "files": [
+      "sfx/card-discard.ogg",
+      "sfx/card-discard.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.32,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "deck-shuffle": {
+    "label": "덱 섞기",
+    "kind": "sfx",
+    "files": [
+      "sfx/deck-shuffle.ogg",
+      "sfx/deck-shuffle.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.64,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "energy-low": {
+    "label": "에너지 부족",
+    "kind": "sfx",
+    "files": [
+      "sfx/energy-low.ogg",
+      "sfx/energy-low.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.33,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "card-upgrade": {
+    "label": "카드 강화",
+    "kind": "sfx",
+    "files": [
+      "sfx/card-upgrade.ogg",
+      "sfx/card-upgrade.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.74,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "hit-normal": {
+    "label": "일반 타격",
+    "kind": "sfx",
+    "files": [
+      "sfx/hit-normal.ogg",
+      "sfx/hit-normal.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.29,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "hit-heavy": {
+    "label": "강한 타격",
+    "kind": "sfx",
+    "files": [
+      "sfx/hit-heavy.ogg",
+      "sfx/hit-heavy.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.54,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "attack-fire": {
+    "label": "화염",
+    "kind": "sfx",
+    "files": [
+      "sfx/attack-fire.ogg",
+      "sfx/attack-fire.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.74,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "attack-electric": {
+    "label": "전기",
+    "kind": "sfx",
+    "files": [
+      "sfx/attack-electric.ogg",
+      "sfx/attack-electric.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.59,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "attack-water": {
+    "label": "물과 얼음",
+    "kind": "sfx",
+    "files": [
+      "sfx/attack-water.ogg",
+      "sfx/attack-water.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.74,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "attack-plant": {
+    "label": "식물 속박",
+    "kind": "sfx",
+    "files": [
+      "sfx/attack-plant.ogg",
+      "sfx/attack-plant.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.69,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "attack-light": {
+    "label": "빛",
+    "kind": "sfx",
+    "files": [
+      "sfx/attack-light.ogg",
+      "sfx/attack-light.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.79,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "attack-dark": {
+    "label": "어둠",
+    "kind": "sfx",
+    "files": [
+      "sfx/attack-dark.ogg",
+      "sfx/attack-dark.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.79,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "block-gain": {
+    "label": "방어도 획득",
+    "kind": "sfx",
+    "files": [
+      "sfx/block-gain.ogg",
+      "sfx/block-gain.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.49,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "block-break": {
+    "label": "방어 파괴",
+    "kind": "sfx",
+    "files": [
+      "sfx/block-break.ogg",
+      "sfx/block-break.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.51,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "heal": {
+    "label": "회복",
+    "kind": "sfx",
+    "files": [
+      "sfx/heal.ogg",
+      "sfx/heal.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.84,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "status-apply": {
+    "label": "상태 이상",
+    "kind": "sfx",
+    "files": [
+      "sfx/status-apply.ogg",
+      "sfx/status-apply.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.59,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "status-cleanse": {
+    "label": "상태 정화",
+    "kind": "sfx",
+    "files": [
+      "sfx/status-cleanse.ogg",
+      "sfx/status-cleanse.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.79,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "enemy-intent": {
+    "label": "행동 예고",
+    "kind": "sfx",
+    "files": [
+      "sfx/enemy-intent.ogg",
+      "sfx/enemy-intent.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.39,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "enemy-appear": {
+    "label": "적 등장",
+    "kind": "sfx",
+    "files": [
+      "sfx/enemy-appear.ogg",
+      "sfx/enemy-appear.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.74,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "player-hit": {
+    "label": "파트너 피격",
+    "kind": "sfx",
+    "files": [
+      "sfx/player-hit.ogg",
+      "sfx/player-hit.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.39,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "enemy-hit": {
+    "label": "적 피격",
+    "kind": "sfx",
+    "files": [
+      "sfx/enemy-hit.ogg",
+      "sfx/enemy-hit.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.36,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "enemy-purify": {
+    "label": "적 정화",
+    "kind": "sfx",
+    "files": [
+      "sfx/enemy-purify.ogg",
+      "sfx/enemy-purify.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 1.19,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "enemy-down": {
+    "label": "적 격퇴",
+    "kind": "sfx",
+    "files": [
+      "sfx/enemy-down.ogg",
+      "sfx/enemy-down.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.79,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "crest-charge": {
+    "label": "문장 에너지",
+    "kind": "sfx",
+    "files": [
+      "sfx/crest-charge.ogg",
+      "sfx/crest-charge.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.44,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "evolution-energy": {
+    "label": "진화 에너지",
+    "kind": "sfx",
+    "files": [
+      "sfx/evolution-energy.ogg",
+      "sfx/evolution-energy.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.59,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "data-gather": {
+    "label": "데이터 집중",
+    "kind": "sfx",
+    "files": [
+      "sfx/data-gather.ogg",
+      "sfx/data-gather.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.99,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "forced-warning": {
+    "label": "강제 진화 경고",
+    "kind": "sfx",
+    "files": [
+      "sfx/forced-warning.ogg",
+      "sfx/forced-warning.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 1.29,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "corruption-rise": {
+    "label": "오염 증가",
+    "kind": "sfx",
+    "files": [
+      "sfx/corruption-rise.ogg",
+      "sfx/corruption-rise.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.79,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  },
+  "burden-relief": {
+    "label": "부담 감소",
+    "kind": "sfx",
+    "files": [
+      "sfx/burden-relief.ogg",
+      "sfx/burden-relief.mp3"
+    ],
+    "volume": 0.7,
+    "loop": false,
+    "duration": 0.74,
+    "limit": 2,
+    "cooldown": 0.14,
+    "variation": 0.035,
+    "fade": 0.08
+  }
+}

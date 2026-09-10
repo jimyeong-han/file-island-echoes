@@ -30,3 +30,6 @@ const rows:Row[]=[
 ];
 export const ENEMIES:Record<string,EnemyDef>=Object.fromEntries(rows.map(([id,name,hp,rank,chapters,purifiable,feature,pattern])=>[id,{name,hp,rank,chapters,purifiable,feature,pattern,art:id,color:rank==='boss'?'#bd92cc':purifiable?'#9cbfca':'#bdad88',shape:id,regions:chapters.map(c=>({file:'파일섬',server:'서버대륙',city:'현실 세계'})[c]),resist:{burn:id==='meramon'?50:0,weak:rank==='boss'?50:0,root:rank==='boss'?50:0},description:feature+' 이 조우는 손상된 데이터로 재구성된 팬게임의 독립 사건입니다.',encounter:purifiable?`${name}의 목소리에 낯선 명령이 겹칩니다. 오염을 끊어야 합니다.`:`${name}이 길을 막습니다. 다음 행동을 살피세요.`,victory:purifiable?`${name}의 오염이 풀렸습니다. “이제 내 목소리가 들려… 고마워.”`:`${name}이 물러나고 막혔던 데이터 길이 열렸습니다.`}]));
 export const NPCS={sukamon:{name:'스카몬',text:'길을 어지럽혔지만 잃어버린 표지판을 기억한다.'},chuumon:{name:'츄몬',text:'작은 틈을 통과하며 안전한 길을 찾아 준다.'},piccolomon:{name:'픽콜몬',text:'서두르는 마음을 멈추고 파트너의 호흡을 듣게 한다.'},whamon:{name:'고래몬',text:'바다에 남은 신호를 듣고 다음 길로 안내한다.'}};
+
+const enemyAudio:Record<string,string>={elec:"attack-electric",seadramon:"attack-water",shellmon:"attack-water",frigimon:"attack-water",meramon:"attack-fire","dark-tyrannomon":"attack-fire",andromon:"attack-electric",devimon:"attack-dark",myotismon:"attack-dark",phantomon:"attack-dark","demi-devimon":"attack-dark",bakemon:"attack-dark"};
+for(const [id,audioId] of Object.entries(enemyAudio))ENEMIES[id].audioId=audioId;

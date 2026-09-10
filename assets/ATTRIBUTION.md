@@ -141,3 +141,7 @@ SVG 생성 스크립트: `scripts/export-art.mjs`. 재생성: `npm run art`. 교
 | `characters/demi-devimon-battle.svg` | 직접 작성한 벡터 일러스트. 향후 래스터 교체 후보. |
 | `backgrounds/server-battle-background.webp` | imagegen · [server-battle-background.txt](prompts/v0.4/server-battle-background.txt) |
 | `backgrounds/city-battle-background.webp` | imagegen · [city-battle-background.txt](prompts/v0.4/city-battle-background.txt) |
+
+## 2026-09-10 · v0.5 직접 제작 오디오
+
+음악 12곡, 징글 17개, 효과음 41개를 이 프로젝트 전용 악보와 로컬 신시사이저로 새로 제작했습니다. 공식/외부 음원, 효과음 샘플, 보이스, 특정 곡이나 작곡가 모방 요청을 사용하지 않았습니다. 파일별 용도·길이·제작 방법과 재생성 소스는 [AUDIO.md](../AUDIO.md)에 기록했습니다. `public/assets/audio/`의 모든 OGG/MP3에 적용됩니다.
