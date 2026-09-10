@@ -42,7 +42,7 @@ function title(){const r=save.run;return `<main class="title-screen">
  ${background(0,'title-landscape')}<div class="title-illustration">${portrait('tai','hero-portrait')}</div>
  <div class="title-copy"><div class="logo-emblem" aria-hidden="true">${icon('device')}</div><p class="series-title">디지몬 어드벤처 · 비공식 팬게임</p><h1 aria-label="디지몬: 우리들의 모험">우리들의<em>모험</em></h1><p class="intro">검은 톱니바퀴가 다시 움직인다.<br/>여덟 개의 마음, 서로 다른 모험.</p>
  <div class="title-audio">${btn(save.settings.muted?'소리 켜기':'소리 끄기','sound','audio-start',`aria-pressed="${!save.settings.muted}"`)}<small>이 모험을 위해 만든 음악과 효과음</small></div><div class="start-actions">${r&&r.screen!=='result'?btn(`<span>이어서 탐험</span><small>${chapterOf(r).zones[zoneAt(r.row)]} · ${r.row+1}번째 장소</small>`,'continue','title-menu'):''}${btn('<span>새 탐험</span><small>아이와 파트너 선택 →</small>','new','title-menu')}${btn('<span>탐험 안내</span><small>카드 전투와 진화</small>','help','title-menu')}</div><p class="playtime">한 판은 약 10~15분이며, 진행 상황은 자동으로 저장됩니다.</p></div>
- <footer class="title-footer"><span>FILE ISLAND ECHOES <b>0.6.1</b></span><p>비공식 · 비영리 팬 프로젝트<br/>사건과 진화 조건은 이 게임을 위한 창작 설정입니다.</p></footer></main>`;}
+ <footer class="title-footer"><span>FILE ISLAND ECHOES <b>0.6.2</b></span><p>비공식 · 비영리 팬 프로젝트<br/>사건과 진화 조건은 이 게임을 위한 창작 설정입니다.</p></footer></main>`;}
 function status(r:Run){return `<section class="statusbar ${r.screen==='battle'?'combat-status':''}" aria-label="파트너 상태">
  <div class="status-partner">${sprite(r.form)}<strong>${FORMS[r.form].name}<small>${CHARACTERS[r.characterId].name} · ${FORMS[r.form].tag}</small></strong></div>
  <div class="health"><span>체력 <b>${r.hp}<small> / ${r.maxHp}</small></b></span>${meter(r.hp,r.maxHp)}</div>
@@ -88,7 +88,7 @@ function render(){
  document.body.classList.toggle('reduced-motion',save.settings.reducedMotion);
  root.innerHTML=header()+(warning?`<div class="save-warning" role="status">${warning}</div>`:'')+
   (view==='select'?selection():view==='detail'?detail():view==='chapters'?chapters():view==='title'||!r?title():status(r)+({intro:introScreen,map:map,battle:battle,event:eventScreen,rest:restScreen,reward:rewardScreen,evolution:evolutionScreen,result:resultScreen}[r.screen])(r))+
-  `<footer class="game-footer"><p>디지몬: 우리들의 모험 · v0.6.1<br/>비공식 · 비영리 팬 프로젝트</p>${btn('정보 · 크레딧','credits','quiet')}</footer>`+
+  `<footer class="game-footer"><p>디지몬: 우리들의 모험 · v0.6.2<br/>비공식 · 비영리 팬 프로젝트</p>${btn('정보 · 크레딧','credits','quiet')}</footer>`+
   (notice?`<div class="toast" role="status">${esc(notice)}</div>`:'')+
   (modal?`<dialog aria-label="${modal==='evo'?'진화 미리보기':'게임 메뉴'}"><div class="dialog-top">${btn(icon('close'),'close','close-button','aria-label="닫기"')}</div>${modalContent()}</dialog>`:'');
  if(modal){

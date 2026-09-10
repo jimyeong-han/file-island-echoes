@@ -167,3 +167,7 @@ SVG 생성 스크립트: `scripts/export-art.mjs`. 재생성: `npm run art`. 교
 - 나리: kari-gatomon-short-hair.txt. 이전 생성 요청의 헤어 용어는 정정하고 원문은 Git 이력에 보존했다.
 - 엔젤우몬: angewomon-asymmetric-battle.txt → angewomon-alpha.txt → angewomon-chroma.txt. 투명 요청은 RGB 체커 패턴이 나와 채택하지 않았다. 최종 단색 녹색 배경 생성본에 크로마키 알파/녹색 가장자리 제거 후 640px WebP로 변환했다.
 - src/crests.ts 및 public/assets/ui/crest-*-icon.svg: 24px/1.8px SVG 직접 제작. 자료 대조는 docs/CANON-SOURCES.md. device-icon.svg와 favicon.svg는 독자적인 원형 장치/산/신호선 심볼이다.
+
+## v0.6.2 · 2026-09-11
+
+`characters/gatomon-balanced-battle.webp`: 사용자 정정에 따라 단독 스프라이트를 내장 imagegen으로 재제작. [생성 요청](prompts/v0.6.2/gatomon-balanced-battle.txt). 단색 녹색 배경을 알파 WebP로 최적화. 공식 추출 에셋 사용 없음. 초상화는 유지.
