@@ -89,3 +89,55 @@ SVG 생성 스크립트: `scripts/export-art.mjs`. 재생성: `npm run art`. 교
 이 요청에서 픽셀풍을 선택해 직접 도형과 격자 데이터를 작성했습니다. 특정 공식 이미지의 자세, 구도, 선화와 세부 표현을 복사하기 위한 참조 이미지를 사용하지 않았습니다. 등장인물과 작품 명칭의 제3자 권리는 위 고지와 같이 별도로 존중합니다.
 
 이후 생성형 이미지나 오디오를 추가하면 **파일명, 제작 날짜, 도구/모델, 실제 원본 프롬프트, 참조 자료의 출처**를 이 문서에 추가합니다. 생성물이라는 사실만으로 제3자 권리가 소멸하거나 프로젝트 전체에 사용 허가가 생긴다고 설명하지 않습니다.
+
+## 2026-09-10 · 8인 확장
+
+새 래스터 41개는 Codex 내장 imagegen 도구로 각각 생성했습니다. 별도 API/CLI 경로는 사용하지 않았습니다. 팔몬 수정에는 기존 프로젝트 생성물 `public/assets/portraits/mimi-palmon.webp`만 색·선화 참조로 사용했습니다. 외부 공식 이미지·스프라이트·로고·음원은 입력하거나 다운로드하지 않았습니다. 모든 프롬프트는 `assets/prompts/v0.4/`에 기록했습니다. 실패한 시도의 프롬프트도 보존하며, 최종 파일과 연결한 요청은 아래와 같습니다.
+
+데미데블몬·츄몬은 이미지 생성 출력 검사에서 반복 실패하여 새 SVG를 직접 작성했습니다. 이는 이미지 생성 결과나 공식 원본 추출물이 아닙니다. 두 파일은 향후 같은 화풍의 래스터로 교체할 수 있습니다. 전투 상태 아이콘 8개와 데이터 심볼 fallback 역시 직접 작성한 SVG입니다.
+
+| 파일 (public/assets/) | 제작 방식 및 최종 프롬프트 |
+| --- | --- |
+| `characters/gabumon-battle.webp` | imagegen · [gabumon-battle.txt](prompts/v0.4/gabumon-battle.txt) |
+| `characters/tentomon-battle.webp` | imagegen · [tentomon-battle.txt](prompts/v0.4/tentomon-battle.txt) |
+| `characters/frigimon-battle.webp` | imagegen · [frigimon-battle-v2.txt](prompts/v0.4/frigimon-battle-v2.txt) |
+| `characters/monochromon-battle.webp` | imagegen · [monochromon-battle-v2.txt](prompts/v0.4/monochromon-battle-v2.txt) |
+| `characters/palmon-battle.webp` | imagegen · [palmon-battle-v2.txt](prompts/v0.4/palmon-battle-v2.txt) |
+| `characters/angemon-battle.webp` | imagegen · [angemon-battle.txt](prompts/v0.4/angemon-battle.txt) |
+| `characters/angewomon-battle.webp` | imagegen · [angewomon-battle.txt](prompts/v0.4/angewomon-battle.txt) |
+| `characters/bakemon-battle.webp` | imagegen · [bakemon-battle.txt](prompts/v0.4/bakemon-battle.txt) |
+| `characters/birdramon-battle.webp` | imagegen · [birdramon-battle.txt](prompts/v0.4/birdramon-battle.txt) |
+| `characters/biyomon-battle.webp` | imagegen · [biyomon-battle.txt](prompts/v0.4/biyomon-battle.txt) |
+| `characters/centarumon-battle.webp` | imagegen · [centarumon-battle.txt](prompts/v0.4/centarumon-battle.txt) |
+| `characters/cockatrimon-battle.webp` | imagegen · [cockatrimon-battle.txt](prompts/v0.4/cockatrimon-battle.txt) |
+| `characters/dark-tyrannomon-battle.webp` | imagegen · [dark-tyrannomon-battle.txt](prompts/v0.4/dark-tyrannomon-battle.txt) |
+| `characters/etemon-battle.webp` | imagegen · [etemon-battle.txt](prompts/v0.4/etemon-battle.txt) |
+| `characters/garudamon-battle.webp` | imagegen · [garudamon-battle.txt](prompts/v0.4/garudamon-battle.txt) |
+| `characters/garurumon-battle.webp` | imagegen · [garurumon-battle.txt](prompts/v0.4/garurumon-battle.txt) |
+| `characters/gatomon-battle.webp` | imagegen · [gatomon-battle.txt](prompts/v0.4/gatomon-battle.txt) |
+| `characters/gazimon-battle.webp` | imagegen · [gazimon-battle.txt](prompts/v0.4/gazimon-battle.txt) |
+| `characters/gomamon-battle.webp` | imagegen · [gomamon-battle.txt](prompts/v0.4/gomamon-battle.txt) |
+| `characters/ikkakumon-battle.webp` | imagegen · [ikkakumon-battle.txt](prompts/v0.4/ikkakumon-battle.txt) |
+| `characters/kabuterimon-battle.webp` | imagegen · [kabuterimon-battle.txt](prompts/v0.4/kabuterimon-battle.txt) |
+| `characters/leomon-battle.webp` | imagegen · [leomon-battle.txt](prompts/v0.4/leomon-battle.txt) |
+| `characters/lillymon-battle.webp` | imagegen · [lillymon-battle.txt](prompts/v0.4/lillymon-battle.txt) |
+| `characters/magna-angemon-battle.webp` | imagegen · [magna-angemon-battle.txt](prompts/v0.4/magna-angemon-battle.txt) |
+| `characters/mega-kabuterimon-battle.webp` | imagegen · [mega-kabuterimon-battle.txt](prompts/v0.4/mega-kabuterimon-battle.txt) |
+| `characters/mojyamon-battle.webp` | imagegen · [mojyamon-battle.txt](prompts/v0.4/mojyamon-battle.txt) |
+| `characters/myotismon-battle.webp` | imagegen · [myotismon-battle.txt](prompts/v0.4/myotismon-battle.txt) |
+| `characters/patamon-battle.webp` | imagegen · [patamon-battle.txt](prompts/v0.4/patamon-battle.txt) |
+| `characters/phantomon-battle.webp` | imagegen · [phantomon-battle.txt](prompts/v0.4/phantomon-battle.txt) |
+| `characters/piccolomon-battle.webp` | imagegen · [piccolomon-battle.txt](prompts/v0.4/piccolomon-battle.txt) |
+| `characters/raremon-battle.webp` | imagegen · [raremon-battle.txt](prompts/v0.4/raremon-battle.txt) |
+| `characters/seadramon-battle.webp` | imagegen · [seadramon-battle.txt](prompts/v0.4/seadramon-battle.txt) |
+| `characters/shellmon-battle.webp` | imagegen · [shellmon-battle.txt](prompts/v0.4/shellmon-battle.txt) |
+| `characters/sukamon-battle.webp` | imagegen · [sukamon-battle.txt](prompts/v0.4/sukamon-battle.txt) |
+| `characters/togemon-battle.webp` | imagegen · [togemon-battle.txt](prompts/v0.4/togemon-battle.txt) |
+| `characters/unimon-battle.webp` | imagegen · [unimon-battle.txt](prompts/v0.4/unimon-battle.txt) |
+| `characters/were-garurumon-battle.webp` | imagegen · [were-garurumon-battle.txt](prompts/v0.4/were-garurumon-battle.txt) |
+| `characters/whamon-battle.webp` | imagegen · [whamon-battle.txt](prompts/v0.4/whamon-battle.txt) |
+| `characters/zudomon-battle.webp` | imagegen · [zudomon-battle.txt](prompts/v0.4/zudomon-battle.txt) |
+| `characters/chuumon-battle.svg` | 직접 작성한 벡터 일러스트. 향후 래스터 교체 후보. |
+| `characters/demi-devimon-battle.svg` | 직접 작성한 벡터 일러스트. 향후 래스터 교체 후보. |
+| `backgrounds/server-battle-background.webp` | imagegen · [server-battle-background.txt](prompts/v0.4/server-battle-background.txt) |
+| `backgrounds/city-battle-background.webp` | imagegen · [city-battle-background.txt](prompts/v0.4/city-battle-background.txt) |

@@ -1,12 +1,15 @@
-import { ENEMIES, FORMS } from './data';
+import { ENEMIES, FORMS, NPCS } from './data';
 import manifest from './asset-manifest.json';
 import type { Form } from './types';
 export const assetUrl = (path: string) => `${import.meta.env.BASE_URL}assets/${path}`;
 const fallbackUrl = (id: string) => `${import.meta.env.BASE_URL}art/${id}.svg`;
 export function sprite(id: string, extra = '') {
-  const name = Object.hasOwn(FORMS, id) ? FORMS[id as Form].name : ENEMIES[id]?.name || '디지몬';
-  const path = manifest.characters[id as keyof typeof manifest.characters];
-  return `<img class="sprite ${extra} form-${id}" src="${path ? assetUrl(path) : fallbackUrl('agumon')}" data-fallback="${fallbackUrl(path ? id : 'agumon')}" width="640" height="640" alt="${name}" draggable="false" decoding="async"/>`;
+  const name = Object.hasOwn(FORMS, id) ? FORMS[id as Form].name : ENEMIES[id]?.name || NPCS[id as keyof typeof NPCS]?.name || '디지몬';
+  const art=FORMS[id]?.art||id;
+  const path = manifest.characters[art as keyof typeof manifest.characters];
+  const old=['agumon','greymon','metal','skull','kuwaga','elec','meramon','nume','andromon','ogre','devimon'];
+  const fallback=fallbackUrl(old.includes(id)?id:'data-silhouette');
+  return `<img class="sprite ${extra} form-${id} stage-${FORMS[id]?.stage??1}" src="${path ? assetUrl(path) : fallback}" data-fallback="${fallback}" width="640" height="640" alt="${name}" draggable="false" decoding="async" loading="lazy"/>`;
 }
 export function background(zone: number, extra = '') {
   return `<img class="scene-background ${extra}" src="${assetUrl(manifest.backgrounds[zone] || manifest.backgrounds[0])}" width="1536" height="864" alt="" draggable="false" decoding="async"/>`;
@@ -20,7 +23,7 @@ const pairs: Record<string, [string, string]> = {
 };
 export function portrait(event: string, extra = '') {
   const [id, name] = pairs[event] || pairs.tai;
-  return `<div class="portrait-frame ${extra}"><img class="portrait" src="${assetUrl(manifest.portraits[id as keyof typeof manifest.portraits])}" width="640" height="640" alt="${name}" decoding="async"/><span class="portrait-fallback" aria-hidden="true">${name}</span><span class="portrait-corner"></span></div>`;
+  return `<div class="portrait-frame ${extra}"><img class="portrait" src="${assetUrl(manifest.portraits[id as keyof typeof manifest.portraits])}" width="640" height="640" alt="${name}" decoding="async" loading="lazy"/><span class="portrait-fallback" aria-hidden="true">${name}</span><span class="portrait-corner"></span></div>`;
 }
 export function installArtFallback(root: HTMLElement) {
   root.addEventListener('error', e => {

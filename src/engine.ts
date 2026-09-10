@@ -1,78 +1,46 @@
-import { BOSS_RAGE, RECOVERY, CARDS, ENEMIES, EVOLUTIONS, FORMS, MAP, REWARD_POOL, START_DECK, STORIES } from './data';
-import type { CardId, Form, Intent, Run } from './types';
-
-export function newRun(seed=Date.now()>>>0):Run { return {seed:seed||1,screen:'map',row:0,path:[],node:null,hp:64,maxHp:64,form:'agumon',evoEnergy:0,bond:1,burden:0,corruption:0,supplies:2,deck:[...START_DECK],battle:null,rewards:[],won:false,battles:0,started:Date.now()}; }
-export function random(r:Run) { r.seed=(Math.imul(1664525,r.seed)+1013904223)>>>0; return r.seed/4294967296; }
-export function shuffle<T>(r:Run,a:T[]):T[] { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(random(r)*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }
-export function nodeOf(r:Run) { return MAP.flat().find(n=>n.id===r.node); }
-function log(r:Run,msg:string) {if(r.battle) r.battle.log=[msg,...r.battle.log].slice(0,7);}
-function heal(r:Run,n:number) {r.hp=Math.min(r.maxHp,Math.max(0,r.hp+n));}
-export function draw(r:Run,n:number) {const b=r.battle;if(!b)return;for(let i=0;i<n;i++){if(!b.draw.length){b.draw=shuffle(r,b.discard);b.discard=[];} const c=b.draw.pop();if(c)b.hand.push(c);}}
-export function turnThreat(r:Run) {
- const b=r.battle;
- if(!b)return {incoming:0,recoil:0,blocked:0,damage:0};
- const incoming=b.enemies.reduce((sum,e,i)=>sum+(e.hp>0&&['attack','drain'].includes(intent(r,i).type)?intent(r,i).value:0),0);
- const recoil=r.corruption+(r.form==='skull'?2:0),blocked=Math.min(incoming,b.block);
- return {incoming,recoil,blocked,damage:incoming-blocked+recoil};
-}
-export function bossRageBonus(turn:number) {
- return turn<BOSS_RAGE.turn?0:(1+Math.floor((turn-BOSS_RAGE.turn)/BOSS_RAGE.interval))*BOSS_RAGE.damage;
-}
-export function intent(r:Run,index:number):Intent {
- const e=r.battle!.enemies[index],pattern=ENEMIES[e.id].pattern;
- const action={...pattern[e.step%pattern.length]};
- const damaging=action.type==='attack'||action.type==='drain';
- const rage=e.id==='devimon'?bossRageBonus(r.battle!.turn):0;
- if(rage&&damaging){action.value+=rage;action.label='폭주 · '+action.label;}
- if(e.weak>0&&damaging)action.value=Math.floor(action.value*.6);
- return action;
-}
-export function enterNode(r:Run,id:string) {
- if(r.screen!=='map')return;const n=MAP[r.row]?.find(x=>x.id===id);if(!n)return;
- r.node=id;r.lastEvent=undefined;
- if(n.enemies){r.screen='battle';r.battle={enemies:n.enemies.map(id=>({id,hp:ENEMIES[id].hp,maxHp:ENEMIES[id].hp,block:0,weak:0,step:0})),hand:[],draw:shuffle(r,r.deck),discard:[],energy:3,block:0,turn:1,target:0,log:['검은 톱니바퀴의 기척… 전투 시작!']};draw(r,5);}
- else r.screen=n.type==='rest'?'rest':'event';
-}
-export function finishNode(r:Run) {if(r.node)r.path.push(r.node);r.row++;r.node=null;r.battle=null;r.rewards=[];r.screen='map';}
-function resolve(r:Run) {
- if(r.hp<=0){r.hp=0;r.won=false;r.screen='result';return;}
- if(r.battle?.enemies.every(e=>e.hp<=0)) {r.battles++;r.evoEnergy+=nodeOf(r)?.type==='elite'?7:5;r.bond++;r.burden=Math.max(0,r.burden-1);if(nodeOf(r)?.type==='boss'){r.path.push(r.node!);r.won=true;r.screen='result';}else{r.screen='reward';r.rewards=shuffle(r,REWARD_POOL).slice(0,3);}}
-}
-export function cardStats(r:Run,id:CardId) {const c={...CARDS[id]};if(c.damage)c.damage+=FORMS[r.form].bonus;if(c.block&&c.kind==='guard'&&r.form==='metal')c.block+=3;return c;}
-export function playCard(r:Run,index:number) {
- const b=r.battle;if(r.screen!=='battle'||!b)return false;const id=b.hand[index];if(!id)return false;const c=cardStats(r,id);if(c.cost>b.energy)return false;
- if(!b.enemies[b.target]||b.enemies[b.target].hp<=0)b.target=b.enemies.findIndex(e=>e.hp>0);
- b.energy-=c.cost;b.hand.splice(index,1); // Draw before discard: a zero-cost draw card cannot redraw itself.
- if(c.damage){b.enemies.forEach((e,i)=>{if(e.hp>0&&(c.all||i===b.target)){const blocked=Math.min(e.block,c.damage!);e.block-=blocked;e.hp=Math.max(0,e.hp-c.damage!+blocked);}});}
- if(c.weak)b.enemies[b.target].weak+=c.weak;
- if(c.block)b.block+=c.block;if(c.heal)heal(r,c.heal);if(c.energy)b.energy+=c.energy;
- if(c.cleanse)r.corruption=Math.max(0,r.corruption-c.cleanse);
- r.burden=Math.max(0,r.burden+(c.burden||0)-(c.relief||0));if(c.self)heal(r,-c.self);
- if(c.draw)draw(r,c.draw);b.discard.push(id);log(r,`${c.name}${c.damage?` · 피해 ${c.damage}`:''}${c.block?` · 방어 ${c.block}`:''}${c.heal?` · 회복 ${c.heal}`:''}`);
- resolve(r);return true;
-}
-export function endTurn(r:Run) {
- const b=r.battle;if(r.screen!=='battle'||!b)return;
- b.discard.push(...b.hand);b.hand=[];
- // Existing corruption ticks once; newly applied corruption begins next turn.
- if(r.corruption){heal(r,-r.corruption);log(r,`오염으로 체력 ${r.corruption} 소모`);}
- if(r.form==='skull'){heal(r,-2);log(r,'강제 진화의 반동 · 체력 2 소모');}
- if(r.hp<=0){resolve(r);return;}
- b.enemies.forEach((e,i)=>{if(e.hp<=0||r.hp<=0)return;const a=intent(r,i);e.block=0;
- if(a.type==='attack'||a.type==='drain'){const absorbed=Math.min(b.block,a.value);b.block-=absorbed;const damage=a.value-absorbed;heal(r,-damage);if(a.type==='drain')e.hp=Math.min(e.maxHp,e.hp+Math.floor(damage/2));log(r,`${ENEMIES[e.id].name} · ${a.label}: 피해 ${damage}${absorbed?` (방어 ${absorbed})`:''}`);}
- if(a.type==='defend'){e.block=a.value;log(r,`${ENEMIES[e.id].name} · 방어 ${a.value}`);}
- if(a.type==='corrupt'){r.corruption+=a.value;log(r,`${ENEMIES[e.id].name} · 오염 +${a.value}`);}
- e.weak=Math.max(0,e.weak-1);e.step++;
- });
- resolve(r);if(r.screen!=='battle')return;b.turn++;b.energy=3;b.block=0;draw(r,5);
-}
-export function reward(r:Run,id?:CardId) {if(r.screen!=='reward')return;if(id&&!r.rewards.includes(id))return;if(id)r.deck.push(r.form!=='agumon'&&id==='flame'?'nova':id);finishNode(r);}
-export function chooseEvent(r:Run,index:number) {if(r.screen!=='event')return;const event=nodeOf(r)?.event;if(!event)return;const c=STORIES[event].choices[index];if(!c)return;
- heal(r,c.hp||0);r.evoEnergy+=c.energy||0;r.bond+=c.bond||0;r.burden=Math.max(0,r.burden+(c.burden||0));r.corruption=Math.max(0,r.corruption+(c.corruption||0));r.supplies+=c.supplies||0;if(c.card)r.deck.push(c.card);r.lastEvent=event;if(r.hp<=0){r.screen='result';r.won=false;}else finishNode(r);
-}
-export function rest(r:Run,kind:'rest'|'train') {if(r.screen!=='rest')return;if(kind==='rest'){heal(r,RECOVERY.rest);r.burden=Math.max(0,r.burden-4);r.corruption=Math.max(0,r.corruption-2);r.bond+=2;}else{heal(r,RECOVERY.train);r.evoEnergy+=5;r.burden+=2;}finishNode(r);}
-export function useSupply(r:Run) {if(r.supplies<=0||!['map','battle','rest','event'].includes(r.screen)||r.hp===r.maxHp)return;heal(r,RECOVERY.supply);r.supplies--;log(r,`보급품 사용 · 체력 ${RECOVERY.supply} 회복`);}
-export function evolutionOptions(r:Run) {return EVOLUTIONS.filter(e=>e.from===r.form).map(e=>({
- form:e.to,ready:r.evoEnergy>=e.energy&&r.bond>=e.bond&&r.burden>=e.burden,cost:e.energy,condition:e.condition,
-}));}
-export function evolve(r:Run,form:Form) {if(r.screen!=='map')return false;const opt=evolutionOptions(r).find(x=>x.form===form);if(!opt?.ready)return false;r.evoEnergy-=opt.cost;r.evolvedFrom=r.form;r.form=form;const delta=FORMS[form].hp-r.maxHp;r.maxHp+=delta;heal(r,delta);if(form==='greymon')r.deck=r.deck.map(c=>c==='flame'?'nova':c);else{let count=0;r.deck=r.deck.map(c=>c==='nova'&&count++<2?(form==='metal'?'missile':'zero'):c);}r.screen='evolution';return true;}
+import { BOSS_RAGE, RECOVERY, CARDS, ENEMIES, EVOLUTIONS, FORMS, CHARACTERS, chapterOf, REWARD_POOL, STORIES, storyId, describeCard } from './data';
+import type { AbilityState, CardId, CharacterId, ChapterId, Enemy, Form, Intent, Run } from './types';
+export const freshAbility=():AbilityState=>({firstAttack:false,firstGuard:false,lastKind:null,combo:0,growth:0,stock:0,hope:0,light:0,attacks:0,supports:0,crestUsed:false,crestBuff:0,retained:[],regen:0,thorns:0,weak:0,burn:0,tax:0,sealed:0,discardNext:0,lastStand:false});
+export const makeEnemy=(id:string):Enemy=>({id,hp:ENEMIES[id].hp,maxHp:ENEMIES[id].hp,block:0,weak:0,step:0,burn:0,root:0,shock:0,exposed:0,mark:0,power:0});
+export function newRun(seed=Date.now()>>>0,characterId:CharacterId='tai',chapterId:ChapterId='file'):Run {const c=CHARACTERS[characterId],form=c.forms[0],hp=FORMS[form].hp;return {seed:seed||1,screen:'intro',characterId,chapterId,row:0,path:[],node:null,hp,maxHp:hp,form,evoEnergy:0,bond:1,burden:0,corruption:0,supplies:2,deck:[...c.startDeck],battle:null,rewards:[],won:false,battles:0,started:Date.now(),storyFlags:[],outcome:'active'};}
+export function random(r:Run){r.seed=(Math.imul(1664525,r.seed)+1013904223)>>>0;return r.seed/4294967296;}
+export function shuffle<T>(r:Run,a:T[]):T[]{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(random(r)*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+export function nodeOf(r:Run){return chapterOf(r).map.flat().find(n=>n.id===r.node);}
+export function storyOf(r:Run){return STORIES[r.legacyEvent||storyId(r,nodeOf(r)?.event||'')];}
+function log(r:Run,msg:string){if(r.battle)r.battle.log=[msg,...r.battle.log].slice(0,10);}
+function heal(r:Run,n:number){r.hp=Math.min(r.maxHp,r.hp+n);}
+function hurt(r:Run,n:number){r.hp=Math.max(0,r.hp-n);const b=r.battle;if(r.hp===0&&b?.ability.lastStand){r.hp=1;b.block+=12;b.ability.lastStand=false;log(r,'희망으로 치명 피해를 버텼습니다. 체력 1 · 방어 +12');}}
+export function draw(r:Run,n:number){const b=r.battle;if(!b)return;for(let i=0;i<n;i++){if(!b.draw.length){b.draw=shuffle(r,b.discard);b.discard=[];}const c=b.draw.pop();if(c)b.hand.push(c);}}
+function startTurn(r:Run){const b=r.battle!,s=b.ability;b.energy=3;b.block=0;s.firstAttack=false;s.firstGuard=false;s.lastKind=null;s.combo=0;s.crestBuff=0;s.thorns=0;b.hand.push(...s.retained);const held=s.retained.length;s.retained=[];draw(r,Math.max(0,5-held));if(s.discardNext){b.discard.push(...b.hand.splice(0,s.discardNext));s.discardNext=0;}if(s.regen){heal(r,s.regen);s.regen--;}if(r.characterId==='tk'&&(r.hp<=r.maxHp*.4||!b.hand.some(c=>CARDS[c].kind==='attack')))s.hope=Math.min(3,s.hope+1);}
+export function bossRageBonus(turn:number){return turn<BOSS_RAGE.turn?0:(1+Math.floor((turn-BOSS_RAGE.turn)/BOSS_RAGE.interval))*BOSS_RAGE.damage;}
+export function intent(r:Run,index:number,ahead=0):Intent{const e=r.battle!.enemies[index],def=ENEMIES[e.id],a={...def.pattern[(e.step+ahead)%def.pattern.length]};if(['attack','drain'].includes(a.type)){a.value+=e.power+(def.rank==='boss'?bossRageBonus(r.battle!.turn+ahead):0);a.value=Math.max(0,a.value-e.root*2-e.shock);if(e.weak)a.value=Math.floor(a.value*.6);}return a;}
+export function turnThreat(r:Run){const b=r.battle;if(!b)return {incoming:0,recoil:0,blocked:0,damage:0};const incoming=b.enemies.reduce((n,e,i)=>n+(e.hp>0&&['attack','drain'].includes(intent(r,i).type)?intent(r,i).value:0),0),recoil=r.corruption+b.ability.burn+(r.form==='skull'?2:0),blocked=Math.min(incoming,b.block);return {incoming,recoil,blocked,damage:incoming-blocked+recoil};}
+export function enterNode(r:Run,id:string){if(r.screen!=='map')return;const n=chapterOf(r).map[r.row]?.find(x=>x.id===id);if(!n)return;r.node=id;r.lastEvent=undefined;r.lastVictory=undefined;r.legacyEvent=undefined;const ids=n.enemies||n.pool?.[Math.floor(random(r)*n.pool.length)];if(ids){r.screen='battle';r.battle={enemies:ids.map(makeEnemy),hand:[],draw:shuffle(r,r.deck),discard:[],exhausted:[],energy:3,block:0,turn:1,target:0,log:ids.map(id=>ENEMIES[id].encounter),ability:freshAbility()};for(const e of r.battle.enemies){const key='seen:'+e.id;if(r.characterId==='koushiro'&&!r.storyFlags.includes(key))e.exposed=1;if(!r.storyFlags.includes(key))r.storyFlags.push(key);if(e.id==='etemon')e.step=Math.floor(random(r)*ENEMIES[e.id].pattern.length);}startTurn(r);}else r.screen=n.type==='rest'?'rest':'event';}
+export function finishNode(r:Run){if(r.node)r.path.push(r.node);r.row++;r.node=null;r.battle=null;r.rewards=[];r.legacyEvent=undefined;r.screen='map';}
+export function rewardPool(r:Run){return [...REWARD_POOL,...CHARACTERS[r.characterId].exclusive].filter(id=>!CARDS[id].stage||CARDS[id].stage!<=FORMS[r.form].stage);}
+function resolve(r:Run){if(r.hp<=0){r.hp=0;r.won=false;r.outcome='defeat';r.screen='result';return;}if(r.screen==='battle'&&r.battle?.enemies.every(e=>e.hp<=0)){r.battles++;r.evoEnergy+=nodeOf(r)?.type==='elite'?7:5;r.bond++;r.burden=Math.max(0,r.burden-1);r.lastVictory=r.battle.enemies.map(e=>ENEMIES[e.id].victory).join(' ');if(nodeOf(r)?.type==='boss'){r.path.push(r.node!);r.won=true;r.outcome='victory';r.screen='result';}else{r.screen='reward';r.rewards=shuffle(r,rewardPool(r)).slice(0,3);}}}
+export function cardStats(r:Run,id:CardId){const c={...CARDS[id]},b=r.screen==='battle'?r.battle:null,s=b?.ability,stage=FORMS[r.form].stage;if(c.damage){c.damage+=FORMS[r.form].bonus+(s?.crestBuff||0);if(r.characterId==='tai'&&s&&!s.firstAttack&&b!.energy>=3&&c.kind==='attack')c.damage+=2+stage;if(c.scaling){const v=c.scaling==='block'?(b?.block||0):(s?.[c.scaling]||0);c.damage+=c.scaling==='block'?Math.floor(v/2):v*(c.scaling==='growth'?2+stage:2);}if(s?.weak)c.damage=Math.floor(c.damage*.75);}if(c.block&&c.kind==='guard'){if(r.form==='metal')c.block+=2;if(r.characterId==='sora'&&s&&!s.firstGuard)c.block+=2+stage;}if(s?.tax)c.cost+=1;c.text=describeCard(c);return c;}
+export function harmful(r:Run){const s=r.battle?.ability;return r.corruption+(s?.burn||0)+(s?.weak||0);}
+function cleanse(r:Run,n:number){const before=harmful(r);r.corruption=Math.max(0,r.corruption-n);if(r.battle){const s=r.battle.ability;s.burn=Math.max(0,s.burn-n);s.weak=Math.max(0,s.weak-n);}return before>harmful(r);}
+function cleaned(r:Run,yes:boolean){if(!yes||!r.battle)return;const s=r.battle.ability;if(r.characterId==='mimi')s.growth=Math.min(6,s.growth+1);if(r.characterId==='kari')s.light=Math.min(6,s.light+1);}
+function damageEnemy(r:Run,e:Enemy,n:number){const bonus=e.exposed*2+e.mark*(2+(r.characterId==='kari'?FORMS[r.form].stage:0)),amount=n+bonus,blocked=Math.min(e.block,amount);e.block-=blocked;e.hp=Math.max(0,e.hp-amount+blocked);e.exposed=0;e.mark=0;return blocked>0;}
+export function playCard(r:Run,index:number){const b=r.battle;if(r.screen!=='battle'||!b)return false;const id=b.hand[index];if(!id)return false;const c=cardStats(r,id),s=b.ability;if(c.cost>b.energy)return false;if(!b.enemies[b.target]||b.enemies[b.target].hp<=0)b.target=b.enemies.findIndex(e=>e.hp>0);b.energy-=c.cost;s.tax=Math.max(0,s.tax-1);b.hand.splice(index,1);let removed=false;
+ if(r.characterId==='matt'){if(s.lastKind&&s.lastKind!==c.kind){s.combo=Math.min(4,s.combo+1);b.block+=2+Math.floor(FORMS[r.form].stage/2);}else if(s.lastKind===c.kind)s.combo=0;s.lastKind=c.kind;}
+ if(c.kind==='attack'){s.firstAttack=true;s.attacks++;}if(c.kind==='support')s.supports++;if(c.kind==='guard'){if(r.characterId==='sora'&&!s.firstGuard)r.burden=Math.max(0,r.burden-1);s.firstGuard=true;}
+ b.enemies.forEach((e,i)=>{if(e.hp<=0||(!c.all&&i!==b.target))return;if(c.dispel){removed=removed||e.block>0||e.power>0;e.block=0;e.power=0;}if(c.damage)removed=damageEnemy(r,e,c.damage)||removed;for(const [key,value] of [['weak',c.weak],['burn',c.burn],['root',c.root],['shock',c.shock],['exposed',c.expose],['mark',c.mark]] as const){if(value){const resist=key==='weak'||key==='burn'||key==='root'?ENEMIES[e.id].resist[key]:0;e[key]+=Math.ceil(value*(100-resist)/100);}}});
+ if(c.block)b.block+=c.block;if(c.heal)heal(r,c.heal);if(c.energy)b.energy+=c.energy;if(c.cleanse)removed=cleanse(r,c.cleanse)||removed;cleaned(r,removed);if(c.regen)s.regen=Math.min(9,s.regen+c.regen);if(c.thorns)s.thorns=Math.min(12,s.thorns+c.thorns);if(c.growth)s.growth=Math.min(6,s.growth+c.growth);if(c.stock)s.stock=Math.min(3,s.stock+c.stock);if(c.hope)s.hope=Math.min(3,s.hope+c.hope);
+ r.burden=Math.max(0,r.burden+(c.burden||0)-(c.relief||0));if(c.self)hurt(r,c.self);if(c.draw)draw(r,c.draw);(c.exhaust?b.exhausted:b.discard).push(id);log(r,`${c.name} · ${c.text}`);resolve(r);return true;}
+export function crestReady(r:Run){const b=r.battle;if(r.screen!=='battle'||!b||b.ability.crestUsed||b.ability.sealed)return false;const s=b.ability;switch(r.characterId){case'tai':return s.attacks>=2;case'matt':return s.combo>=2&&b.hand.length>0;case'sora':return b.block>=8||r.hp<=r.maxHp*.7;case'koushiro':return b.turn>=2&&s.supports>=1&&b.draw.length>0;case'mimi':return s.growth>=2||harmful(r)>0;case'joe':return s.stock>=2;case'tk':return s.hope>=2;case'kari':return s.light>=2||r.corruption>=2;}}
+export function crest(r:Run,choice?:number|number[]|string){if(!crestReady(r))return false;const b=r.battle!,s=b.ability;switch(r.characterId){case'tai':r.burden+=3;r.evoEnergy+=1;s.crestBuff=4;break;case'matt':if(typeof choice!=='number'||!Number.isInteger(choice)||!b.hand[choice])return false;s.retained.push(...b.hand.splice(choice,1));b.block+=6;b.energy++;break;case'sora':heal(r,10);b.block+=12;r.burden=Math.max(0,r.burden-3);break;case'koushiro':{const n=Math.min(3,b.draw.length);if(!Array.isArray(choice)||choice.length!==n||new Set(choice).size!==n||choice.some(i=>!Number.isInteger(i)||i<0||i>=n))return false;const top=b.draw.splice(-n).reverse();b.draw.push(...choice.map(i=>top[i]).reverse());b.enemies.filter(e=>e.hp>0).forEach(e=>e.exposed+=2);b.energy++;break;}case'mimi':cleaned(r,cleanse(r,999));heal(r,s.growth*2);b.enemies.filter(e=>e.hp>0).forEach(e=>damageEnemy(r,e,s.growth*3));s.growth=0;break;case'joe':s.stock=0;if(r.hp<=r.maxHp*.5)heal(r,16);else if(turnThreat(r).incoming>b.block)b.block+=16;else if(b.energy<=1)b.energy+=2;else draw(r,3);break;case'tk':if(!['survive','support'].includes(String(choice)))return false;if(choice==='survive')s.lastStand=true;else{heal(r,6+s.hope*3);b.block+=s.hope*4;}s.hope=0;break;case'kari':if(!['attack','guard'].includes(String(choice)))return false;{let yes=cleanse(r,999);b.enemies.forEach(e=>{yes=yes||e.block>0||e.power>0;e.block=0;e.power=0;});cleaned(r,yes);if(choice==='attack')b.enemies.filter(e=>e.hp>0).forEach(e=>damageEnemy(r,e,12+s.light*2));else{b.block+=10+s.light*3;heal(r,5);}s.light=0;}break;}
+ s.crestUsed=true;log(r,CHARACTERS[r.characterId].ability.name+' · 문장 사용');resolve(r);return true;}
+function special(r:Run,e:Enemy,a:Intent){const b=r.battle!,s=b.ability;switch(a.type){case'defend':e.block=a.value;break;case'corrupt':case'curse':r.corruption+=a.value;break;case'burn':s.burn+=a.value;break;case'weaken':s.weak+=a.value+1;break;case'tax':s.tax+=a.value;break;case'seal':s.sealed=Math.max(s.sealed,a.value+1);break;case'charge':e.power+=a.value;break;case'shuffle':s.discardNext+=a.value;break;case'summon':if(b.enemies.filter(x=>x.hp>0).length<2){const summoned=makeEnemy(a.spawn||'demi-devimon'),dead=b.enemies.findIndex(x=>x.hp<=0);if(dead>=0)b.enemies[dead]=summoned;else b.enemies.push(summoned);}break;}}
+export function endTurn(r:Run){const b=r.battle;if(r.screen!=='battle'||!b)return;const s=b.ability;if(r.characterId==='joe')s.stock=Math.min(3,s.stock+Math.min(2,b.energy));b.discard.push(...b.hand);b.hand=[];hurt(r,r.corruption+s.burn+(r.form==='skull'?2:0));s.burn=Math.max(0,s.burn-1);if(r.hp<=0){resolve(r);return;}
+ for(const e of [...b.enemies]){if(e.hp<=0||r.hp<=0)continue;const i=b.enemies.indexOf(e),a=intent(r,i);e.block=0;if(a.type==='attack'||a.type==='drain'){const absorbed=Math.min(b.block,a.value),damage=a.value-absorbed;b.block-=absorbed;hurt(r,damage);if(a.type==='drain')e.hp=Math.min(e.maxHp,e.hp+Math.floor(damage/2));if(s.thorns)e.hp=Math.max(0,e.hp-s.thorns);log(r,`${ENEMIES[e.id].name} · ${a.label}: 피해 ${damage} (방어 ${absorbed})`);}else{special(r,e,a);log(r,`${ENEMIES[e.id].name} · ${a.label} ${a.value}`);}if(a.extra)special(r,e,{type:a.extra,value:a.amount||1,label:a.extra});e.hp=Math.max(0,e.hp-e.burn);for(const k of ['burn','weak','root','shock'] as const)e[k]=Math.max(0,e[k]-1);e.step++;}
+ resolve(r);if(r.screen!=='battle')return;s.weak=Math.max(0,s.weak-1);s.sealed=Math.max(0,s.sealed-1);b.turn++;startTurn(r);}
+export function reward(r:Run,id?:CardId){if(r.screen!=='reward'||(id&&!r.rewards.includes(id)))return;if(id){const f=FORMS[r.form];r.deck.push(id===f.basic&&f.stage>0?f.upgraded:id);}finishNode(r);}
+export function chooseEvent(r:Run,index:number){if(r.screen!=='event')return;const story=storyOf(r),c=story?.choices[index];if(!c)return;heal(r,c.hp||0);r.evoEnergy+=c.energy||0;r.bond+=c.bond||0;r.burden=Math.max(0,r.burden+(c.burden||0));r.corruption=Math.max(0,r.corruption+(c.corruption||0));r.supplies+=c.supplies||0;if(c.card)r.deck.push(c.card);if(c.flag&&!r.storyFlags.includes(c.flag))r.storyFlags.push(c.flag);r.lastEvent=r.legacyEvent||storyId(r,nodeOf(r)!.event!);if(r.hp<=0){r.hp=0;r.screen='result';r.won=false;r.outcome='defeat';}else finishNode(r);}
+export function rest(r:Run,kind:'rest'|'train'){if(r.screen!=='rest')return;if(kind==='rest'){heal(r,RECOVERY.rest);r.burden=Math.max(0,r.burden-4);r.corruption=Math.max(0,r.corruption-2);r.bond+=2;}else{heal(r,RECOVERY.train);r.evoEnergy+=5;r.burden+=2;}finishNode(r);}
+export function useSupply(r:Run){if(r.supplies<=0||!['map','battle','rest','event'].includes(r.screen)||r.hp===r.maxHp)return;heal(r,RECOVERY.supply);r.supplies--;log(r,`보급품 · 체력 ${RECOVERY.supply} 회복`);}
+export function evolutionOptions(r:Run){return EVOLUTIONS.filter(e=>e.from===r.form).map(e=>({form:e.to,ready:r.evoEnergy>=e.energy&&r.bond>=e.bond&&r.burden>=e.burden,cost:e.energy,condition:e.condition}));}
+export function evolve(r:Run,form:Form){if(r.screen!=='map')return false;const opt=evolutionOptions(r).find(x=>x.form===form);if(!opt?.ready)return false;const old=FORMS[r.form],f=FORMS[form];r.evoEnergy-=opt.cost;r.evolvedFrom=r.form;r.form=form;const delta=f.hp-r.maxHp;r.maxHp=f.hp;heal(r,Math.max(0,delta));let count=0;r.deck=r.deck.map(c=>c===old.upgraded&&(f.stage===1||count++<2)?f.upgraded:c);r.screen='evolution';return true;}
+export function retire(r:Run){if(r.screen==='result')return;r.outcome='retreat';r.won=false;r.screen='result';}

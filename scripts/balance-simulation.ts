@@ -1,75 +1,9 @@
-import { cardStats, chooseEvent, endTurn, enterNode, evolve, evolutionOptions, intent, newRun, playCard, rest, reward, useSupply } from '../src/engine';
-import type { Form, Run } from '../src/types';
-
-export type Strategy = 'tactical' | 'rush';
-export function playTurn(r: Run, strategy: Strategy) {
-  if (r.hp <= r.maxHp - 18) useSupply(r);
-  let budget = 35;
-  while (r.screen === 'battle' && budget-- > 0) {
-    const b = r.battle!;
-    const incoming = b.enemies.reduce((sum, e, i) => sum + (e.hp > 0 && ['attack', 'drain'].includes(intent(r, i).type) ? intent(r, i).value : 0), 0);
-    const options = b.hand.flatMap((id, index) => {
-      const c = cardStats(r, id);
-      if (c.cost > b.energy) return [];
-      return b.enemies.flatMap((enemy, target) => {
-        if (enemy.hp <= 0) return [];
-        let score = (c.energy || 0) * 12 + (c.draw || 0) * 3;
-        if (c.damage) {
-          const affected = c.all ? b.enemies.filter(e => e.hp > 0) : [enemy];
-          score += affected.reduce((s, e) => s + Math.min(e.hp, Math.max(0, c.damage! - e.block)), 0) * .65;
-          for (const e of affected) if (c.damage >= e.hp + e.block) score += 15;
-        }
-        if (c.heal) score += Math.min(c.heal, r.maxHp - r.hp) * (strategy === 'tactical' ? 1.1 : .4);
-        if (strategy === 'tactical') {
-          score += Math.min(c.block || 0, Math.max(0, incoming - b.block)) * 1.15;
-          if (c.weak && enemy.weak === 0) {
-            const a = intent(r, target);
-            score += (['attack', 'drain'].includes(a.type) ? a.value * .4 : 3) * 1.3;
-          }
-          score += Math.min(c.cleanse || 0, r.corruption) * 5;
-          score -= (c.self || 0) * .8;
-          if (c.self && r.hp <= c.self) score = -100;
-        }
-        return [{ index, target, score: score / Math.max(1, c.cost) }];
-      });
-    }).sort((a, b) => b.score - a.score);
-    if (!options.length || options[0].score <= 0) break;
-    b.target = options[0].target;
-    playCard(r, options[0].index);
-  }
-  if (r.screen === 'battle') endTurn(r);
-}
-
-export function simulate(seed: number, form: Form, strategy: Strategy, route: 'standard' | 'alternate' = 'standard') {
-  const r = newRun(seed);
-  let budget = 400, turns = 0, bossTurns = 0, bossEntryHp = 0;
-  const path = route === 'standard'
-    ? ['0a','1a','2b','3a','4b',form === 'skull' ? '5b' : '5a',form === 'skull' ? '6b' : '6a','7a','8a','9a','10a']
-    : ['0a','1b','2a','3b','4a',form === 'skull' ? '5b' : '5a',form === 'skull' ? '6b' : '6a','7a','8b','9a','10a'];
-  while (r.screen !== 'result' && budget-- > 0) {
-    if (r.screen === 'map') {
-      const next = evolutionOptions(r).find(e => e.ready && (e.form === 'greymon' || e.form === form));
-      if (next) evolve(r, next.form);
-      else { if (r.row === 10) bossEntryHp = r.hp; enterNode(r, path[r.row]); }
-    } else if (r.screen === 'evolution') r.screen = 'map';
-    else if (r.screen === 'battle') { if (r.row === 10) bossTurns++; playTurn(r, strategy); turns++; }
-    else if (r.screen === 'rest') rest(r, 'rest');
-    else if (r.screen === 'event') chooseEvent(r, form === 'skull' && [5,6].includes(r.row) ? 1 : 0);
-    else if (r.screen === 'reward') {
-      const priority = strategy === 'tactical' ? ['analysis','light','mimi','claw','hope','matt'] : ['claw','courage','cheer','flame'];
-      const id = priority.find(id => r.rewards.includes(id as typeof r.rewards[number]));
-      reward(r, id as typeof r.rewards[number] | undefined);
-    }
-  }
-  return { r, turns, bossTurns, bossEntryHp, exhausted: budget <= 0 };
-}
-
-export function balanceReport(count = 100) {
-  return (['standard', 'alternate'] as const).flatMap(route => (['metal', 'skull'] as const).flatMap(form => (['tactical','rush'] as const).map(strategy => {
-    const runs = Array.from({ length: count }, (_, i) => simulate(i + 1, form, strategy, route));
-    const wins = runs.filter(x => x.r.won);
-    const bosses = runs.filter(x => x.bossTurns > 0);
-    const avg = (items: number[]) => +(items.reduce((a,b) => a+b, 0) / Math.max(1, items.length)).toFixed(1);
-    return { route, form, strategy, runs: count, wins: wins.length, reachedBoss: bosses.length, turns: avg(runs.map(x => x.turns)), bossTurns: avg(bosses.map(x => x.bossTurns)), winHp: avg(wins.map(x => x.r.hp)), exhausted: runs.some(x => x.exhausted) };
-  })));
-}
+import { cardStats, chooseEvent, crest, crestReady, endTurn, enterNode, evolve, evolutionOptions, harmful, intent, newRun, playCard, rest, reward, useSupply } from '../src/engine';
+import {CARDS,CHARACTERS,chapterOf,FORMS} from '../src/data';
+import {CHARACTER_IDS} from '../src/types';
+import type { CharacterId, ChapterId, Run } from '../src/types';
+export type Strategy='tactical'|'rush';
+export function useCrest(r:Run){if(!crestReady(r))return false;const b=r.battle!,s=b.ability;switch(r.characterId){case'matt':return crest(r,b.hand.map((id,i)=>({i,v:(CARDS[id].damage||0)+(CARDS[id].block||0)})).sort((a,b)=>b.v-a.v)[0].i);case'koushiro':return crest(r,b.draw.slice(-3).reverse().map((_,i)=>i));case'tk':return crest(r,'support');case'kari':return crest(r,r.hp<r.maxHp*.4?'guard':'attack');case'sora':return r.hp<=r.maxHp-10?crest(r):false;case'joe':return crest(r);case'mimi':return s.growth>=3||harmful(r)>1?crest(r):false;default:return crest(r);}}
+export function playTurn(r:Run,strategy:Strategy){if(r.hp<=r.maxHp-18)useSupply(r);let budget=35;while(r.screen==='battle'&&budget-->0){const b=r.battle!,s=b.ability;if(strategy==='tactical')useCrest(r);if(r.screen!=='battle')return;const incoming=b.enemies.reduce((n,e,i)=>n+(e.hp>0&&['attack','drain'].includes(intent(r,i).type)?intent(r,i).value:0),0);const options=b.hand.flatMap((id,index)=>{const c=cardStats(r,id);if(c.cost>b.energy)return [];return b.enemies.flatMap((enemy,target)=>{if(enemy.hp<=0)return [];let score=(c.energy||0)*9+(c.draw||0)*3;if(c.damage){const affected=c.all?b.enemies.filter(e=>e.hp>0):[enemy];score+=affected.reduce((n,e)=>n+Math.min(e.hp,Math.max(0,c.damage!+e.exposed*2+e.mark*2-e.block)),0)*.9;for(const e of affected)if(c.damage+e.exposed*2+e.mark*2>=e.hp+e.block)score+=18;}if(c.heal)score+=Math.min(c.heal,r.maxHp-r.hp)*(strategy==='tactical'?1.15:.3);if(strategy==='tactical'){score+=Math.min(c.block||0,Math.max(0,incoming-b.block))*1.2;score+=(c.burn||0)*1.8+(c.root||0)*2+(c.shock||0)*1.6+(c.expose||0)*1.6+(c.mark||0)*1.5;if(c.weak&&!enemy.weak)score+=Math.max(2,intent(r,target).value*.4)*1.2;score+=Math.min(c.cleanse||0,harmful(r))*4;score+=(c.growth||0)*(s.growth<6?2:0)+(c.stock||0)*(s.stock<3?2:0)+(c.hope||0)*(s.hope<3?2:0);score+=(c.regen||0)*Math.min(1.2,(r.maxHp-r.hp)/8)+(c.thorns||0)*(incoming>0?1.5:.2);if(c.dispel)score+=enemy.block*.6+enemy.power*2;if(r.characterId==='matt'&&s.lastKind&&s.lastKind!==c.kind)score+=3;if(r.characterId==='joe'&&b.energy<=2&&score<2)score=-1;score-=(c.self||0)*1.1;if(c.self&&r.hp<=c.self)score=-100;}return [{index,target,score:score/Math.max(1,c.cost)}];});}).sort((a,b)=>b.score-a.score);if(!options.length||options[0].score<=0)break;b.target=options[0].target;playCard(r,options[0].index);}if(r.screen==='battle')endTurn(r);}
+export function simulate(seed:number,character:CharacterId='tai',strategy:Strategy='tactical',chapter:ChapterId='file',forced=false){const r=newRun(seed,character,chapter);let budget=500,turns=0,bossTurns=0,bossEntryHp=0;const visitedForms=[r.form],events:string[]=[];while(r.screen!=='result'&&budget-->0){if(r.screen==='intro')r.screen='map';else if(r.screen==='map'){const next=evolutionOptions(r).find(e=>e.ready&&(e.form!=='skull'||forced)&&(e.form!=='metal'||!forced));if(next){evolve(r,next.form);visitedForms.push(next.form);}else{if(r.row===10)bossEntryHp=r.hp;enterNode(r,chapterOf(r).map[r.row][0].id);}}else if(r.screen==='evolution')r.screen='map';else if(r.screen==='battle'){if(r.row===10)bossTurns++;playTurn(r,strategy);turns++;}else if(r.screen==='rest')rest(r,'rest');else if(r.screen==='event'){chooseEvent(r,forced&&[5,6].includes(r.row)?1:0);if(r.lastEvent)events.push(r.lastEvent);}else if(r.screen==='reward'){const scored=r.rewards.map(id=>{const c=CARDS[id];return {id,score:(c.damage||0)*.65+(c.draw||0)*3+(c.block||0)*.3+(c.cleanse||0)*2+(c.growth||0)*2+(c.heal||0)*.45+(c.burn||0)*2+(c.root||0)*2+(c.shock||0)*2-(c.self||0)*1.3-c.cost*3};}).sort((a,b)=>b.score-a.score);reward(r,scored[0].score>1?scored[0].id:undefined);}}return {r,turns,bossTurns,bossEntryHp,visitedForms,events,exhausted:budget<=0};}
+export function balanceReport(count=100){return CHARACTER_IDS.flatMap(character=>(['tactical','rush'] as const).map(strategy=>{const runs=Array.from({length:count},(_,i)=>simulate(i+1,character,strategy));const wins=runs.filter(x=>x.r.won),bosses=runs.filter(x=>x.bossTurns>0),avg=(ns:number[])=>+(ns.reduce((a,b)=>a+b,0)/Math.max(1,ns.length)).toFixed(1);return {character,strategy,runs:count,wins:wins.length,reachedBoss:bosses.length,turns:avg(runs.map(x=>x.turns)),bossTurns:avg(bosses.map(x=>x.bossTurns)),winHp:avg(wins.map(x=>x.r.hp)),exhausted:runs.some(x=>x.exhausted)};}));}

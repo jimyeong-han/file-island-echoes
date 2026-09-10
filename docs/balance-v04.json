@@ -1,0 +1,178 @@
+[
+  {
+    "character": "tai",
+    "strategy": "tactical",
+    "runs": 100,
+    "wins": 100,
+    "reachedBoss": 100,
+    "turns": 17.8,
+    "bossTurns": 7.2,
+    "winHp": 54.4,
+    "exhausted": false
+  },
+  {
+    "character": "tai",
+    "strategy": "rush",
+    "runs": 100,
+    "wins": 93,
+    "reachedBoss": 100,
+    "turns": 16.1,
+    "bossTurns": 6.3,
+    "winHp": 20.4,
+    "exhausted": false
+  },
+  {
+    "character": "matt",
+    "strategy": "tactical",
+    "runs": 100,
+    "wins": 81,
+    "reachedBoss": 100,
+    "turns": 27,
+    "bossTurns": 11.6,
+    "winHp": 32.2,
+    "exhausted": false
+  },
+  {
+    "character": "matt",
+    "strategy": "rush",
+    "runs": 100,
+    "wins": 53,
+    "reachedBoss": 100,
+    "turns": 21.9,
+    "bossTurns": 8.5,
+    "winHp": 22.8,
+    "exhausted": false
+  },
+  {
+    "character": "sora",
+    "strategy": "tactical",
+    "runs": 100,
+    "wins": 100,
+    "reachedBoss": 100,
+    "turns": 26.1,
+    "bossTurns": 10.8,
+    "winHp": 44.9,
+    "exhausted": false
+  },
+  {
+    "character": "sora",
+    "strategy": "rush",
+    "runs": 100,
+    "wins": 18,
+    "reachedBoss": 100,
+    "turns": 21.7,
+    "bossTurns": 8.3,
+    "winHp": 14.4,
+    "exhausted": false
+  },
+  {
+    "character": "koushiro",
+    "strategy": "tactical",
+    "runs": 100,
+    "wins": 88,
+    "reachedBoss": 100,
+    "turns": 19.9,
+    "bossTurns": 8.3,
+    "winHp": 28.4,
+    "exhausted": false
+  },
+  {
+    "character": "koushiro",
+    "strategy": "rush",
+    "runs": 100,
+    "wins": 26,
+    "reachedBoss": 100,
+    "turns": 21.1,
+    "bossTurns": 7.6,
+    "winHp": 16.4,
+    "exhausted": false
+  },
+  {
+    "character": "mimi",
+    "strategy": "tactical",
+    "runs": 100,
+    "wins": 79,
+    "reachedBoss": 100,
+    "turns": 23.2,
+    "bossTurns": 8.8,
+    "winHp": 30.3,
+    "exhausted": false
+  },
+  {
+    "character": "mimi",
+    "strategy": "rush",
+    "runs": 100,
+    "wins": 55,
+    "reachedBoss": 100,
+    "turns": 22.7,
+    "bossTurns": 7.3,
+    "winHp": 25.3,
+    "exhausted": false
+  },
+  {
+    "character": "joe",
+    "strategy": "tactical",
+    "runs": 100,
+    "wins": 80,
+    "reachedBoss": 100,
+    "turns": 26.9,
+    "bossTurns": 10.3,
+    "winHp": 26.9,
+    "exhausted": false
+  },
+  {
+    "character": "joe",
+    "strategy": "rush",
+    "runs": 100,
+    "wins": 10,
+    "reachedBoss": 100,
+    "turns": 23,
+    "bossTurns": 8.1,
+    "winHp": 19.5,
+    "exhausted": false
+  },
+  {
+    "character": "tk",
+    "strategy": "tactical",
+    "runs": 100,
+    "wins": 87,
+    "reachedBoss": 100,
+    "turns": 24.3,
+    "bossTurns": 8.8,
+    "winHp": 31.8,
+    "exhausted": false
+  },
+  {
+    "character": "tk",
+    "strategy": "rush",
+    "runs": 100,
+    "wins": 44,
+    "reachedBoss": 100,
+    "turns": 21.4,
+    "bossTurns": 7.4,
+    "winHp": 27.8,
+    "exhausted": false
+  },
+  {
+    "character": "kari",
+    "strategy": "tactical",
+    "runs": 100,
+    "wins": 83,
+    "reachedBoss": 100,
+    "turns": 21.1,
+    "bossTurns": 8.7,
+    "winHp": 25.7,
+    "exhausted": false
+  },
+  {
+    "character": "kari",
+    "strategy": "rush",
+    "runs": 100,
+    "wins": 19,
+    "reachedBoss": 100,
+    "turns": 19.4,
+    "bossTurns": 7.4,
+    "winHp": 18.6,
+    "exhausted": false
+  }
+]

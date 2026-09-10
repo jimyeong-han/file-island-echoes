@@ -1,93 +1,48 @@
-import { describe, expect, it } from 'vitest';
-import { BOSS_RAGE, CARDS, ENEMIES, MAP, RECOVERY, STORIES } from './data';
-import { cardStats, chooseEvent, draw, endTurn, enterNode, evolve, evolutionOptions, intent, newRun, playCard, rest, reward, turnThreat, useSupply } from './engine';
-import { emptyArchive, loadSave, SAVE_KEY, updateArchive, validRun, writeSave } from './storage';
-import { balanceReport, playTurn } from '../scripts/balance-simulation';
-import type { Form, Run, Save } from './types';
-
-function fight(seed=12){const r=newRun(seed);enterNode(r,'0a');return r;}
-function turnAI(r:Run){playTurn(r,'tactical');}
-function completeRun(seed:number,form:Form){const r=newRun(seed);let safety=500;const forms:Form[]=['agumon'];let turns=0;
- while(r.screen!=='result'&&safety--){expect(validRun(r)).toBe(true);
- if(r.screen==='map'){const next=evolutionOptions(r).find(e=>e.ready&&(e.form==='greymon'||e.form===form));if(next){evolve(r,next.form);forms.push(next.form);continue;}const paths=['0a','1a','2b','3a','4b',form==='skull'?'5b':'5a',form==='skull'?'6b':'6a','7a','8a','9a','10a'];enterNode(r,paths[r.row]);}
- else if(r.screen==='evolution')r.screen='map';
- else if(r.screen==='battle'){turnAI(r);turns++;}
- else if(r.screen==='reward'){const id=['analysis','light','mimi','claw','hope','matt'].find(x=>r.rewards.includes(x as typeof r.rewards[number])) as typeof r.rewards[number] | undefined;reward(r,id);}
- else if(r.screen==='rest')rest(r,'rest');
- else if(r.screen==='event')chooseEvent(r,form==='skull'&&[5,6].includes(r.row)?1:0);
- }
- return {r,forms,turns,safety};
-}
-describe('combat rules',()=>{
- it('cheer cycles a card without generating free energy',()=>{const r=fight();r.battle!.hand=['cheer'];r.battle!.draw=['guard'];playCard(r,0);expect(r.battle!.energy).toBe(3);expect(r.battle!.hand).toEqual(['guard']);});
- it('forecasts the exact damage after block, weakness, corruption and skull recoil',()=>{
-  const r=newRun(55);r.row=2;r.form='skull';enterNode(r,'2a');r.battle!.enemies[1].weak=1;r.battle!.block=5;r.corruption=2;
-  const forecast=turnThreat(r),hp=r.hp;expect(forecast).toEqual({incoming:11,blocked:5,recoil:4,damage:10});
-  endTurn(r);expect(r.hp).toBe(hp-forecast.damage);expect(turnThreat(r).incoming).toBe(0);
- });
- it('scales boss attacks at announced turns and applies weakness after the bonus',()=>{
-  const r=newRun(1);r.row=10;enterNode(r,'10a');const b=r.battle!;
-  expect(intent(r,0).value).toBe(20);b.turn=BOSS_RAGE.turn;expect(intent(r,0).value).toBe(26);
-  b.turn=9;expect(intent(r,0).value).toBe(32);b.enemies[0].weak=1;expect(intent(r,0).value).toBe(19);
-  b.enemies[0].step=1;expect(intent(r,0).type).toBe('corrupt');expect(intent(r,0).value).toBe(2);
-  const resumed=JSON.parse(JSON.stringify(r));expect(intent(resumed,0)).toEqual(intent(r,0));
- });
- it('drain heals only from damage that passed through block',()=>{
-  const r=newRun(1);r.row=10;enterNode(r,'10a');const e=r.battle!.enemies[0];e.step=2;e.hp=100;r.battle!.block=20;
-  endTurn(r);expect(r.hp).toBe(58);expect(e.hp).toBe(103);
- });
- it('skips a defeated target when using a single-target card',()=>{
-  const r=newRun(1);r.row=2;enterNode(r,'2a');r.battle!.enemies[1].hp=0;r.battle!.target=1;r.battle!.hand=['flame'];
-  playCard(r,0);expect(r.battle!.target).toBe(0);expect(r.battle!.enemies[0].hp).toBe(27);
- });
- it('starts with ten cards, five drawn, three energy, and rejects unreachable nodes',()=>{const r=newRun(1);enterNode(r,'10a');expect(r.screen).toBe('map');enterNode(r,'0a');expect(r.deck).toHaveLength(10);expect(r.battle?.hand).toHaveLength(5);expect(r.battle?.draw).toHaveLength(5);expect(r.battle?.energy).toBe(3);});
- it('spends energy, resolves attack and moves the card to discard',()=>{const r=fight();r.battle!.hand=['flame'];playCard(r,0);expect(r.battle!.energy).toBe(2);expect(r.battle!.enemies[0].hp).toBe(27);expect(r.battle!.discard).toEqual(['flame']);expect(r.battle!.hand).toEqual([]);});
- it('rejects unaffordable cards without changing state',()=>{const r=fight();r.battle!.hand=['courage'];r.battle!.energy=1;const before=structuredClone(r);expect(playCard(r,0)).toBe(false);expect(r).toEqual(before);});
- it('blocks the enemy attack then resets block and draws next turn',()=>{const r=fight();r.battle!.hand=['guard'];playCard(r,0);endTurn(r);expect(r.hp).toBe(64);expect(r.battle!.block).toBe(0);expect(r.battle!.energy).toBe(3);expect(r.battle!.hand).toHaveLength(5);expect(r.battle!.turn).toBe(2);});
- it('reshuffles discard and preserves the total number of cards',()=>{const r=fight();r.battle!.hand=[];r.battle!.draw=['guard'];r.battle!.discard=['flame','cheer','food','guard'];draw(r,5);expect(r.battle!.hand).toHaveLength(5);expect(r.battle!.draw).toHaveLength(0);expect(r.battle!.discard).toHaveLength(0);});
- it('draw cards cannot redraw themselves while resolving',()=>{const r=fight();r.battle!.hand=['cheer'];r.battle!.draw=[];r.battle!.discard=[];playCard(r,0);expect(r.battle!.hand).toEqual([]);expect(r.battle!.discard).toEqual(['cheer']);});
- it('distinguishes enemy patterns, weakness, guard, corruption and drain',()=>{expect(new Set(Object.values(ENEMIES).map(e=>JSON.stringify(e.pattern))).size).toBe(7);const r=fight();r.battle!.enemies[0].weak=2;expect(intent(r,0).value).toBe(4);endTurn(r);expect(r.hp).toBe(60);endTurn(r);expect(r.battle!.enemies[0].block).toBe(7);r.corruption=2;const hp=r.hp;endTurn(r);expect(r.hp).toBe(hp-14);});
- it('selects one target, applies all-target damage, and handles dead targets',()=>{const r=newRun(3);r.row=2;enterNode(r,'2a');r.battle!.hand=['flame','zero','flame'];r.battle!.energy=9;r.battle!.target=1;playCard(r,0);expect(r.battle!.enemies.map(e=>e.hp)).toEqual([34,27]);playCard(r,0);expect(r.battle!.enemies.map(e=>e.hp)).toEqual([0,0]);expect(r.screen).toBe('reward');});
- it('self damage can lose the battle even on a finishing attack',()=>{const r=fight();r.hp=5;r.battle!.hand=['zero'];playCard(r,0);expect(r.screen).toBe('result');expect(r.won).toBe(false);});
- it('can lose normally by passing turns',()=>{const r=fight();for(let i=0;i<30&&r.screen==='battle';i++)endTurn(r);expect(r.screen).toBe('result');expect(r.hp).toBe(0);expect(r.won).toBe(false);});
+import {describe,it,expect} from 'vitest';
+import {CARDS,CHARACTERS,CHAPTERS,ENEMIES,EVOLUTIONS,FORMS,STORIES,chapterOf} from './data';
+import {cardStats,chooseEvent,crest,crestReady,draw,endTurn,enterNode,evolve,evolutionOptions,intent,makeEnemy,newRun,playCard,reward,storyOf,turnThreat} from './engine';
+import {emptyArchive,loadSave,SAVE_KEY,LEGACY_KEY,updateArchive,validRun,writeSave,chapterUnlocked} from './storage';
+import {CHARACTER_IDS} from './types';
+import type {CharacterId,Run,Save} from './types';
+import {simulate,balanceReport} from '../scripts/balance-simulation';
+import manifest from './asset-manifest.json';
+const wrap=(r:Run):Save=>({version:2,run:r,archive:emptyArchive(),settings:{muted:true,reducedMotion:false,guide:true}});
+function fight(id:CharacterId='tai',enemy='kuwaga'){const r=newRun(1,id);r.screen='map';enterNode(r,'0a');r.battle!.enemies=[makeEnemy(enemy)];return r;}
+function hand(r:Run,ids:string[]){r.battle!.hand=ids;r.battle!.draw=[];r.battle!.discard=[];r.battle!.energy=9;}
+describe('eight partners and content',()=>{
+ it('has a project asset for every playable form, enemy and guide',()=>{for(const f of Object.values(FORMS))expect(Object.hasOwn(manifest.characters,f.art),f.art).toBe(true);for(const id of [...Object.keys(ENEMIES),'sukamon','chuumon','piccolomon','whamon'])expect(Object.hasOwn(manifest.characters,id),id).toBe(true);expect(manifest.backgrounds).toHaveLength(6);});
+ it('defines eight unlocked file starts, distinct decks and six owner-only reward cards',()=>{const decks=new Set();for(const id of CHARACTER_IDS){const r=newRun(1,id),c=CHARACTERS[id];expect(r.screen).toBe('intro');expect(r.characterId).toBe(id);expect(r.form).toBe(c.forms[0]);expect(r.deck).toHaveLength(10);expect(new Set(r.deck).size).toBeGreaterThanOrEqual(6);expect(c.exclusive).toHaveLength(6);c.exclusive.forEach(card=>expect(CARDS[card].owner).toBe(id));expect(chapterUnlocked(wrap(r),id,'file')).toBe(true);decks.add(JSON.stringify(r.deck));expect(validRun(r)).toBe(true);}expect(decks.size).toBe(8);});
+ it('provides at least 16 normal, four elite, three playable bosses and three personal events each',()=>{expect(Object.values(ENEMIES).filter(e=>e.rank==='normal').length).toBeGreaterThanOrEqual(16);expect(Object.values(ENEMIES).filter(e=>e.rank==='elite')).toHaveLength(4);expect(Object.values(ENEMIES).filter(e=>e.rank==='boss')).toHaveLength(3);for(const ch of Object.values(CHAPTERS)){expect(ch.map).toHaveLength(11);expect(ch.map[10][0].enemies).toEqual([ch.boss]);for(const n of ch.map.flat())for(const id of [...(n.enemies||[]),...(n.pool||[]).flat()])expect(ENEMIES[id]).toBeDefined();}for(const id of CHARACTER_IDS)for(let i=1;i<=3;i++)expect(STORIES[`personal-${id}-${i}`].owner).toBe(id);});
+ it('personal story choices stay with their owner and grant actual effects',()=>{for(const id of CHARACTER_IDS){const r=newRun(1,id);r.screen='map';r.row=5;enterNode(r,'5a');const s=storyOf(r);expect(s.owner).toBe(id);const card=s.choices[0].card!;chooseEvent(r,0);expect(r.deck).toContain(card);expect(CARDS[card].owner).toBe(id);expect(r.storyFlags).toContain(`${id}-care-1`);expect(r.lastEvent).toBe(`personal-${id}-2`);expect(validRun(r)).toBe(true);}});
+ it('grants only common or selected-owner rewards, and one completion',()=>{for(const id of CHARACTER_IDS){const r=fight(id);hand(r,[CHARACTERS[id].startDeck[0]]);r.battle!.enemies[0].hp=1;playCard(r,0);expect(r.screen).toBe('reward');expect(r.rewards).toHaveLength(3);r.rewards.forEach(c=>expect(!CARDS[c].owner||CARDS[c].owner===id).toBe(true));expect(r.lastVictory).toContain('오염이 풀렸습니다');const chosen=r.rewards[0];reward(r,chosen);expect(r.deck).toHaveLength(11);reward(r,chosen);expect(r.row).toBe(1);}});
 });
-describe('progression and evolution',()=>{
- it('preserves damage after winning and uses the shared limited recovery values',()=>{
-  const r=fight();r.hp=25;r.battle!.enemies[0].hp=1;r.battle!.hand=['flame'];playCard(r,0);reward(r);
-  expect(r.hp).toBe(25);useSupply(r);expect(r.hp).toBe(25+RECOVERY.supply);expect(r.supplies).toBe(1);
-  r.row=3;enterNode(r,'3a');rest(r,'rest');expect(r.hp).toBe(25+RECOVERY.supply+RECOVERY.rest);
- });
- it('supports reward selection and skipping without duplicate completion',()=>{const r=fight();r.battle!.enemies[0].hp=1;r.battle!.hand=['flame'];playCard(r,0);expect(r.rewards).toHaveLength(3);expect(new Set(r.rewards).size).toBe(3);const id=r.rewards[0];reward(r,id);expect(r.deck).toHaveLength(11);expect(r.row).toBe(1);reward(r,id);expect(r.row).toBe(1);const s=fight();s.battle!.enemies[0].hp=1;s.battle!.hand=['flame'];playCard(s,0);reward(s);expect(s.deck).toHaveLength(10);});
- it('checks evolution conditions and changes the deck and combat modifiers',()=>{const r=newRun(2);expect(evolve(r,'greymon')).toBe(false);r.evoEnergy=5;expect(evolve(r,'greymon')).toBe(true);expect(r.deck.filter(c=>c==='nova')).toHaveLength(4);expect(r.maxHp).toBe(80);r.screen='map';r.evoEnergy=14;r.bond=7;expect(evolve(r,'metal')).toBe(true);expect(r.deck.filter(c=>c==='missile')).toHaveLength(2);expect(cardStats(r,'nova').damage).toBe(15);expect(cardStats(r,'guard').block).toBe(10);});
- it('never automatically forces evolution and applies skull recoil',()=>{const r=newRun(2);r.evoEnergy=99;evolve(r,'greymon');r.screen='map';r.burden=20;enterNode(r,'0a');expect(r.form).toBe('greymon');expect(evolve(r,'skull')).toBe(false);r.screen='map';r.battle=null;expect(evolve(r,'skull')).toBe(true);r.screen='map';enterNode(r,'0a');r.battle!.block=100;endTurn(r);expect(r.hp).toBe(88);expect(r.deck.filter(c=>c==='zero')).toHaveLength(2);expect(evolutionOptions(r)).toHaveLength(0);});
- it('applies every event and safe/risky consequences',()=>{for(const n of MAP.flat().filter(n=>n.event)){for(let c=0;c<2;c++){const r=newRun(1);r.row=MAP.findIndex(row=>row.includes(n));r.hp=30;enterNode(r,n.id);const choice=STORIES[n.event!].choices[c];chooseEvent(r,c);expect(r.bond).toBe(1+(choice.bond||0));expect(r.evoEnergy).toBe(choice.energy||0);expect(r.lastEvent).toBe(n.event);expect(r.row).toBe(MAP.findIndex(row=>row.includes(n))+1);}}});
- it('can win both paths while preserving valid checkpoints on wins and losses',()=>{
-  for(const form of ['metal','skull'] as Form[]){
-   let wins=0;
-   for(let seed=1;seed<=30;seed++){
-    const {r,forms,safety}=completeRun(seed,form);
-    expect(safety).toBeGreaterThan(0);expect(forms).toContain(form);expect(r.screen).toBe('result');
-    if(r.won){wins++;expect(r.path).toHaveLength(11);expect(r.battles).toBe(5);}
-    else expect(r.hp).toBe(0);
-   }
-   expect(wins,form).toBeGreaterThan(form==='metal'?20:5);
-  }
- });
- it('rewards defensive planning over attack-only play across both routes',()=>{
-  const reports=balanceReport(50);
-  expect(reports.some(x=>x.exhausted)).toBe(false);
-  const planned=reports.filter(x=>x.strategy==='tactical'), rushed=reports.filter(x=>x.strategy==='rush');
-  expect(planned.every(x=>x.wins>0)).toBe(true);
-  expect(planned.reduce((s,x)=>s+x.wins,0)).toBeGreaterThan(rushed.reduce((s,x)=>s+x.wins,0)+30);
-  expect(rushed.some(x=>x.wins<x.runs/2)).toBe(true);
- });
+describe('combat and previews',()=>{
+ it('keeps draw, discard, energy, exhaust and reshuffle rules',()=>{const r=fight();expect(r.battle!.hand).toHaveLength(5);expect(r.battle!.energy).toBe(3);hand(r,['cheer']);playCard(r,0);expect(r.battle!.hand).toHaveLength(0);expect(r.battle!.discard).toEqual(['cheer']);draw(r,1);expect(r.battle!.hand).toEqual(['cheer']);hand(r,['pressure']);playCard(r,0);expect(r.battle!.exhausted).toEqual(['pressure']);expect(r.battle!.discard).toHaveLength(0);});
+ it('rejects unaffordable actions without mutation',()=>{const r=fight();hand(r,['courage']);r.battle!.energy=1;const before=structuredClone(r);expect(playCard(r,0)).toBe(false);expect(r).toEqual(before);});
+ it('all enemy forecasts match real damage, including statuses and multiple enemies',()=>{for(const id of Object.keys(ENEMIES))for(let step=0;step<ENEMIES[id].pattern.length;step++){const r=fight('tai',id);r.hp=r.maxHp=999;const b=r.battle!,e=b.enemies[0];e.step=step;e.weak=1;e.root=1;e.shock=1;e.power=2;b.turn=9;b.block=7;b.ability.burn=2;r.corruption=2;r.form='skull';const hp=r.hp,damage=turnThreat(r).damage;endTurn(r);expect(r.hp,`${id}:${step}`).toBe(hp-damage);expect(b.block).toBe(0);}});
+ it('burn ticks after enemy action; new corruption ticks only next turn',()=>{const r=fight('tai','nume');r.battle!.enemies[0].burn=2;const hp=r.hp;endTurn(r);expect(r.hp).toBe(hp);expect(r.corruption).toBe(2);expect(r.battle!.enemies[0].hp).toBe(ENEMIES.nume.hp-2);endTurn(r);expect(r.hp).toBe(hp-2);});
+ it('tax is charged on the next card only, shuffle discards and summon caps at two',()=>{const r=fight('tai','seadramon');endTurn(r);expect(r.battle!.ability.tax).toBe(1);hand(r,['guard','guard']);expect(cardStats(r,'guard').cost).toBe(2);playCard(r,0);expect(cardStats(r,'guard').cost).toBe(1);const ghost=fight('tai','bakemon');endTurn(ghost);expect(ghost.battle!.hand).toHaveLength(4);const boss=fight('tai','myotismon');boss.hp=boss.maxHp=999;for(let i=0;i<10;i++){endTurn(boss);expect(boss.battle!.enemies.length).toBeLessThanOrEqual(2);}});
+ it('can lose by passing and by recoil on a finishing blow',()=>{const r=fight();while(r.screen==='battle')endTurn(r);expect(r.hp).toBe(0);expect(r.outcome).toBe('defeat');const s=fight();s.hp=5;hand(s,['zero']);playCard(s,0);expect(s.outcome).toBe('defeat');});
 });
-describe('save checkpoints',()=>{
- const wrap=(r:Run):Save=>({version:1,run:r,archive:emptyArchive(),settings:{muted:true,reducedMotion:false,guide:true}});
- it('round trips a battle checkpoint exactly, including shuffle and enemy intents',()=>{const r=fight(55);playCard(r,0);endTurn(r);const s=wrap(r);const raw=JSON.stringify(s);const loaded=loadSave({getItem:()=>raw});expect(loaded.warning).toBe('');expect(loaded.save.run).toEqual(r);});
- it('handles malformed JSON, wrong schemas and blocked storage',()=>{for(const raw of ['{','null','[]','{}',JSON.stringify({...wrap(fight()),run:{screen:'battle'}})]){expect(loadSave({getItem:()=>raw}).save.run).toBeNull();}expect(loadSave({getItem:()=>{throw Error('blocked');}}).warning).not.toBe('');expect(writeSave(wrap(fight()),{setItem:()=>{throw Error('quota');}})).toBe(false);});
- it('rejects structurally corrupted nested data while keeping valid archive/settings',()=>{const s=wrap(fight());s.settings.reducedMotion=true;(s.run!.battle!.enemies[0] as any).id='unknown';const loaded=loadSave({getItem:()=>JSON.stringify(s)});expect(loaded.save.run).toBeNull();expect(loaded.save.settings.reducedMotion).toBe(true);expect(loaded.save.archive.forms).toEqual(['agumon']);});
- it('rejects corrupt optional evolution and event references',()=>{for(const key of ['evolvedFrom','lastEvent']){const r=newRun(1);(r as any)[key]='missing';expect(validRun(r)).toBe(false);}});
- it('keeps the game available when the browser blocks the storage accessor itself',()=>{const original=Object.getOwnPropertyDescriptor(globalThis,'localStorage');try{Object.defineProperty(globalThis,'localStorage',{configurable:true,get:()=>{throw Error('SecurityError');}});expect(loadSave().save.run).toBeNull();expect(writeSave(wrap(fight()))).toBe(false);}finally{if(original)Object.defineProperty(globalThis,'localStorage',original);else Reflect.deleteProperty(globalThis,'localStorage');}});
- it('records a result once and starts the next run without permanent stat bonuses',()=>{const {r}=completeRun(1,'metal');const s=wrap(r),before=structuredClone(r);before.screen='battle';updateArchive(s,before);updateArchive(s,r);expect(s.archive.wins).toBe(1);expect(s.archive.runs).toBe(1);expect(newRun().deck).toHaveLength(10);expect(newRun().maxHp).toBe(64);let key='';expect(writeSave(s,{setItem:(k)=>{key=k;}})).toBe(true);expect(key).toBe(SAVE_KEY);});
+describe('all passives and once-per-battle crests',()=>{
+ it('Tai rewards only the first attack at sufficient energy and limits crest use',()=>{const r=fight();hand(r,['flame','flame']);r.battle!.energy=3;expect(cardStats(r,'flame').damage).toBe(9);playCard(r,0);expect(cardStats(r,'flame').damage).toBe(7);playCard(r,0);expect(crestReady(r)).toBe(true);expect(crest(r)).toBe(true);expect(r.burden).toBe(3);expect(r.evoEnergy).toBe(1);expect(crest(r)).toBe(false);expect(cardStats(r,'flame').damage).toBe(11);endTurn(r);expect(r.battle!.ability.crestBuff).toBe(0);});
+ it('Matt chains different kinds and retains exactly one card into a five-card hand',()=>{const r=fight('matt');hand(r,['blue','guard','cheer','link']);r.battle!.draw=['guard','guard','guard','guard','guard'];playCard(r,0);playCard(r,0);playCard(r,0);expect(r.battle!.ability.combo).toBe(2);expect(crest(r,0)).toBe(true);expect(r.battle!.ability.retained).toEqual(['link']);endTurn(r);expect(r.battle!.hand[0]).toBe('link');expect(r.battle!.hand).toHaveLength(5);expect(r.battle!.ability.combo).toBe(0);});
+ it('Sora protects once per turn and crest heals/reduces burden',()=>{const r=fight('sora');r.hp=30;r.burden=5;hand(r,['guard','guard']);playCard(r,0);expect(r.battle!.block).toBe(9);playCard(r,0);expect(r.battle!.block).toBe(16);expect(r.burden).toBe(4);crest(r);expect(r.hp).toBe(40);expect(r.burden).toBe(1);expect(r.battle!.block).toBe(28);});
+ it('Koushiro exposes first encounters and validates reordered indexes including duplicates',()=>{const r=newRun(1,'koushiro');r.screen='map';enterNode(r,'0a');expect(r.battle!.enemies[0].exposed).toBe(1);r.battle!.turn=2;r.battle!.ability.supports=1;r.battle!.draw=['guard','shock','guard'];expect(crest(r,[0,0,2])).toBe(false);expect(crest(r,[1,2,0])).toBe(true);r.battle!.hand=[];draw(r,3);expect(r.battle!.hand).toEqual(['shock','guard','guard']);});
+ it('Mimi only gains passive growth from actual cleansing and consumes it once',()=>{const r=fight('mimi');hand(r,['mimi','mimi']);r.hp=20;playCard(r,0);expect(r.battle!.ability.growth).toBe(0);r.corruption=2;playCard(r,0);expect(r.battle!.ability.growth).toBe(1);r.corruption=2;expect(crestReady(r)).toBe(true);crest(r);expect(r.corruption).toBe(0);expect(r.battle!.ability.growth).toBe(0);expect(r.battle!.enemies[0].hp).toBe(ENEMIES.kuwaga.hp-6);});
+ it('Joe stores limited spare energy and prioritizes a missing resource',()=>{const r=fight('joe');r.hp=25;endTurn(r);expect(r.battle!.ability.stock).toBe(2);const hp=r.hp;crest(r);expect(r.hp).toBe(hp+16);expect(r.battle!.ability.stock).toBe(0);endTurn(r);endTurn(r);expect(r.battle!.ability.stock).toBe(3);});
+ it('Takeru gains hope only at turn start and survives exactly one lethal blow',()=>{const r=fight('tk');r.hp=20;hand(r,['guard']);playCard(r,0);expect(r.battle!.ability.hope).toBe(0);endTurn(r);expect(r.battle!.ability.hope).toBe(1);endTurn(r);expect(r.battle!.ability.hope).toBe(2);crest(r,'survive');r.hp=1;r.corruption=20;endTurn(r);expect(r.hp).toBeGreaterThan(0);expect(r.battle!.ability.lastStand).toBe(false);endTurn(r);expect(r.hp).toBe(0);});
+ it('Kari earns light from actual dispel, clears all and consumes the chosen effect',()=>{const r=fight('kari');hand(r,['purge','purge']);playCard(r,0);expect(r.battle!.ability.light).toBe(0);r.battle!.enemies[0].power=4;r.battle!.enemies[0].block=6;r.corruption=2;playCard(r,0);expect(r.battle!.ability.light).toBe(1);expect(r.battle!.enemies[0].power).toBe(0);r.corruption=2;expect(crest(r,'invalid')).toBe(false);crest(r,'guard');expect(r.corruption).toBe(0);expect(r.battle!.ability.light).toBe(0);expect(r.battle!.block).toBe(16);});
+ it('seal blocks an otherwise ready crest for the announced turn',()=>{const r=fight();r.battle!.ability.attacks=2;r.battle!.ability.sealed=1;expect(crest(r)).toBe(false);endTurn(r);expect(crestReady(r)).toBe(true);});
+});
+describe('evolution, campaign and checkpoints',()=>{
+ it('all normal lines change cards and HP; Gatomon resonance stays the same species art',()=>{for(const id of CHARACTER_IDS){const r=newRun(1,id);r.screen='map';r.evoEnergy=50;r.bond=20;for(const target of CHARACTERS[id].forms.slice(1)){expect(evolve(r,target)).toBe(true);expect(r.deck).toContain(FORMS[target].upgraded);expect(r.maxHp).toBe(FORMS[target].hp);expect(validRun(r)).toBe(true);r.screen='map';}expect(r.deck.filter(c=>c===FORMS[r.form].upgraded)).toHaveLength(2);}expect(FORMS.gatomon.tag).toBe('성숙기');expect(FORMS['gatomon-resonance'].art).toBe('gatomon');});
+ it('forced evolution never happens automatically and requires burden and explicit choice',()=>{const r=newRun(1);r.screen='map';r.evoEnergy=50;evolve(r,'greymon');r.screen='map';expect(evolve(r,'skull')).toBe(false);r.burden=6;enterNode(r,'0a');expect(r.form).toBe('greymon');expect(evolve(r,'skull')).toBe(false);r.battle=null;r.screen='map';expect(evolve(r,'skull')).toBe(true);expect(r.deck.filter(c=>c==='zero')).toHaveLength(2);});
+ it('round-trips every partner with ability, piles, intents and flags intact',()=>{for(const id of CHARACTER_IDS){const r=fight(id);playCard(r,0);const s=wrap(r),raw=JSON.stringify(s),loaded=loadSave({getItem:k=>k===SAVE_KEY?raw:null});expect(loaded.warning).toBe('');expect(loaded.save.run).toEqual(r);expect(validRun(r)).toBe(true);}});
+ it('migrates v1 Tai battles and legacy events while preserving archive/settings',()=>{const r:any=fight();delete r.characterId;delete r.chapterId;delete r.storyFlags;delete r.outcome;delete r.battle.ability;delete r.battle.exhausted;for(const k of ['burn','root','shock','exposed','mark','power'])delete r.battle.enemies[0][k];const old={version:1,run:r,archive:{forms:['agumon'],enemies:['kuwaga'],events:['joe'],zones:[0],runs:2,wins:1,best:11},settings:{muted:false,reducedMotion:true,guide:false}};const loaded=loadSave({getItem:k=>k===LEGACY_KEY?JSON.stringify(old):null});expect(loaded.save.run?.characterId).toBe('tai');expect(loaded.save.run?.battle?.ability.crestUsed).toBe(false);expect(loaded.save.archive.clears.tai).toEqual(['file']);expect(loaded.save.settings.reducedMotion).toBe(true);r.screen='event';r.row=5;r.node='5b';r.battle=null;const event=loadSave({getItem:k=>k===LEGACY_KEY?JSON.stringify(old):null});expect(storyOf(event.save.run!).title).toBe(STORIES.gear.title);chooseEvent(event.save.run!,1);expect(event.save.run?.burden).toBe(6);});
+ it('recovers from broken data, preserving valid profile fields and settings',()=>{for(const raw of ['{','null','[]','{}'])expect(loadSave({getItem:()=>raw}).save.run).toBeNull();const s=wrap(fight());(s.run!.battle!.ability as any).stock='bad';s.settings.reducedMotion=true;const loaded=loadSave({getItem:()=>JSON.stringify(s)});expect(loaded.save.run).toBeNull();expect(loaded.save.settings.reducedMotion).toBe(true);expect(writeSave(s,{setItem:()=>{throw Error();}})).toBe(false);});
+ it('unlocks only the chosen character next chapter and records a result once',()=>{const r=newRun(1,'mimi'),s=wrap(r),before=structuredClone(r);r.won=true;r.screen='result';r.outcome='victory';updateArchive(s,before);updateArchive(s,r);expect(s.archive.wins).toBe(1);expect(chapterUnlocked(s,'mimi','server')).toBe(true);expect(chapterUnlocked(s,'tai','server')).toBe(false);});
+ it('all eight can finish chapter one with personal scenes and final evolution',()=>{for(const id of CHARACTER_IDS){const runs=Array.from({length:15},(_,i)=>simulate(i+1,id));expect(runs.some(x=>x.r.won),id).toBe(true);for(const x of runs){expect(x.exhausted,id).toBe(false);expect(validRun(x.r),id).toBe(true);}const win=runs.find(x=>x.r.won)!;expect(win.r.path).toHaveLength(11);expect(win.r.battles).toBe(5);expect(win.visitedForms).toContain(CHARACTERS[id].forms[2]);expect(win.events).toHaveLength(4);expect(win.events.every(e=>STORIES[e].owner===id)).toBe(true);}});
+ it('later chapters and forced route are playable, without endless recovery loops',()=>{for(const chapter of ['server','city'] as const){const results=Array.from({length:15},(_,i)=>simulate(i+1,'tai','tactical',chapter));expect(results.some(x=>x.r.won),chapter).toBe(true);expect(results.every(x=>!x.exhausted)).toBe(true);}expect(Array.from({length:20},(_,i)=>simulate(i+1,'tai','tactical','file',true)).some(x=>x.r.won&&x.r.form==='skull')).toBe(true);});
+ it('each partner can also clear both later chapters with the same rules',()=>{for(const id of CHARACTER_IDS)for(const chapter of ['server','city'] as const){const runs=Array.from({length:20},(_,i)=>simulate(i+1,id,'tactical',chapter));expect(runs.some(x=>x.r.won),id+':'+chapter).toBe(true);expect(runs.every(x=>!x.exhausted)).toBe(true);}});
 });

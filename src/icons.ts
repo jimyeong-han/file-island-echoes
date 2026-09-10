@@ -19,6 +19,16 @@ export const iconPaths: Record<string,string> = {
   "signal": "<path d=\"M4 19v-4m5 4v-8m5 8V7m5 12V3\"/>",
   "data": "<path d=\"m12 2 9 5v10l-9 5-9-5V7Z\"/><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v6m0 8v6M3 7l6 3m6 4 6 3M3 17l6-3m6-4 6-3\"/>"
 };
+Object.assign(iconPaths,{
+ burn:'<path d="M13 3c2 6-3 5-1 9 2-1 3-3 3-3s5 5 3 9c-2 4-10 4-12-1-2-4 1-7 3-9 0 4 2 5 2 5s-2-5 2-10Z"/>',
+ tax:'<circle cx="10" cy="11" r="7"/><path d="M10 7v8m-2-2 2 2 2-2m4 5h6m-3-3v6"/>',
+ weaken:'<path d="m12 3-6 9h5l-1 9 8-12h-5l1-6M3 3l18 18"/>',
+ seal:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4m-4 5v2"/>',
+ summon:'<circle cx="12" cy="12" r="9"/><path d="M12 6v12m-6-6h12"/>',
+ charge:'<path d="m12 2-8 12h7l-1 8 10-13h-8Z"/>',
+ curse:'<path d="M5 5h14l-3 14-4 3-4-3Z"/><path d="m8 9 3 3m5-3-3 3m-3 4h4"/>',
+ shuffle:'<path d="M3 6h3c5 0 5 12 10 12h5m-4-4 4 4-4 4M3 18h3c2 0 3-2 4-4m4-4c1-2 2-4 4-4h3m-4-4 4 4-4 4"/>',
+});
 const aliases: Record<string,string> = {battle:'attack',elite:'boss',defend:'guard',corrupt:'corruption',drain:'heal'};
 export function icon(type:string) {
  const key=aliases[type]||type;

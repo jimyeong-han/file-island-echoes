@@ -20,7 +20,7 @@ for (const ref of refs) {
 const manifest = JSON.parse(readFileSync('src/asset-manifest.json', 'utf8'));
 const images = [...Object.values(manifest.characters), ...manifest.backgrounds, ...Object.values(manifest.portraits)];
 for (const path of images) {
-  assert(/^(characters|backgrounds|portraits)\/[a-z0-9-]+\.webp$/.test(path), `Invalid asset path: ${path}`);
+  assert(/^(characters|backgrounds|portraits)\/[a-z0-9-]+\.(webp|svg)$/.test(path), `Invalid asset path: ${path}`);
   assert(statSync(join(root, 'assets', path)).size > 1000, `Missing or empty art: ${path}`);
 }
 let checked = 0, rawBytes = 0, compressedBytes = 0;
