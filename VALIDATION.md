@@ -55,3 +55,5 @@ Chromium에서 화면에 표시된 카드/적 예고를 읽고 실제 버튼과 
 - 로컬 프로덕션 `/file-island-echoes/index.html` 직접 접근 후 새 탐험·전투·카드·Enter 턴 종료·설정을 확인했다. 음악 1개, 출력 RMS 약 0.09, 개발 계측 없음.
 - 실제 믹서 QA에서 OGG 404 후 MP3 재생, 두 형식 실패 이후 정상 효과음 재생, suspend/resume 이후 음악 시작 횟수 1·음악 음성 1, 빠른 동일 효과음 제한을 확인했다. 이 404는 의도한 QA 파일이며 실제 manifest 에셋 누락과 구분한다.
 - 냉/캐시 시간 및 네트워크 제어 방법은 AUDIO.md 참조. 물리적 iOS Safari·Android Chrome, 실제 손가락 입력의 청감 및 OS 백그라운드 전환은 미검증이다. 모바일 크기 Chromium + DOM PointerEvent 검증을 실제 모바일 측정으로 간주하지 않는다.
+
+- 배포 커밋 `57cf70b`, Actions `34442025958` 성공. 공개 Pages의 현재 빌드와 212개 URL(OGG/MP3 MIME 포함) HTTP 200 확인. 공개 타이틀에 0.5.1 표시.
