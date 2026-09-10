@@ -106,10 +106,10 @@ export class GameAudio {
     if(discovered)void this.mixer.play('archive-unlock',.65);
   }
   action(action: string, value='') {
-    if(action==='preview'&&value==='skull'){void this.mixer.play('forced-warning');return;}
+    if(action==='preview'&&value==='skull'){this.mixer.playInput('forced-warning');return;}
     const id=action==='node'?'node-select':action==='card'?'card-select':
       ['close','home','selection'].includes(action)?'ui-cancel':
       ['select','target','order','view-zone'].includes(action)?'ui-select':'ui-confirm';
-    void this.mixer.play(id);
+    this.mixer.playInput(id);
   }
 }

@@ -10,6 +10,7 @@
         "path": "music/music-title.ogg",
         "bytes": 564723,
         "decodedSeconds": 65.45453125,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.26,
         "rmsDb": -20.01,
         "seamStep": 0.008737
@@ -19,6 +20,7 @@
         "path": "music/music-title.mp3",
         "bytes": 524492,
         "decodedSeconds": 65.45453125,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.44,
         "rmsDb": -20.44,
         "seamStep": 0.010489
@@ -36,6 +38,7 @@
         "path": "music/music-selection.ogg",
         "bytes": 558941,
         "decodedSeconds": 72.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.26,
         "rmsDb": -20.02,
         "seamStep": 0.012838
@@ -45,6 +48,7 @@
         "path": "music/music-selection.mp3",
         "bytes": 576620,
         "decodedSeconds": 72.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.47,
         "rmsDb": -20.45,
         "seamStep": 0.00438
@@ -62,6 +66,7 @@
         "path": "music/music-map.ogg",
         "bytes": 617585,
         "decodedSeconds": 70.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.11,
         "rmsDb": -20.01,
         "seamStep": 0.032107
@@ -71,6 +76,7 @@
         "path": "music/music-map.mp3",
         "bytes": 560780,
         "decodedSeconds": 70.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.69,
         "rmsDb": -20.44,
         "seamStep": 0.016604
@@ -88,6 +94,7 @@
         "path": "music/music-forest.ogg",
         "bytes": 552810,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -7.23,
         "rmsDb": -20.01,
         "seamStep": 0.015396
@@ -97,6 +104,7 @@
         "path": "music/music-forest.mp3",
         "bytes": 512684,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -7.54,
         "rmsDb": -20.44,
         "seamStep": 0.00878
@@ -114,6 +122,7 @@
         "path": "music/music-factory.ogg",
         "bytes": 611207,
         "decodedSeconds": 68.5714375,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.49,
         "rmsDb": -20.01,
         "seamStep": 0.007212
@@ -123,6 +132,7 @@
         "path": "music/music-factory.mp3",
         "bytes": 549260,
         "decodedSeconds": 68.5714375,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.66,
         "rmsDb": -20.44,
         "seamStep": 0.004698
@@ -140,6 +150,7 @@
         "path": "music/music-mountain.ogg",
         "bytes": 590109,
         "decodedSeconds": 70.24390625,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -7.08,
         "rmsDb": -20.01,
         "seamStep": 0.017174
@@ -149,6 +160,7 @@
         "path": "music/music-mountain.mp3",
         "bytes": 562796,
         "decodedSeconds": 70.24390625,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -7.49,
         "rmsDb": -20.45,
         "seamStep": 0.003317
@@ -166,6 +178,7 @@
         "path": "music/music-battle.ogg",
         "bytes": 604817,
         "decodedSeconds": 66.20690625,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.0,
         "rmsDb": -20.01,
         "seamStep": 0.01162
@@ -175,6 +188,7 @@
         "path": "music/music-battle.mp3",
         "bytes": 530540,
         "decodedSeconds": 66.20690625,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.44,
         "rmsDb": -20.45,
         "seamStep": 0.011889
@@ -192,6 +206,7 @@
         "path": "music/music-elite.ogg",
         "bytes": 590044,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.95,
         "rmsDb": -20.01,
         "seamStep": 0.019673
@@ -201,6 +216,7 @@
         "path": "music/music-elite.mp3",
         "bytes": 512684,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.37,
         "rmsDb": -20.44,
         "seamStep": 0.005388
@@ -218,6 +234,7 @@
         "path": "music/music-boss.ogg",
         "bytes": 589117,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.75,
         "rmsDb": -20.01,
         "seamStep": 0.010596
@@ -227,6 +244,7 @@
         "path": "music/music-boss.mp3",
         "bytes": 512684,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.0,
         "rmsDb": -20.45,
         "seamStep": 0.020272
@@ -244,6 +262,7 @@
         "path": "music/music-boss-etemon.ogg",
         "bytes": 602991,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.38,
         "rmsDb": -20.01,
         "seamStep": 0.010583
@@ -253,6 +272,7 @@
         "path": "music/music-boss-etemon.mp3",
         "bytes": 512684,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.62,
         "rmsDb": -20.45,
         "seamStep": 0.020146
@@ -270,6 +290,7 @@
         "path": "music/music-boss-myotismon.ogg",
         "bytes": 572713,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.06,
         "rmsDb": -20.01,
         "seamStep": 0.004635
@@ -279,6 +300,7 @@
         "path": "music/music-boss-myotismon.mp3",
         "bytes": 512684,
         "decodedSeconds": 64.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.63,
         "rmsDb": -20.44,
         "seamStep": 0.003127
@@ -296,6 +318,7 @@
         "path": "music/music-story.ogg",
         "bytes": 336136,
         "decodedSeconds": 75.78946875,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.51,
         "rmsDb": -20.02,
         "seamStep": 0.004533
@@ -305,6 +328,7 @@
         "path": "music/music-story.mp3",
         "bytes": 607148,
         "decodedSeconds": 75.78946875,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.92,
         "rmsDb": -20.45,
         "seamStep": 0.032008
@@ -322,6 +346,7 @@
         "path": "stingers/crest-ready.ogg",
         "bytes": 10945,
         "decodedSeconds": 1.5,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.34,
         "rmsDb": -17.7,
         "seamStep": null
@@ -331,6 +356,7 @@
         "path": "stingers/crest-ready.mp3",
         "bytes": 12716,
         "decodedSeconds": 1.5,
+        "onsetMsMinus60Db": 0.219,
         "peakDb": -3.96,
         "rmsDb": -18.17,
         "seamStep": null
@@ -348,6 +374,7 @@
         "path": "stingers/evolution-start.ogg",
         "bytes": 39017,
         "decodedSeconds": 6.5,
+        "onsetMsMinus60Db": 0.281,
         "peakDb": -4.15,
         "rmsDb": -17.74,
         "seamStep": null
@@ -357,6 +384,7 @@
         "path": "stingers/evolution-start.mp3",
         "bytes": 52748,
         "decodedSeconds": 6.5,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.51,
         "rmsDb": -18.17,
         "seamStep": null
@@ -374,6 +402,7 @@
         "path": "stingers/evolution-complete.ogg",
         "bytes": 14858,
         "decodedSeconds": 2.5,
+        "onsetMsMinus60Db": 0.062,
         "peakDb": -4.22,
         "rmsDb": -17.7,
         "seamStep": null
@@ -383,6 +412,7 @@
         "path": "stingers/evolution-complete.mp3",
         "bytes": 20780,
         "decodedSeconds": 2.5,
+        "onsetMsMinus60Db": 0.188,
         "peakDb": -4.8,
         "rmsDb": -18.17,
         "seamStep": null
@@ -400,6 +430,7 @@
         "path": "stingers/evolution-forced.ogg",
         "bytes": 37219,
         "decodedSeconds": 6.5,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.55,
         "rmsDb": -17.78,
         "seamStep": null
@@ -409,6 +440,7 @@
         "path": "stingers/evolution-forced.mp3",
         "bytes": 52748,
         "decodedSeconds": 6.5,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.57,
         "rmsDb": -18.17,
         "seamStep": null
@@ -426,6 +458,7 @@
         "path": "stingers/battle-victory.ogg",
         "bytes": 18185,
         "decodedSeconds": 2.8,
+        "onsetMsMinus60Db": 0.219,
         "peakDb": -4.87,
         "rmsDb": -17.7,
         "seamStep": null
@@ -435,6 +468,7 @@
         "path": "stingers/battle-victory.mp3",
         "bytes": 23084,
         "decodedSeconds": 2.8,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.62,
         "rmsDb": -18.17,
         "seamStep": null
@@ -452,6 +486,7 @@
         "path": "stingers/battle-defeat.ogg",
         "bytes": 24972,
         "decodedSeconds": 3.2,
+        "onsetMsMinus60Db": 1.469,
         "peakDb": -4.72,
         "rmsDb": -17.72,
         "seamStep": null
@@ -461,6 +496,7 @@
         "path": "stingers/battle-defeat.mp3",
         "bytes": 26252,
         "decodedSeconds": 3.2,
+        "onsetMsMinus60Db": 1.625,
         "peakDb": -5.31,
         "rmsDb": -18.19,
         "seamStep": null
@@ -478,6 +514,7 @@
         "path": "stingers/card-acquire.ogg",
         "bytes": 11852,
         "decodedSeconds": 1.3,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.26,
         "rmsDb": -17.74,
         "seamStep": null
@@ -487,6 +524,7 @@
         "path": "stingers/card-acquire.mp3",
         "bytes": 11276,
         "decodedSeconds": 1.3,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.06,
         "rmsDb": -18.18,
         "seamStep": null
@@ -504,6 +542,7 @@
         "path": "stingers/chapter-complete.ogg",
         "bytes": 30029,
         "decodedSeconds": 5.0,
+        "onsetMsMinus60Db": 0.281,
         "peakDb": -4.4,
         "rmsDb": -17.73,
         "seamStep": null
@@ -513,6 +552,7 @@
         "path": "stingers/chapter-complete.mp3",
         "bytes": 40652,
         "decodedSeconds": 5.0,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.89,
         "rmsDb": -18.17,
         "seamStep": null
@@ -530,6 +570,7 @@
         "path": "stingers/archive-unlock.ogg",
         "bytes": 10669,
         "decodedSeconds": 1.6,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.38,
         "rmsDb": -17.71,
         "seamStep": null
@@ -539,6 +580,7 @@
         "path": "stingers/archive-unlock.mp3",
         "bytes": 13580,
         "decodedSeconds": 1.6,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.9,
         "rmsDb": -18.17,
         "seamStep": null
@@ -556,6 +598,7 @@
         "path": "stingers/crest-tai.ogg",
         "bytes": 11316,
         "decodedSeconds": 1.9,
+        "onsetMsMinus60Db": 0.344,
         "peakDb": -5.69,
         "rmsDb": -17.7,
         "seamStep": null
@@ -565,6 +608,7 @@
         "path": "stingers/crest-tai.mp3",
         "bytes": 15884,
         "decodedSeconds": 1.9,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.99,
         "rmsDb": -18.17,
         "seamStep": null
@@ -582,6 +626,7 @@
         "path": "stingers/crest-matt.ogg",
         "bytes": 13408,
         "decodedSeconds": 2.0,
+        "onsetMsMinus60Db": 0.219,
         "peakDb": -5.24,
         "rmsDb": -17.74,
         "seamStep": null
@@ -591,6 +636,7 @@
         "path": "stingers/crest-matt.mp3",
         "bytes": 16748,
         "decodedSeconds": 2.0,
+        "onsetMsMinus60Db": 0.125,
         "peakDb": -5.96,
         "rmsDb": -18.17,
         "seamStep": null
@@ -608,6 +654,7 @@
         "path": "stingers/crest-sora.ogg",
         "bytes": 12131,
         "decodedSeconds": 2.2,
+        "onsetMsMinus60Db": 2.188,
         "peakDb": -5.97,
         "rmsDb": -17.7,
         "seamStep": null
@@ -617,6 +664,7 @@
         "path": "stingers/crest-sora.mp3",
         "bytes": 18476,
         "decodedSeconds": 2.2,
+        "onsetMsMinus60Db": 2.219,
         "peakDb": -6.44,
         "rmsDb": -18.17,
         "seamStep": null
@@ -634,6 +682,7 @@
         "path": "stingers/crest-koushiro.ogg",
         "bytes": 13773,
         "decodedSeconds": 1.6,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.28,
         "rmsDb": -17.74,
         "seamStep": null
@@ -643,6 +692,7 @@
         "path": "stingers/crest-koushiro.mp3",
         "bytes": 13580,
         "decodedSeconds": 1.6,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.6,
         "rmsDb": -18.17,
         "seamStep": null
@@ -660,6 +710,7 @@
         "path": "stingers/crest-mimi.ogg",
         "bytes": 18914,
         "decodedSeconds": 2.0,
+        "onsetMsMinus60Db": 0.938,
         "peakDb": -6.52,
         "rmsDb": -17.71,
         "seamStep": null
@@ -669,6 +720,7 @@
         "path": "stingers/crest-mimi.mp3",
         "bytes": 16748,
         "decodedSeconds": 2.0,
+        "onsetMsMinus60Db": 1.094,
         "peakDb": -7.0,
         "rmsDb": -18.18,
         "seamStep": null
@@ -686,6 +738,7 @@
         "path": "stingers/crest-joe.ogg",
         "bytes": 14075,
         "decodedSeconds": 1.8,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.2,
         "rmsDb": -17.7,
         "seamStep": null
@@ -695,6 +748,7 @@
         "path": "stingers/crest-joe.mp3",
         "bytes": 15020,
         "decodedSeconds": 1.8,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.47,
         "rmsDb": -18.14,
         "seamStep": null
@@ -712,6 +766,7 @@
         "path": "stingers/crest-tk.ogg",
         "bytes": 15373,
         "decodedSeconds": 2.3,
+        "onsetMsMinus60Db": 0.281,
         "peakDb": -5.55,
         "rmsDb": -17.73,
         "seamStep": null
@@ -721,6 +776,7 @@
         "path": "stingers/crest-tk.mp3",
         "bytes": 19052,
         "decodedSeconds": 2.3,
+        "onsetMsMinus60Db": 0.312,
         "peakDb": -6.26,
         "rmsDb": -18.17,
         "seamStep": null
@@ -738,6 +794,7 @@
         "path": "stingers/crest-kari.ogg",
         "bytes": 14279,
         "decodedSeconds": 2.3,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.25,
         "rmsDb": -17.72,
         "seamStep": null
@@ -747,6 +804,7 @@
         "path": "stingers/crest-kari.mp3",
         "bytes": 19052,
         "decodedSeconds": 2.3,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.25,
         "rmsDb": -18.17,
         "seamStep": null
@@ -764,6 +822,7 @@
         "path": "sfx/ui-confirm.ogg",
         "bytes": 5299,
         "decodedSeconds": 0.256,
+        "onsetMsMinus60Db": 0.281,
         "peakDb": -8.25,
         "rmsDb": -17.66,
         "seamStep": null
@@ -773,6 +832,7 @@
         "path": "sfx/ui-confirm.mp3",
         "bytes": 2924,
         "decodedSeconds": 0.26,
+        "onsetMsMinus60Db": 0.094,
         "peakDb": -8.67,
         "rmsDb": -18.25,
         "seamStep": null
@@ -790,6 +850,7 @@
         "path": "sfx/ui-select.ogg",
         "bytes": 5146,
         "decodedSeconds": 0.286,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -9.98,
         "rmsDb": -17.65,
         "seamStep": null
@@ -799,6 +860,7 @@
         "path": "sfx/ui-select.mp3",
         "bytes": 3212,
         "decodedSeconds": 0.29,
+        "onsetMsMinus60Db": 0.188,
         "peakDb": -10.76,
         "rmsDb": -18.18,
         "seamStep": null
@@ -816,6 +878,7 @@
         "path": "sfx/ui-cancel.ogg",
         "bytes": 5698,
         "decodedSeconds": 0.316,
+        "onsetMsMinus60Db": 0.125,
         "peakDb": -8.03,
         "rmsDb": -17.68,
         "seamStep": null
@@ -825,6 +888,7 @@
         "path": "sfx/ui-cancel.mp3",
         "bytes": 3212,
         "decodedSeconds": 0.32,
+        "onsetMsMinus60Db": 0.406,
         "peakDb": -8.56,
         "rmsDb": -18.19,
         "seamStep": null
@@ -842,6 +906,7 @@
         "path": "sfx/ui-denied.ogg",
         "bytes": 5997,
         "decodedSeconds": 0.386,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -7.18,
         "rmsDb": -17.64,
         "seamStep": null
@@ -851,6 +916,7 @@
         "path": "sfx/ui-denied.mp3",
         "bytes": 3788,
         "decodedSeconds": 0.39,
+        "onsetMsMinus60Db": 0.219,
         "peakDb": -7.94,
         "rmsDb": -18.2,
         "seamStep": null
@@ -868,6 +934,7 @@
         "path": "sfx/node-select.ogg",
         "bytes": 6004,
         "decodedSeconds": 0.536,
+        "onsetMsMinus60Db": 0.312,
         "peakDb": -10.13,
         "rmsDb": -17.66,
         "seamStep": null
@@ -877,6 +944,7 @@
         "path": "sfx/node-select.mp3",
         "bytes": 4940,
         "decodedSeconds": 0.54,
+        "onsetMsMinus60Db": 0.219,
         "peakDb": -10.86,
         "rmsDb": -18.18,
         "seamStep": null
@@ -894,6 +962,7 @@
         "path": "sfx/reward-reveal.ogg",
         "bytes": 6369,
         "decodedSeconds": 0.836,
+        "onsetMsMinus60Db": 0.031,
         "peakDb": -6.89,
         "rmsDb": -17.66,
         "seamStep": null
@@ -903,6 +972,7 @@
         "path": "sfx/reward-reveal.mp3",
         "bytes": 7532,
         "decodedSeconds": 0.84,
+        "onsetMsMinus60Db": 0.219,
         "peakDb": -7.43,
         "rmsDb": -18.17,
         "seamStep": null
@@ -920,6 +990,7 @@
         "path": "sfx/card-draw.ogg",
         "bytes": 5998,
         "decodedSeconds": 0.276,
+        "onsetMsMinus60Db": 5.656,
         "peakDb": -2.39,
         "rmsDb": -19.88,
         "seamStep": null
@@ -929,6 +1000,7 @@
         "path": "sfx/card-draw.mp3",
         "bytes": 2924,
         "decodedSeconds": 0.28,
+        "onsetMsMinus60Db": 6.375,
         "peakDb": -2.55,
         "rmsDb": -19.78,
         "seamStep": null
@@ -946,6 +1018,7 @@
         "path": "sfx/card-select.ogg",
         "bytes": 5202,
         "decodedSeconds": 0.25,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -8.25,
         "rmsDb": -18.32,
         "seamStep": null
@@ -955,6 +1028,7 @@
         "path": "sfx/card-select.mp3",
         "bytes": 2636,
         "decodedSeconds": 0.22,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -8.46,
         "rmsDb": -18.13,
         "seamStep": null
@@ -972,6 +1046,7 @@
         "path": "sfx/card-attack.ogg",
         "bytes": 6706,
         "decodedSeconds": 0.366,
+        "onsetMsMinus60Db": 0.719,
         "peakDb": -3.86,
         "rmsDb": -17.85,
         "seamStep": null
@@ -981,6 +1056,7 @@
         "path": "sfx/card-attack.mp3",
         "bytes": 3788,
         "decodedSeconds": 0.37,
+        "onsetMsMinus60Db": 0.062,
         "peakDb": -2.67,
         "rmsDb": -17.8,
         "seamStep": null
@@ -998,6 +1074,7 @@
         "path": "sfx/card-guard.ogg",
         "bytes": 7229,
         "decodedSeconds": 0.47,
+        "onsetMsMinus60Db": 1.219,
         "peakDb": -8.93,
         "rmsDb": -17.99,
         "seamStep": null
@@ -1007,6 +1084,7 @@
         "path": "sfx/card-guard.mp3",
         "bytes": 4364,
         "decodedSeconds": 0.44,
+        "onsetMsMinus60Db": 0.969,
         "peakDb": -9.37,
         "rmsDb": -18.26,
         "seamStep": null
@@ -1024,6 +1102,7 @@
         "path": "sfx/card-support.ogg",
         "bytes": 5531,
         "decodedSeconds": 0.536,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -8.11,
         "rmsDb": -17.66,
         "seamStep": null
@@ -1033,6 +1112,7 @@
         "path": "sfx/card-support.mp3",
         "bytes": 4940,
         "decodedSeconds": 0.54,
+        "onsetMsMinus60Db": 0.25,
         "peakDb": -8.55,
         "rmsDb": -18.18,
         "seamStep": null
@@ -1050,6 +1130,7 @@
         "path": "sfx/card-evolved.ogg",
         "bytes": 6822,
         "decodedSeconds": 0.736,
+        "onsetMsMinus60Db": 0.281,
         "peakDb": -5.94,
         "rmsDb": -17.68,
         "seamStep": null
@@ -1059,6 +1140,7 @@
         "path": "sfx/card-evolved.mp3",
         "bytes": 6668,
         "decodedSeconds": 0.74,
+        "onsetMsMinus60Db": 0.031,
         "peakDb": -6.17,
         "rmsDb": -18.17,
         "seamStep": null
@@ -1076,6 +1158,7 @@
         "path": "sfx/card-discard.ogg",
         "bytes": 6374,
         "decodedSeconds": 0.316,
+        "onsetMsMinus60Db": 3.75,
         "peakDb": -2.2,
         "rmsDb": -20.24,
         "seamStep": null
@@ -1085,6 +1168,7 @@
         "path": "sfx/card-discard.mp3",
         "bytes": 3212,
         "decodedSeconds": 0.32,
+        "onsetMsMinus60Db": 0.062,
         "peakDb": -2.66,
         "rmsDb": -20.24,
         "seamStep": null
@@ -1102,6 +1186,7 @@
         "path": "sfx/deck-shuffle.ogg",
         "bytes": 8898,
         "decodedSeconds": 0.636,
+        "onsetMsMinus60Db": 3.594,
         "peakDb": -3.64,
         "rmsDb": -20.5,
         "seamStep": null
@@ -1111,6 +1196,7 @@
         "path": "sfx/deck-shuffle.mp3",
         "bytes": 5804,
         "decodedSeconds": 0.64,
+        "onsetMsMinus60Db": 3.625,
         "peakDb": -2.32,
         "rmsDb": -20.6,
         "seamStep": null
@@ -1128,6 +1214,7 @@
         "path": "sfx/energy-low.ogg",
         "bytes": 5677,
         "decodedSeconds": 0.326,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -8.38,
         "rmsDb": -17.66,
         "seamStep": null
@@ -1137,6 +1224,7 @@
         "path": "sfx/energy-low.mp3",
         "bytes": 3500,
         "decodedSeconds": 0.33,
+        "onsetMsMinus60Db": 0.219,
         "peakDb": -8.95,
         "rmsDb": -18.22,
         "seamStep": null
@@ -1154,6 +1242,7 @@
         "path": "sfx/card-upgrade.ogg",
         "bytes": 6488,
         "decodedSeconds": 0.736,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.05,
         "rmsDb": -17.81,
         "seamStep": null
@@ -1163,6 +1252,7 @@
         "path": "sfx/card-upgrade.mp3",
         "bytes": 6668,
         "decodedSeconds": 0.74,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.19,
         "rmsDb": -18.18,
         "seamStep": null
@@ -1180,6 +1270,7 @@
         "path": "sfx/hit-normal.ogg",
         "bytes": 6147,
         "decodedSeconds": 0.286,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.39,
         "rmsDb": -17.88,
         "seamStep": null
@@ -1189,6 +1280,7 @@
         "path": "sfx/hit-normal.mp3",
         "bytes": 3212,
         "decodedSeconds": 0.29,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.65,
         "rmsDb": -18.26,
         "seamStep": null
@@ -1206,6 +1298,7 @@
         "path": "sfx/hit-heavy.ogg",
         "bytes": 8213,
         "decodedSeconds": 0.57,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -2.52,
         "rmsDb": -19.37,
         "seamStep": null
@@ -1215,6 +1308,7 @@
         "path": "sfx/hit-heavy.mp3",
         "bytes": 4940,
         "decodedSeconds": 0.54,
+        "onsetMsMinus60Db": 0.031,
         "peakDb": -3.27,
         "rmsDb": -19.47,
         "seamStep": null
@@ -1232,6 +1326,7 @@
         "path": "sfx/attack-fire.ogg",
         "bytes": 9548,
         "decodedSeconds": 0.736,
+        "onsetMsMinus60Db": 1.25,
         "peakDb": -4.06,
         "rmsDb": -17.84,
         "seamStep": null
@@ -1241,6 +1336,7 @@
         "path": "sfx/attack-fire.mp3",
         "bytes": 6668,
         "decodedSeconds": 0.74,
+        "onsetMsMinus60Db": 1.469,
         "peakDb": -4.49,
         "rmsDb": -18.16,
         "seamStep": null
@@ -1258,6 +1354,7 @@
         "path": "sfx/attack-electric.ogg",
         "bytes": 8540,
         "decodedSeconds": 0.586,
+        "onsetMsMinus60Db": 1.469,
         "peakDb": -3.59,
         "rmsDb": -17.77,
         "seamStep": null
@@ -1267,6 +1364,7 @@
         "path": "sfx/attack-electric.mp3",
         "bytes": 5516,
         "decodedSeconds": 0.59,
+        "onsetMsMinus60Db": 0.094,
         "peakDb": -3.94,
         "rmsDb": -18.14,
         "seamStep": null
@@ -1284,6 +1382,7 @@
         "path": "sfx/attack-water.ogg",
         "bytes": 5769,
         "decodedSeconds": 0.736,
+        "onsetMsMinus60Db": 1.0,
         "peakDb": -9.25,
         "rmsDb": -17.72,
         "seamStep": null
@@ -1293,6 +1392,7 @@
         "path": "sfx/attack-water.mp3",
         "bytes": 6668,
         "decodedSeconds": 0.74,
+        "onsetMsMinus60Db": 1.062,
         "peakDb": -9.75,
         "rmsDb": -18.17,
         "seamStep": null
@@ -1310,6 +1410,7 @@
         "path": "sfx/attack-plant.ogg",
         "bytes": 9158,
         "decodedSeconds": 0.686,
+        "onsetMsMinus60Db": 0.281,
         "peakDb": -6.43,
         "rmsDb": -17.78,
         "seamStep": null
@@ -1319,6 +1420,7 @@
         "path": "sfx/attack-plant.mp3",
         "bytes": 6380,
         "decodedSeconds": 0.69,
+        "onsetMsMinus60Db": 0.188,
         "peakDb": -6.72,
         "rmsDb": -18.2,
         "seamStep": null
@@ -1336,6 +1438,7 @@
         "path": "sfx/attack-light.ogg",
         "bytes": 6577,
         "decodedSeconds": 0.786,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.43,
         "rmsDb": -17.69,
         "seamStep": null
@@ -1345,6 +1448,7 @@
         "path": "sfx/attack-light.mp3",
         "bytes": 6956,
         "decodedSeconds": 0.79,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -5.97,
         "rmsDb": -18.17,
         "seamStep": null
@@ -1362,6 +1466,7 @@
         "path": "sfx/attack-dark.ogg",
         "bytes": 9732,
         "decodedSeconds": 0.786,
+        "onsetMsMinus60Db": 1.312,
         "peakDb": -9.47,
         "rmsDb": -17.7,
         "seamStep": null
@@ -1371,6 +1476,7 @@
         "path": "sfx/attack-dark.mp3",
         "bytes": 6956,
         "decodedSeconds": 0.79,
+        "onsetMsMinus60Db": 1.188,
         "peakDb": -9.88,
         "rmsDb": -18.15,
         "seamStep": null
@@ -1388,6 +1494,7 @@
         "path": "sfx/block-gain.ogg",
         "bytes": 7722,
         "decodedSeconds": 0.486,
+        "onsetMsMinus60Db": 1.688,
         "peakDb": -8.34,
         "rmsDb": -17.68,
         "seamStep": null
@@ -1397,6 +1504,7 @@
         "path": "sfx/block-gain.mp3",
         "bytes": 4652,
         "decodedSeconds": 0.49,
+        "onsetMsMinus60Db": 0.469,
         "peakDb": -9.43,
         "rmsDb": -18.22,
         "seamStep": null
@@ -1414,6 +1522,7 @@
         "path": "sfx/block-break.ogg",
         "bytes": 7764,
         "decodedSeconds": 0.506,
+        "onsetMsMinus60Db": 1.219,
         "peakDb": -6.29,
         "rmsDb": -17.69,
         "seamStep": null
@@ -1423,6 +1532,7 @@
         "path": "sfx/block-break.mp3",
         "bytes": 4940,
         "decodedSeconds": 0.51,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.63,
         "rmsDb": -18.16,
         "seamStep": null
@@ -1440,6 +1550,7 @@
         "path": "sfx/heal.ogg",
         "bytes": 6369,
         "decodedSeconds": 0.836,
+        "onsetMsMinus60Db": 0.031,
         "peakDb": -6.89,
         "rmsDb": -17.66,
         "seamStep": null
@@ -1449,6 +1560,7 @@
         "path": "sfx/heal.mp3",
         "bytes": 7532,
         "decodedSeconds": 0.84,
+        "onsetMsMinus60Db": 0.219,
         "peakDb": -7.43,
         "rmsDb": -18.17,
         "seamStep": null
@@ -1466,6 +1578,7 @@
         "path": "sfx/status-apply.ogg",
         "bytes": 8235,
         "decodedSeconds": 0.586,
+        "onsetMsMinus60Db": 0.844,
         "peakDb": -8.91,
         "rmsDb": -17.65,
         "seamStep": null
@@ -1475,6 +1588,7 @@
         "path": "sfx/status-apply.mp3",
         "bytes": 5516,
         "decodedSeconds": 0.59,
+        "onsetMsMinus60Db": 0.812,
         "peakDb": -9.2,
         "rmsDb": -18.16,
         "seamStep": null
@@ -1492,6 +1606,7 @@
         "path": "sfx/status-cleanse.ogg",
         "bytes": 6158,
         "decodedSeconds": 0.786,
+        "onsetMsMinus60Db": 1.062,
         "peakDb": -9.38,
         "rmsDb": -17.76,
         "seamStep": null
@@ -1501,6 +1616,7 @@
         "path": "sfx/status-cleanse.mp3",
         "bytes": 6956,
         "decodedSeconds": 0.79,
+        "onsetMsMinus60Db": 1.062,
         "peakDb": -9.73,
         "rmsDb": -18.17,
         "seamStep": null
@@ -1518,6 +1634,7 @@
         "path": "sfx/enemy-intent.ogg",
         "bytes": 5848,
         "decodedSeconds": 0.386,
+        "onsetMsMinus60Db": 0.188,
         "peakDb": -7.85,
         "rmsDb": -17.64,
         "seamStep": null
@@ -1527,6 +1644,7 @@
         "path": "sfx/enemy-intent.mp3",
         "bytes": 3788,
         "decodedSeconds": 0.39,
+        "onsetMsMinus60Db": 0.125,
         "peakDb": -8.32,
         "rmsDb": -18.22,
         "seamStep": null
@@ -1544,6 +1662,7 @@
         "path": "sfx/enemy-appear.ogg",
         "bytes": 9574,
         "decodedSeconds": 0.736,
+        "onsetMsMinus60Db": 0.812,
         "peakDb": -2.43,
         "rmsDb": -17.93,
         "seamStep": null
@@ -1553,6 +1672,7 @@
         "path": "sfx/enemy-appear.mp3",
         "bytes": 6668,
         "decodedSeconds": 0.74,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.44,
         "rmsDb": -18.18,
         "seamStep": null
@@ -1570,6 +1690,7 @@
         "path": "sfx/player-hit.ogg",
         "bytes": 6969,
         "decodedSeconds": 0.386,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -2.63,
         "rmsDb": -18.22,
         "seamStep": null
@@ -1579,6 +1700,7 @@
         "path": "sfx/player-hit.mp3",
         "bytes": 3788,
         "decodedSeconds": 0.39,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -2.93,
         "rmsDb": -18.7,
         "seamStep": null
@@ -1596,6 +1718,7 @@
         "path": "sfx/enemy-hit.ogg",
         "bytes": 6755,
         "decodedSeconds": 0.356,
+        "onsetMsMinus60Db": 0.031,
         "peakDb": -3.7,
         "rmsDb": -17.77,
         "seamStep": null
@@ -1605,6 +1728,7 @@
         "path": "sfx/enemy-hit.mp3",
         "bytes": 3500,
         "decodedSeconds": 0.36,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.55,
         "rmsDb": -18.31,
         "seamStep": null
@@ -1622,6 +1746,7 @@
         "path": "sfx/enemy-purify.ogg",
         "bytes": 8527,
         "decodedSeconds": 1.19,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -3.74,
         "rmsDb": -17.69,
         "seamStep": null
@@ -1631,6 +1756,7 @@
         "path": "sfx/enemy-purify.mp3",
         "bytes": 10412,
         "decodedSeconds": 1.19,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -4.21,
         "rmsDb": -18.17,
         "seamStep": null
@@ -1648,6 +1774,7 @@
         "path": "sfx/enemy-down.ogg",
         "bytes": 9790,
         "decodedSeconds": 0.786,
+        "onsetMsMinus60Db": 0.688,
         "peakDb": -3.76,
         "rmsDb": -17.84,
         "seamStep": null
@@ -1657,6 +1784,7 @@
         "path": "sfx/enemy-down.mp3",
         "bytes": 6956,
         "decodedSeconds": 0.79,
+        "onsetMsMinus60Db": 0.125,
         "peakDb": -3.25,
         "rmsDb": -18.01,
         "seamStep": null
@@ -1674,6 +1802,7 @@
         "path": "sfx/crest-charge.ogg",
         "bytes": 5249,
         "decodedSeconds": 0.47,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -8.66,
         "rmsDb": -18.01,
         "seamStep": null
@@ -1683,6 +1812,7 @@
         "path": "sfx/crest-charge.mp3",
         "bytes": 4364,
         "decodedSeconds": 0.44,
+        "onsetMsMinus60Db": 0.219,
         "peakDb": -9.04,
         "rmsDb": -18.19,
         "seamStep": null
@@ -1700,6 +1830,7 @@
         "path": "sfx/evolution-energy.ogg",
         "bytes": 6280,
         "decodedSeconds": 0.586,
+        "onsetMsMinus60Db": 0.0,
         "peakDb": -6.18,
         "rmsDb": -17.67,
         "seamStep": null
@@ -1709,6 +1840,7 @@
         "path": "sfx/evolution-energy.mp3",
         "bytes": 5516,
         "decodedSeconds": 0.59,
+        "onsetMsMinus60Db": 0.188,
         "peakDb": -6.57,
         "rmsDb": -18.17,
         "seamStep": null
@@ -1726,6 +1858,7 @@
         "path": "sfx/data-gather.ogg",
         "bytes": 12267,
         "decodedSeconds": 0.986,
+        "onsetMsMinus60Db": 2.062,
         "peakDb": -3.63,
         "rmsDb": -17.78,
         "seamStep": null
@@ -1735,6 +1868,7 @@
         "path": "sfx/data-gather.mp3",
         "bytes": 8684,
         "decodedSeconds": 0.99,
+        "onsetMsMinus60Db": 0.156,
         "peakDb": -3.6,
         "rmsDb": -18.04,
         "seamStep": null
@@ -1752,6 +1886,7 @@
         "path": "sfx/forced-warning.ogg",
         "bytes": 13387,
         "decodedSeconds": 1.29,
+        "onsetMsMinus60Db": 1.344,
         "peakDb": -8.88,
         "rmsDb": -17.72,
         "seamStep": null
@@ -1761,6 +1896,7 @@
         "path": "sfx/forced-warning.mp3",
         "bytes": 10988,
         "decodedSeconds": 1.29,
+        "onsetMsMinus60Db": 0.875,
         "peakDb": -9.21,
         "rmsDb": -18.17,
         "seamStep": null
@@ -1778,6 +1914,7 @@
         "path": "sfx/corruption-rise.ogg",
         "bytes": 9698,
         "decodedSeconds": 0.786,
+        "onsetMsMinus60Db": 1.344,
         "peakDb": -9.06,
         "rmsDb": -17.75,
         "seamStep": null
@@ -1787,6 +1924,7 @@
         "path": "sfx/corruption-rise.mp3",
         "bytes": 6956,
         "decodedSeconds": 0.79,
+        "onsetMsMinus60Db": 1.281,
         "peakDb": -9.45,
         "rmsDb": -18.17,
         "seamStep": null
@@ -1804,6 +1942,7 @@
         "path": "sfx/burden-relief.ogg",
         "bytes": 5887,
         "decodedSeconds": 0.736,
+        "onsetMsMinus60Db": 0.906,
         "peakDb": -9.48,
         "rmsDb": -17.72,
         "seamStep": null
@@ -1813,6 +1952,7 @@
         "path": "sfx/burden-relief.mp3",
         "bytes": 6668,
         "decodedSeconds": 0.74,
+        "onsetMsMinus60Db": 0.969,
         "peakDb": -9.86,
         "rmsDb": -18.17,
         "seamStep": null

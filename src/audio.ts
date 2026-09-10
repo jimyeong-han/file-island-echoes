@@ -6,6 +6,7 @@ export interface AudioCue {
   loop: boolean; duration: number; limit: number; cooldown: number; variation: number; fade: number;
 }
 export const AUDIO = rawManifest as Record<string, AudioCue>;
+export const PRIORITY_SFX = ['ui-confirm','ui-select','ui-cancel','ui-denied','card-select','card-attack','card-guard','card-support','node-select','energy-low'] as const;
 /** Lossy codecs can introduce an endpoint offset. Correct 2 ms, preserving tempo/tails. */
 export function smoothLoopEdge(samples: Float32Array, length: number, window=64) {
   const end=Math.min(samples.length,Math.max(0,length));if(end<window*2)return;
@@ -45,6 +46,8 @@ export class AudioManager {
   private loading = false;
   private lastCue = '';
   private musicStarts = 0;
+  private activation?: Promise<void>;
+  private preparation?: Promise<void>;
   onStatus?: (status: AudioStatus) => void;
 
   constructor(settings: Settings, private catalog: Record<string, AudioCue> = AUDIO) { this.settings = {...settings}; }
@@ -85,7 +88,13 @@ export class AudioManager {
         this.master.gain.value=this.settings.masterVolume;this.musicBus.gain.value=this.settings.musicVolume;this.sfxBus.gain.value=this.settings.sfxVolume;
         const probe=new Audio();this.formats=probe.canPlayType('audio/ogg; codecs="vorbis"')?['ogg','mp3']:['mp3','ogg'];
       }
-      await this.ctx.resume();
+      if(this.ctx.state!=='running') {
+        this.activation ??= this.ctx.resume().finally(()=>{this.activation=undefined;});
+        await this.activation;
+      }
+      // Small interaction cues enter the request queue before any soundtrack.
+      this.preparation ??= this.preload(PRIORITY_SFX);
+      await this.preparation;
       void this.refreshMusic(); this.report();
     } catch { this.report(); /* Autoplay refusal never blocks the game. */ }
   }
@@ -98,9 +107,28 @@ export class AudioManager {
     } catch { /* A later input can resume a context interrupted by the OS. */ }
     this.report();
   }
-  private async load(id: string): Promise<AudioBuffer|null> {
+  /** Speculative failures do not poison the real-play failure cache. */
+  async preload(ids: readonly string[] = PRIORITY_SFX) {
+    if(!this.ctx||this.hidden||this.settings.muted)return;
+    await Promise.all(ids.filter(id=>this.catalog[id]?.kind==='sfx').map(id=>this.load(id,true)));
+  }
+  playInput(id: string) {
+    if(this.settings.muted||this.hidden)return;
+    // Start a cached sound in this event's stack, before a full UI render.
+    if(this.ctx?.state==='running'){void this.play(id);return;}
+    // Resume must be invoked within the gesture; preparation never blocks the UI.
+    void this.unlock();
+    const ready=this.activation||Promise.resolve();
+    void ready.then(()=>this.play(id)).catch(()=>{});
+  }
+  private async load(id: string, speculative=false): Promise<AudioBuffer|null> {
     const cached=this.buffers.get(id);if(cached){this.buffers.delete(id);this.buffers.set(id,cached);return cached;}
-    if(this.pending.has(id))return this.pending.get(id)!;
+    if(this.pending.has(id)){
+      const task=this.pending.get(id)!,result=await task;
+      // A real request joining a failed preload gets its own codec retry.
+      if(!result&&!speculative&&!this.failed.has(id)){if(this.pending.get(id)===task)this.pending.delete(id);return this.load(id);}
+      return result;
+    }
     if(this.failed.has(id)||!this.ctx||!this.catalog[id])return null;
     const promise=(async()=>{
       const cue=this.catalog[id];
@@ -115,10 +143,10 @@ export class AudioManager {
           this.buffers.set(id,buffer);this.trimCache();return buffer;
         } catch { /* Try the alternate codec once. */ } finally {clearTimeout(timeout);}
       }
-      this.failed.add(id);this.report();return null;
+      if(!speculative)this.failed.add(id);this.report();return null;
     })();
     this.pending.set(id,promise);
-    try{return await promise;}finally{this.pending.delete(id);}
+    try{return await promise;}finally{if(this.pending.get(id)===promise)this.pending.delete(id);}
   }
   private trimCache() {
     const music=[...this.buffers.keys()].filter(k=>this.catalog[k].loop);
@@ -131,7 +159,10 @@ export class AudioManager {
     void this.refreshMusic();
   }
   private async refreshMusic() {
-    if(!this.ctx||this.settings.muted||this.hidden||!this.desired||this.current?.id===this.desired)return;
+    if(!this.ctx||this.ctx.state!=='running'||this.settings.muted||this.hidden||!this.desired||this.current?.id===this.desired)return;
+    // configure/sync can run while the activation preparation is still pending.
+    if(this.preparation)await this.preparation;
+    if(this.settings.muted||this.hidden||!this.desired||this.current?.id===this.desired)return;
     const id=this.desired,request=++this.musicRequest;this.loading=true;this.report();
     const buffer=await this.load(id);
     if(request!==this.musicRequest)return;
@@ -168,7 +199,8 @@ export class AudioManager {
     const count=[...this.voices].filter(v=>v.id===id&&!v.stopping).length+(this.pendingVoices.get(id)||0);
     if(count>=cue.limit||now-(this.lastPlayed.get(id)??-999)<cue.cooldown||(this.voices.size>=12&&cue.kind!=='stinger'))return;
     this.lastPlayed.set(id,now);this.pendingVoices.set(id,(this.pendingVoices.get(id)||0)+1);
-    const epoch=this.effectEpoch,groupEpoch=this.groupEpoch.get(group)||0,buffer=await this.load(id);
+    const epoch=this.effectEpoch,groupEpoch=this.groupEpoch.get(group)||0;
+    const cached=this.buffers.get(id),buffer=cached||await this.load(id);
     this.pendingVoices.set(id,Math.max(0,(this.pendingVoices.get(id)||1)-1));
     if(!buffer||epoch!==this.effectEpoch||groupEpoch!==(this.groupEpoch.get(group)||0)||this.hidden||this.settings.muted||ctx.state!=='running')return;
     if(this.voices.size>=12&&cue.kind==='stinger') {

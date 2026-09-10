@@ -153,3 +153,33 @@ npm run check:pages
 
 2026-09-10, v0.5 빌드와 배포 성공. 공개 사이트의 212개 URL(오디오 140개 포함)을 확인했습니다. GitHub의 MP3 응답은 audio/mp3이며 로컬의 audio/mpeg와 함께 검사합니다. 공개 브라우저에서도 v0.5 표시와 첫 입력 전 오디오 잠금을 확인했습니다.
 공개 사이트에서 소리 켜기 후 music-title 1개, 최종 출력 RMS 약 0.049, 콘솔 오류 없음도 확인했습니다. 검증 후 사용자의 기존 음소거 상태로 되돌렸습니다.
+
+
+## v0.5.1 — 입력 효과음 지연 (2026-09-10)
+
+확인된 주 원인은 처음 사용하는 큐의 fetch/decode 대기다. 기본 믹서의 캐시 재생 자체는 빠르지만 `await load()` 때문에 UI 전체 렌더 뒤로 밀릴 여지가 있었다. 정상 입력은 click에서 유지한다. 관측한 pointerup→click은 0.1~0.3ms로, pointerdown 확인음으로 바꿀 근거가 없었고 스크롤 오발음을 피했다. 비활성 버튼만 이동 10px 이내의 완료된 pointerup에서 거절음을 내며 후속 click을 명시적으로 중복 제거한다. Enter/Space/보조기기 click은 독립 처리한다.
+
+`PRIORITY_SFX` 10개(ui-confirm/select/cancel/denied, card-select/attack/guard/support, node-select, energy-low)를 첫 활성화 직후 음악보다 먼저 다운로드·디코딩한다. 첫 입력 전 오디오 요청·컨텍스트는 여전히 0개다. 캐시 적중은 같은 이벤트 스택에서 source.start()를 호출해 UI 렌더를 기다리지 않는다. resume Promise를 공유하며 첫 활성화 확인음이 resume과 경합해 누락되지 않게 했다. 소리 켜기 버튼은 설정 적용 후 ui-confirm을 재생한다. 프리로드 실패는 실제 재생의 OGG/MP3 재시도를 막지 않는다. 기존 세 곡 음악 캐시, 12음성 제한, 징글 덕킹과 의도적 결과음 delay는 유지했다.
+
+### 측정
+
+Windows의 Codex in-app Chromium, 로컬 Vite 서버에서 실제 Web Audio를 계측했다. 네트워크 제한 도구 대신 오디오 fetch마다 200ms를 추가하는 개발용 제어 실험을 사용했다. 아래는 반복 통계가 아닌 관측 표본이며, 다른 입력이 끼어들지 않은 기록이다.
+
+| 상황 | v0.5 기준 | v0.5.1 |
+| --- | ---: | ---: |
+| 독립 믹서 첫 활성화 + confirm | 263.5ms | 260.4ms |
+| 처음 선택하는 ui-select | 217.8ms (cold) | 0.5ms (우선 준비 완료) |
+| 이미 사용한 confirm | 0.1ms | 0.3ms |
+| 실제 게임의 소리 켜기 | 기존 버튼에는 확인음 없음 | 240.7ms (cold) |
+| 실제 게임 새 탐험/선택/지도/카드/턴 종료/설정 | — | 0~0.4ms (준비 완료) |
+
+준비된 일반 효과음의 앱 내부 50ms 목표는 관측 표본에서 충족했다. 최초 활성화는 네트워크 영향을 여전히 받으며 약 260ms의 냉상태를 100ms 이내로 해결했다고 주장하지 않는다. 이후 최초 큐 사용은 준비된 캐시로 처리한다. 기본 AudioContext와 `{latencyHint:'interactive'}` 모두 baseLatency=10ms, outputLatency=0을 보고해 생성 옵션은 변경하지 않았다. outputLatency=0은 실제 하드웨어 지연이 없다는 뜻이 아니다. 실제 iOS/Android와 Bluetooth 출력 청감 100ms 목표는 미검증이다.
+
+효과음의 예약 추가 지연은 0ms, 카드 결과음은 기존 60~500ms 등 의도적 간격을 유지했다. 냉상태의 비우선 결과음에는 다운로드 시간도 더해질 수 있다. 우선 10개 파일의 -60dB 첫 신호는 OGG 0~1.219ms, MP3 0~0.969ms로 0.5초 무음은 없었다. 자세한 코덱별 값은 `docs/audio-measurements.json`에 기록했다.
+
+### 예산과 재현
+
+- 우선 10개: OGG 58,489bytes(57.1KiB), MP3 37,304bytes(36.4KiB). 정상적으로 한 형식만 받는다.
+- PCM 예상: 48kHz stereo float32 기준 약 1,420,800bytes(1.36MiB). 실제 리샘플링/코덱 길이에 따라 조금 달라진다.
+- 전체 오디오: 14,490,553bytes(13.82MiB), 파일 추가·음악 변경 없음.
+- `?audioDebug&audioDelay=200`은 개발 모드 전용이며 배포 JS에서 제거된다. 입력/로드/디코딩/start 시각은 로컬 DOM에만 표시한다. 재현 절차는 `qa/README.md` 참고.

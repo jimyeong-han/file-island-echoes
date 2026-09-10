@@ -8,8 +8,10 @@ import { background, portrait, sprite, installArtFallback } from './art';
 import { icon } from './icons';
 import { AUDIO } from './audio';
 import { GameAudio } from './audio-events';
+import { installAudioInput } from './audio-input';
 import './audio.css';
 import type { CardId, Form, Run, CharacterId, ChapterId } from './types';
+if(import.meta.env.DEV&&new URLSearchParams(location.search).has('audioDebug'))void import('./audio-debug').then(m=>m.installAudioDebug());
 
 const loaded=loadSave();const save=loaded.save;
 const gameAudio=new GameAudio(save.settings);
@@ -19,6 +21,12 @@ let mapZone:number|null=null;
 let selected:CharacterId='tai', order:number[]=[];
 const root=document.querySelector<HTMLDivElement>('#app')!;
 installArtFallback(root);
+installAudioInput(root,()=>{void gameAudio.mixer.unlock();},(id,disabled)=>{
+ if(disabled){gameAudio.mixer.playInput(id.startsWith('card:')?'energy-low':'ui-denied');return;}
+ // Muting must be silent; enabling gives feedback after the setting changes.
+ if(id==='sound')return;
+ const [action,value]=id.split(':');gameAudio.action(action,value);
+});
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const btn=(label:string,action:string,cls='',attrs='')=>`<button class="${cls}" data-action="${action}" ${attrs}>${label}</button>`;
 const kindName=(type:string)=>({battle:'전투',elite:'강적',event:'이야기',rest:'휴식',boss:'최종 보스',attack:'공격',guard:'방어',support:'지원'} as Record<string,string>)[type]||type;
@@ -30,7 +38,7 @@ function title(){const r=save.run;return `<main class="title-screen">
  ${background(0,'title-landscape')}<div class="title-illustration">${portrait('tai','hero-portrait')}</div>
  <div class="title-copy"><p class="series-title">디지몬 어드벤처 · 비공식 팬게임</p><h1>파일섬의<br/><em>잔향</em></h1><p class="intro">검은 톱니바퀴가 다시 움직인다.<br/>여덟 개의 마음, 서로 다른 모험.</p>
  <div class="title-audio">${btn(save.settings.muted?'소리 켜기':'소리 끄기','sound','audio-start',`aria-pressed="${!save.settings.muted}"`)}<small>이 모험을 위해 만든 음악과 효과음</small></div><div class="start-actions">${r&&r.screen!=='result'?btn(`<span>이어서 탐험</span><small>${chapterOf(r).zones[zoneAt(r.row)]} · ${r.row+1}번째 장소</small>`,'continue','title-menu'):''}${btn('<span>새 탐험</span><small>아이와 파트너 선택 →</small>','new','title-menu')}${btn('<span>탐험 안내</span><small>카드 전투와 진화</small>','help','title-menu')}</div><p class="playtime">한 번의 탐험, 약 10–15분 · 자동 저장</p></div>
- <footer class="title-footer"><span>FILE ISLAND ECHOES <b>0.5</b></span><p>비공식 · 비영리 팬 프로젝트<br/>사건과 진화 조건은 이 게임을 위한 창작 설정입니다.</p>${btn('프로젝트 정보','credits','quiet')}</footer></main>`;}
+ <footer class="title-footer"><span>FILE ISLAND ECHOES <b>0.5.1</b></span><p>비공식 · 비영리 팬 프로젝트<br/>사건과 진화 조건은 이 게임을 위한 창작 설정입니다.</p>${btn('프로젝트 정보','credits','quiet')}</footer></main>`;}
 function status(r:Run){return `<section class="statusbar ${r.screen==='battle'?'combat-status':''}" aria-label="파트너 상태">
  <div class="status-partner">${sprite(r.form)}<strong>${FORMS[r.form].name}<small>${CHARACTERS[r.characterId].name} · ${FORMS[r.form].tag}</small></strong></div>
  <div class="health"><span>체력 <b>${r.hp}<small> / ${r.maxHp}</small></b></span>${meter(r.hp,r.maxHp)}</div>
@@ -89,12 +97,12 @@ function render(){
  updateAudioStatus();
 }
 function start(ch:ChapterId){if(!chapterUnlocked(save,selected,ch))return;mapZone=null;save.run=newRun(Date.now()>>>0,selected,ch);view='game';modal='';persist(null);render();window.scrollTo(0,0);}
-root.addEventListener('click',e=>{const el=(e.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');if(!el)return;if(el.disabled){void gameAudio.mixer.play(el.dataset.action?.startsWith('card:')?'energy-low':'ui-denied');return;}const [action,value]=el.dataset.action!.split(':');currentAction=el.dataset.action!;void gameAudio.mixer.unlock();gameAudio.action(action,value);
+root.addEventListener('click',e=>{const el=(e.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');if(!el)return;if(el.disabled)return;const [action,value]=el.dataset.action!.split(':');currentAction=el.dataset.action!;
  if(action==='audio-test'){void gameAudio.mixer.unlock().then(()=>gameAudio.mixer.preview());return;}
  if(extraAction(action,value))return;
  if(action==='close'){modal='';render();return;}if(action==='home'){view='title';modal='';render();return;}if(action==='new'){if(save.run&&save.run.screen!=='result'){modal='new';render();}else{view='select';render();}return;}if(action==='confirm-new'){modal='';view='select';render();return;}if(action==='continue'){mapZone=null;view='game';render();return;}
  if(['settings','archive','deck','help','credits'].includes(action)){modal=action;render();return;}
- if(['sound','motion','guide'].includes(action)){const k=action==='sound'?'muted':action==='motion'?'reducedMotion':'guide';save.settings[k]=!save.settings[k];persist(save.run);gameAudio.mixer.configure(save.settings);if(k==='muted'&&!save.settings.muted)void gameAudio.mixer.unlock();render();return;}
+ if(['sound','motion','guide'].includes(action)){const k=action==='sound'?'muted':action==='motion'?'reducedMotion':'guide';save.settings[k]=!save.settings[k];persist(save.run);gameAudio.mixer.configure(save.settings);if(k==='muted'&&!save.settings.muted)gameAudio.mixer.playInput('ui-confirm');render();return;}
  if(action==='preview'){pendingForm=value as Form;modal='evo';render();return;}
  if(action==='evolve'){modal='';act(r=>{if(pendingForm)evolve(r,pendingForm);});window.scrollTo(0,0);return;}
  if(action==='evolution-done'){act(r=>{if(r.screen==='evolution')r.screen='map';});return;}
@@ -136,8 +144,6 @@ root.addEventListener('input',e=>{
  input.setAttribute('aria-valuetext',n+'퍼센트');const out=root.querySelector(`[data-volume-output="${key}"]`);if(out)out.textContent=n+'%';
  gameAudio.mixer.configure(save.settings);void gameAudio.mixer.unlock();persist(save.run);
 });
-// Pointer events also cover disabled cards, which do not dispatch click events.
-root.addEventListener('pointerdown',e=>{void gameAudio.mixer.unlock();const b=(e.target as HTMLElement).closest<HTMLButtonElement>('button:disabled');if(b)void gameAudio.mixer.play(b.dataset.action?.startsWith('card:')?'energy-low':'ui-denied');});
 document.addEventListener('visibilitychange',()=>void gameAudio.mixer.visibility(document.hidden));
 window.addEventListener('pagehide',()=>void gameAudio.mixer.visibility(true));
 window.addEventListener('pageshow',()=>void gameAudio.mixer.visibility(document.hidden));

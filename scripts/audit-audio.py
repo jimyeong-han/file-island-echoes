@@ -28,7 +28,9 @@ for id,cue in manifest.items():
             for i in range(64):
                 d=correction*(.5+.5*np.cos(np.pi*i/63));z[i]+=d;z[n-1-i]-=d
             prepared=float(np.max(np.abs(z[0]-z[n-1])));assert prepared<1e-6
-        row['files'].append({'preparedSeamStep':round(prepared,8) if cue['loop'] else None,'path':file,'bytes':p.stat().st_size,'decodedSeconds':seconds,'peakDb':round(20*np.log10(peak),2),'rmsDb':round(20*np.log10(rms),2),'seamStep':round(seam,6) if cue['loop'] else None})
+        audible=np.flatnonzero(np.max(np.abs(y),axis=1)>.001)
+        onset=float(audible[0]/sr*1000) if len(audible) else seconds*1000
+        row['files'].append({'preparedSeamStep':round(prepared,8) if cue['loop'] else None,'path':file,'bytes':p.stat().st_size,'decodedSeconds':seconds,'onsetMsMinus60Db':round(onset,3),'peakDb':round(20*np.log10(peak),2),'rmsDb':round(20*np.log10(rms),2),'seamStep':round(seam,6) if cue['loop'] else None})
         if file.endswith('.ogg') and id in ['music-title','music-forest','music-battle','music-boss','evolution-start','crest-matt','attack-fire','heal']:
             clip=y[sr*8:sr*16] if cue['loop'] else y
             reel.append(np.concatenate([clip,np.zeros((int(.5*sr),2),np.float32)]))

@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Pointer regression QA</title><button id="run">Run PointerEvent checks</button><div id="root"><button data-action="card:0" id="card">Card</button><button data-action="card:1" id="disabled" disabled>Disabled card</button></div><pre id="out"></pre><script type="module">
+import {installAudioInput} from '../src/audio-input.ts';
+const root=document.querySelector('#root'),card=document.querySelector('#card'),disabled=document.querySelector('#disabled');let sounds=[];
+installAudioInput(root,()=>{},(action,disabled)=>sounds.push({action,disabled}));
+document.querySelector('#run').onclick=()=>{const checks=[];
+function fire(el,type,x=0,id=1){el.dispatchEvent(new PointerEvent(type,{bubbles:true,pointerType:'touch',pointerId:id,clientX:x,clientY:0,button:0}));}
+function click(el,detail=1){el.dispatchEvent(new MouseEvent('click',{bubbles:true,detail}));}
+function check(name,fn,n){sounds=[];fn();checks.push({name,pass:sounds.length===n,actual:sounds.length});}
+check('touch down/up/click once',()=>{fire(card,'pointerdown');fire(card,'pointerup');click(card)},1);
+check('disabled + forwarded click once',()=>{fire(disabled,'pointerdown');fire(disabled,'pointerup');click(disabled)},1);
+check('scroll silent',()=>{fire(disabled,'pointerdown');fire(disabled,'pointermove',40);fire(disabled,'pointerup',40)},0);
+check('cancel silent',()=>{fire(disabled,'pointerdown');fire(disabled,'pointercancel');fire(disabled,'pointerup')},0);
+check('other target silent',()=>{fire(disabled,'pointerdown');fire(card,'pointerup')},0);
+check('keyboard/assistive click once',()=>click(card,0),1);
+document.querySelector('#out').textContent=JSON.stringify(checks,null,2)};
+</script>
