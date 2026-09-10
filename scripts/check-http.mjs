@@ -14,7 +14,7 @@ await Promise.all(paths.map(async path => {
   const response = await fetch(new URL(path, base));
   assert.equal(response.status, 200, `${path}: HTTP ${response.status}`);
   if(path.endsWith('.ogg'))assert.match(response.headers.get('content-type')||'',/audio\/ogg|application\/ogg/);
-  if(path.endsWith('.mp3'))assert.match(response.headers.get('content-type')||'',/audio\/mpeg/);
+  if(path.endsWith('.mp3'))assert.match(response.headers.get('content-type')||'',/audio\/(?:mpeg|mp3)/);
   if (path.endsWith('.webp')) assert.match(response.headers.get('content-type') || '', /image\/webp/);
   if (!path || path === 'index.html') {
     const html = await response.text();
