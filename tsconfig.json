@@ -6,6 +6,7 @@
       "DOM"
     ],
     "module": "ESNext",
+    "allowImportingTsExtensions": true,
     "moduleResolution": "Bundler",
     "strict": true,
     "noEmit": true,

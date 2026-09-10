@@ -17,7 +17,7 @@
     "monochromon": "characters/monochromon-battle.webp",
     "palmon": "characters/palmon-battle.webp",
     "angemon": "characters/angemon-battle.webp",
-    "angewomon": "characters/angewomon-battle.webp",
+    "angewomon": "characters/angewomon-asymmetric-battle.webp",
     "bakemon": "characters/bakemon-battle.webp",
     "birdramon": "characters/birdramon-battle.webp",
     "biyomon": "characters/biyomon-battle.webp",
@@ -63,12 +63,12 @@
   ],
   "portraits": {
     "tai": "portraits/tai-agumon.webp",
-    "koushiro": "portraits/koushiro-tentomon.webp",
+    "koushiro": "portraits/koushiro-tentomon-adventure.webp",
     "joe": "portraits/joe-gomamon.webp",
     "mimi": "portraits/mimi-palmon.webp",
     "matt": "portraits/matt-gabumon.webp",
-    "tk": "portraits/tk-patamon.webp",
-    "kari": "portraits/kari-gatomon-adventure.webp",
+    "tk": "portraits/tk-patamon-adventure.webp",
+    "kari": "portraits/kari-gatomon-short-hair.webp",
     "sora": "portraits/sora-biyomon.webp"
   }
 }

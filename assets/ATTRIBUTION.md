@@ -152,3 +152,18 @@ SVG 생성 스크립트: `scripts/export-art.mjs`. 재생성: `npm run art`. 교
 - `public/assets/portraits/kari-gatomon-adventure.webp`: 캐릭터 선택·상세·스토리·엔딩·도감용. 내장 imagegen으로 프로젝트 자체 생성 초상화의 얼굴·체구를 다시 그린 뒤 사용자가 제공한 이미지의 의상 색과 구성만 참고하여 재편집. 640×640 WebP로 최적화. [연령 수정 프롬프트](prompts/v0.6/kari-gatomon-young.txt), [의상 수정 프롬프트](prompts/v0.6/kari-outfit.txt). 공식 캡처/추출물을 실제 에셋으로 재사용하거나 참고 이미지의 선화·자세·구도를 트레이싱하지 않았다. 참고 이미지 자체는 배포하지 않는다. 기존 `kari-gatomon.webp`를 대체하며 추가 교체 예정 없음.
 - `public/assets/fonts/galmuri11-bold.woff2`, `pretendard-variable.woff2`: 공식 공개 저장소에서 받은 SIL OFL 1.1 서체. 생성형 에셋이 아니며 각 저작자·원문 라이선스와 소스 커밋은 [TYPOGRAPHY.md](../TYPOGRAPHY.md)에 기록했다. 라이선스 원문은 파일 옆에 포함한다.
 - `src/icons.ts`의 `sound-on`, `sound-off`: 24px 격자/1.8px 선 굵기로 직접 작성한 인터페이스 SVG.
+
+## 2026-09-11 · v0.6.1
+
+내장 imagegen으로 기존 프로젝트 팬 일러스트를 편집했다. 공식 추출 에셋은 사용하지 않았다. WebP 최적화본만 배포한다. 아래 네 파일은 이 버전의 최종 교체본이며 원본 요청과 수정 요청은 assets/prompts/v0.6.1/에 저장했다.
+
+- `portraits/koushiro-tentomon-adventure.webp`
+- `portraits/tk-patamon-adventure.webp`
+- `portraits/kari-gatomon-short-hair.webp`
+- `characters/angewomon-asymmetric-battle.webp`
+
+- 한솔: koushiro-tentomon-adventure.txt → koushiro-centered-pineapple.txt (사용자 정중앙 요청).
+- 리키: tk-patamon-adventure.txt → tk-hat-no-earflaps.txt (사용자 귀덮개 제거 요청).
+- 나리: kari-gatomon-short-hair.txt. 이전 생성 요청의 헤어 용어는 정정하고 원문은 Git 이력에 보존했다.
+- 엔젤우몬: angewomon-asymmetric-battle.txt → angewomon-alpha.txt → angewomon-chroma.txt. 투명 요청은 RGB 체커 패턴이 나와 채택하지 않았다. 최종 단색 녹색 배경 생성본에 크로마키 알파/녹색 가장자리 제거 후 640px WebP로 변환했다.
+- src/crests.ts 및 public/assets/ui/crest-*-icon.svg: 24px/1.8px SVG 직접 제작. 자료 대조는 docs/CANON-SOURCES.md. device-icon.svg와 favicon.svg는 독자적인 원형 장치/산/신호선 심볼이다.

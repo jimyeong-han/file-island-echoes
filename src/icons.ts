@@ -1,3 +1,4 @@
+import { crestPaths } from './crests.ts';
 // Project-drawn interface symbols: one 24px grid, rounded 1.8px strokes, no emoji.
 export const iconPaths: Record<string,string> = {
   'sound-on':'<path d="M3 9h4l5-4v14l-5-4H3Z"/><path d="M16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>',
@@ -21,7 +22,8 @@ export const iconPaths: Record<string,string> = {
   "signal": "<path d=\"M4 19v-4m5 4v-8m5 8V7m5 12V3\"/>",
   "data": "<path d=\"m12 2 9 5v10l-9 5-9-5V7Z\"/><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v6m0 8v6M3 7l6 3m6 4 6 3M3 17l6-3m6-4 6-3\"/>"
 };
-Object.assign(iconPaths,{
+Object.assign(iconPaths,crestPaths,{
+ device:'<circle cx="12" cy="12" r="10"/><rect x="6" y="6" width="12" height="9" rx="2"/><path d="m8 12 3-3 2 2 3-2M7 18h2m6 0h2"/>',
  burn:'<path d="M13 3c2 6-3 5-1 9 2-1 3-3 3-3s5 5 3 9c-2 4-10 4-12-1-2-4 1-7 3-9 0 4 2 5 2 5s-2-5 2-10Z"/>',
  tax:'<circle cx="10" cy="11" r="7"/><path d="M10 7v8m-2-2 2 2 2-2m4 5h6m-3-3v6"/>',
  weaken:'<path d="m12 3-6 9h5l-1 9 8-12h-5l1-6M3 3l18 18"/>',
@@ -36,3 +38,4 @@ export function icon(type:string) {
  const key=aliases[type]||type;
  return `<svg class="icon icon-${key}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${iconPaths[key]||iconPaths.data}</svg>`;
 }
+

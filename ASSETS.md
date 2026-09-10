@@ -96,3 +96,16 @@ v0.4는 이미지 66개를 사용합니다: 알파 WebP 전투/이벤트 캐릭�
 - `src/asset-manifest.json`에서 새 파일명으로 참조해 이전 초상화 캐시와 분리한다. 선택·상세는 contain으로 두 얼굴을 보존하고, 엔딩과 도감 진행 목록에도 초상화를 표시한다.
 - `public/assets/fonts/`의 로컬 WOFF2 두 파일과 각 SIL OFL 라이선스를 추가했다. 총 2,224,040 B이며 자세한 출처·글리프·교체 방식은 TYPOGRAPHY.md에 있다.
 - 소리 켜짐/꺼짐 스피커 아이콘은 `src/icons.ts`에 직접 그린 SVG이며 외부 아이콘을 다운로드하지 않았다.
+
+## v0.6.1 · 2026-09-11
+
+| 파일 | 크기 | 형식 | 용량 |
+| --- | --- | --- | ---: |
+| `portraits/koushiro-tentomon-adventure.webp` | 640×640 | RGB WebP | 65,618 B |
+| `portraits/tk-patamon-adventure.webp` | 640×640 | RGB WebP | 57,792 B |
+| `portraits/kari-gatomon-short-hair.webp` | 640×640 | RGB WebP | 69,322 B |
+| `characters/angewomon-asymmetric-battle.webp` | 640×640 | RGBA WebP | 106,746 B |
+
+초상화는 실제 선택·상세 표시에서 두 얼굴이 남도록 contain을 유지한다. 노트북 파인애플은 사용자 정정대로 덮개 정중앙, 리키의 모자는 귀덮개 없이 표현했다. 나리는 귀와 목이 드러나는 숏컷이다. 엔젤우몬은 8장 날개·전면 마스크와 비대칭 의상을 새로 생성하고 단색 배경을 알파 변환했다. 기존 네 파일은 새 경로로 교체했으며 참조는 src/asset-manifest.json에 있다.
+
+8개 문장은 src/crests.ts, 장치 로고는 src/icons.ts에서 관리한다. npm run art:ui로 public/assets/ui/ SVG를 재생성한다. 공식 파일 추출·트레이싱은 하지 않았다.
