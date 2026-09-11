@@ -20,3 +20,6 @@ Run `node scripts/create-save-qa.mjs` to create synthetic JSON files under ignor
 
 
 v0.8.1: `Check v0.8.1 layout` 버튼은 공통 팝업의 44px 닫기/스크롤/포커스, 전투 헤더, 단일 체력, 대상 전환 시 상대 좌표와 카드 대상, 이름과 효과 위치를 검사합니다. 로컬 합성 fixture에서만 실행하며 초기화를 확정하지 않습니다. 200% text와 뷰포트 변경 뒤 반복할 수 있습니다.
+
+
+v0.8.2: `Check v0.8.2 layout`은 보상 카드 1/2/3장·긴 설명의 nowrap/폭/높이/포커스/휠과 덱 선택·건너뛰기를 검사합니다. 8명 HUD 및 고유 중첩 0→최대값, 사용/봉인 상태, 대상광 레이어, 상단 48/60px 높이와 소리 토글 10회의 메뉴 위치도 확인합니다. 200% text 버튼 및 viewport 변경 뒤 반복할 수 있습니다. `reward-long`, `hud-zero/rich/used/sealed`는 합성 fixture이며 배포에 포함하지 않습니다.

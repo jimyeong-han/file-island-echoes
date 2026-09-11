@@ -20,16 +20,14 @@ small,.eyebrow{line-height:1.55}
 .cost,.stat b,.health strong,.intent b,.energy-orb,.card-art b,.turn-info,.enemy-health,.result-stats b{font-family:var(--font-numeric);font-variant-numeric:tabular-nums lining-nums;letter-spacing:0}
 .intent{font-size:.8125rem;line-height:1.5;min-height:44px}.intent b{font-size:1.125rem}
 .enemy strong,.target-label,.fighter-label,.enemy-health>span{font-size:.8125rem}
-.guide-banner,.threat-readout>span,.threat-readout small,.status-tags span,.crest-readout small,.crest-readout span{font-size:.8125rem}
+.threat-readout>span,.threat-readout small,.status-tags span{font-size:.8125rem}
 .story-copy blockquote,.center-screen blockquote{font-family:var(--font-body);font-size:1.25rem;line-height:1.85}
 .choice strong,.choice small,.character-copy p,.character-copy details,.deck-list p,.archive-enemy p{font-size:.875rem;line-height:1.75}
 .character-detail{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
 .character-card{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
 .character-card>.portrait-frame{height:auto;min-height:0;max-height:none;aspect-ratio:1;align-self:start}
 .character-card .portrait,.detail-art .portrait{object-fit:contain}
-.character-copy{min-width:0}.character-copy h2{font-size:1.375rem}
-.crest-button{font-family:var(--font-body);font-size:.875rem;min-width:0}
-.crest-readout{min-width:0}.topbar{height:auto;min-height:65px;flex-wrap:wrap;gap:4px}
+.character-copy{min-width:0}.character-copy h2{font-size:1.375rem}.topbar{height:auto;min-height:65px;flex-wrap:wrap;gap:4px}
 .top-actions{flex-wrap:wrap}.battle-heading,.hand-toolbar{flex-wrap:wrap}
 .top-actions .quiet{display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-body);font-size:.875rem;line-height:1.4;letter-spacing:0;white-space:nowrap}
 .top-actions [data-action="sound"]{gap:6px}.top-actions [data-action="sound"] .icon{width:16px;height:16px;flex:none}
@@ -51,7 +49,7 @@ dialog p,dialog label,.audio-state{font-size:.9375rem;line-height:1.75}
  .statusbar .supply{flex:1 1 6rem;min-width:0}
  .statusbar>.quiet{flex:1 1 4rem;min-width:0;white-space:nowrap}
  .statusbar .stat{flex:1 1 calc(50% - 8px);min-width:6.5rem;align-items:center}
- .battle-heading h1{font-size:1.125rem}.guide-banner{font-size:.8125rem}
+ .battle-heading h1{font-size:1.125rem}
  .game-card{min-width:180px;flex-basis:180px;min-height:260px}
  .end-turn{font-size:.875rem}.threat-readout{flex:1;min-width:145px}
  .enemy{max-width:49%}.enemy-health{max-width:100%}
@@ -64,5 +62,4 @@ dialog p,dialog label,.audio-state{font-size:.9375rem;line-height:1.75}
  .character-card{grid-template-columns:1fr}.character-card>.portrait-frame{width:100%;aspect-ratio:4/3}
  .character-copy{padding:20px}.character-copy .primary{font-size:1rem}
  .topbar{padding:6px 12px}.top-actions .quiet{padding:7px;font-size:.8125rem}
- .crest-readout{min-width:125px}.crest-button{max-width:none;flex:1}
 }

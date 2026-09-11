@@ -51,3 +51,12 @@ assert(compressedBytes-audioBytes<10*1024*1024,'Non-audio deployment exceeds 10 
 assert.doesNotMatch(readFileSync(refs.find(r=>r.endsWith('.js')).replace(base,root+'/'),'utf8'),/data:audio\/.*base64/);
 console.log('Audio checks: '+Object.keys(audioManifest).length+' cues / '+audioBytes+' bytes (both codecs).');
 console.log(`Pages checks passed: ${checked} files, ${images.length} manifest images; paths, crawler directives, common credential/path patterns. All files: ${rawBytes} raw bytes / ${compressedBytes} estimated transferred bytes.`);
+
+// v0.8.2: guard the cascade as well as the emitted asset paths.
+const combatStyles=readFileSync('src/combat.css','utf8');
+assert.match(combatStyles,/\.reward-cards\{[^}]*flex-wrap:nowrap[^}]*overflow-x:auto/);
+assert.match(combatStyles,/\.reward-cards \.game-card\{flex:0 0 210px/);
+assert(combatStyles.includes('--topbar-content:48px'));
+assert(combatStyles.includes('.enemy.targeted:not(.defeated) .target-field{display:block}'));
+for(const file of ['style.css','expansion.css','refinements.css','typography.css'])assert(!readFileSync('src/'+file,'utf8').includes('.reward-cards'),'Reward rules must stay in combat.css: '+file);
+assert(!readFileSync('src/main.ts','utf8').includes('guide-banner'));
