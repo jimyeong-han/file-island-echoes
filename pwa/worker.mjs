@@ -2,7 +2,7 @@ export function createWorker(env, config) {
  const prefix='file-island-echoes-', shell=prefix+'shell-'+config.build, runtime=prefix+'runtime-v1';
  const base=new URL(config.base,env.location.origin), index=new URL('index.html',base).href;
  const urls=config.files.map(p=>new URL(p,base).href);
- const eligible=req=>{const u=new URL(req.url);return req.method==='GET'&&u.origin===base.origin&&u.pathname.startsWith(base.pathname)&&!req.headers.has('range');};
+ const eligible=req=>{const u=new URL(req.url);return req.method==='GET'&&req.cache!=='no-store'&&u.origin===base.origin&&u.pathname.startsWith(base.pathname)&&!['sw.js','pwa-build.json'].some(p=>u.pathname===base.pathname+p)&&!req.headers.has('range');};
  async function install(){const cache=await env.caches.open(shell);try{await cache.addAll(urls);}catch(e){await env.caches.delete(shell);throw e;}}
  async function activate(){for(const name of await env.caches.keys())if(name.startsWith(prefix)&&![shell,runtime].includes(name))await env.caches.delete(name);await env.clients.claim();}
  async function fetchRequest(req){
