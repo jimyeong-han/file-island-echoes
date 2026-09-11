@@ -17,3 +17,6 @@ Run `node scripts/create-save-qa.mjs` to create synthetic JSON files under ignor
 ## Combat UI checks
 
 `node scripts/create-visual-qa.mjs` creates the ignored local fixture page. Use a disposable port (e.g. 3008) and its `test-results/visual.html`. The visible controls choose partner, scene and enemy pattern. Run combat checks, Check enemy motions, Check evolution and results, Check card faces, and Check log scroll perform actual DOM actions and report in the page. No production hook is installed. `node scripts/verify-combat-baseline.mjs` compares against pre-v0.8 engine commit 340c57c using generated ignored files.
+
+
+v0.8.1: `Check v0.8.1 layout` 버튼은 공통 팝업의 44px 닫기/스크롤/포커스, 전투 헤더, 단일 체력, 대상 전환 시 상대 좌표와 카드 대상, 이름과 효과 위치를 검사합니다. 로컬 합성 fixture에서만 실행하며 초기화를 확정하지 않습니다. 200% text와 뷰포트 변경 뒤 반복할 수 있습니다.
