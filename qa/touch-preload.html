@@ -1,0 +1,10 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>Touch preload comparison</title><h1>Touch preload comparison</h1><p>200ms fetch delay · source.start timing, not speaker latency</p><button id="cold">Cold first touch</button><button id="prepare">Prepare encoded touch bytes</button><button id="prepared">Prepared first touch</button><pre id="result"></pre><script type="module">
+import {AudioManager} from '../src/audio';import {prepareTouchAudio,preparedTouchAudio} from '../src/touch-audio';
+const rows=[],out=document.querySelector('#result');let input=0,label='';const log=row=>{rows.push(row);out.textContent=JSON.stringify(rows,null,2);};
+const realFetch=window.fetch.bind(window);window.fetch=async(...args)=>{await new Promise(r=>setTimeout(r,200));return realFetch(...args);};
+const Real=window.AudioContext;window.AudioContext=class extends Real{createBufferSource(){const source=super.createBufferSource(),start=source.start.bind(source);source.start=(...args)=>{log({label,inputToStartMs:performance.now()-input,baseLatency:this.baseLatency});start(...args);};return source;}};
+const settings={muted:false,masterVolume:.8,musicVolume:.65,sfxVolume:.8,guide:true,reducedMotion:false};const cold=new AudioManager(settings),prepared=new AudioManager(settings);
+document.querySelector('#cold').onclick=()=>{input=performance.now();label='cold';cold.playInput('ui-select');};
+document.querySelector('#prepare').onclick=async()=>{prepareTouchAudio();await preparedTouchAudio('sfx/ui-select.ogg');log({prepared:true});};
+document.querySelector('#prepared').onclick=()=>{input=performance.now();label='prepared';prepared.playInput('ui-select');};
+</script></html>

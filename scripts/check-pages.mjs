@@ -60,3 +60,5 @@ assert(combatStyles.includes('--topbar-content:48px'));
 assert(combatStyles.includes('.enemy.targeted:not(.defeated) .target-field{display:block}'));
 for(const file of ['style.css','expansion.css','refinements.css','typography.css'])assert(!readFileSync('src/'+file,'utf8').includes('.reward-cards'),'Reward rules must stay in combat.css: '+file);
 assert(!readFileSync('src/main.ts','utf8').includes('guide-banner'));
+
+await import('./check-pwa.mjs');

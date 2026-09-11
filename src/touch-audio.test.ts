@@ -1,0 +1,4 @@
+import {test,expect,vi,afterEach} from 'vitest';
+afterEach(()=>{vi.unstubAllGlobals();vi.resetModules();});
+test('encoded warmup only downloads seven touch cues, not music or an audio context',async()=>{const fetch=vi.fn(async(_url:string)=>new Response(new Uint8Array([1,2,3]))),context=vi.fn();vi.stubGlobal('Audio',class{canPlayType(){return 'probably';}});vi.stubGlobal('AudioContext',context);vi.stubGlobal('fetch',fetch);const {prepareTouchAudio,preparedTouchAudio}=await import('./touch-audio');prepareTouchAudio();prepareTouchAudio();expect(fetch).toHaveBeenCalledTimes(7);expect(fetch.mock.calls.every(c=>String(c[0]).endsWith('.ogg')&&!String(c[0]).includes('/music/'))).toBe(true);const a=await preparedTouchAudio('sfx/ui-select.ogg');expect(context).not.toHaveBeenCalled();expect(a?.byteLength).toBe(3);const b=await preparedTouchAudio('sfx/ui-select.ogg');expect(a).not.toBe(b);});
+

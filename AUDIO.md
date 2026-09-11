@@ -183,3 +183,7 @@ Windows의 Codex in-app Chromium, 로컬 Vite 서버에서 실제 Web Audio를 �
 - PCM 예상: 48kHz stereo float32 기준 약 1,420,800bytes(1.36MiB). 실제 리샘플링/코덱 길이에 따라 조금 달라진다.
 - 전체 오디오: 14,490,553bytes(13.82MiB), 파일 추가·음악 변경 없음.
 - `?audioDebug&audioDelay=200`은 개발 모드 전용이며 배포 JS에서 제거된다. 입력/로드/디코딩/start 시각은 로컬 DOM에만 표시한다. 재현 절차는 `qa/README.md` 참고.
+
+## v0.9.0 터치 선행 다운로드
+
+사용자 추가 요청으로 첫 입력 전 터치 피드백 7종의 지원 코덱 압축 데이터를 준비한다. AudioContext나 재생은 시작하지 않는다. PWA shell에는 OGG/MP3 14파일 63,235B를 포함하며 음악은 제외한다. 기존 unlock 뒤 우선 효과음 디코딩과 메모리 버퍼 재생 경로를 유지한다. 로컬 200ms fetch 지연 비교에서 새 mixer의 최초 ui-select source.start는 347ms, 압축 데이터 준비 후 새 mixer는 77.6ms였다. 이 수치는 브라우저 예약 지연이며 실제 Android/iOS 스피커 지연을 나타내지 않는다. `qa/touch-preload.html`로 재현한다.

@@ -1,12 +1,12 @@
 {
   "name": "file-island-echoes",
   "description": "Small browser game prototype",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 3000",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/build-pwa.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 3001",
     "test": "vitest run",
     "art": "node scripts/export-art.mjs",
@@ -14,7 +14,8 @@
     "art:ui": "node scripts/export-icons.mjs",
     "balance": "node scripts/run-balance.mjs",
     "audio:compose": "python scripts/compose-audio.py",
-    "audio:audit": "python scripts/audit-audio.py"
+    "audio:audit": "python scripts/audit-audio.py",
+    "test:pwa": "vitest run pwa/worker.test.mjs"
   },
   "devDependencies": {
     "typescript": "~5.9.3",

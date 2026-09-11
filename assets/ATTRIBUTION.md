@@ -186,3 +186,7 @@ SVG 생성 스크립트: `scripts/export-art.mjs`. 재생성: `npm run art`. 교
 ## v0.8 · 2026-09-11 · 카드 뒷면
 
 `public/assets/ui/card-back.svg`: 프로젝트를 위해 코드로 직접 제작한 대칭 회로·육각형·원형 데이터 장치 문양. 남색·청록·금색의 전용 카드 뒷면이며 공식 카드 프레임/이미지나 로고를 사용하지 않았다. 생성형 도구를 사용하지 않은 SVG이므로 이미지 생성 프롬프트는 없다. 앞면 기술 도형은 프로젝트 SVG 아이콘과 CSS 회로를 조합한다. 교체 위치는 `src/card-ui.ts`의 공통 참조다. 추가 래스터·음원·영상 또는 런타임 의존성은 없다.
+
+## PWA icons · 2026-09-11
+
+`public/assets/pwa/icon-192.png`, `icon-512.png`, `maskable-192.png`, `maskable-512.png`, `apple-touch-icon.png`: existing project-authored circular device motif redrawn in Python/Pillow by `scripts/create-pwa-icons.py`, then antialiased downsampling. Design brief: navy field, cyan circular device and screen, orange data trace, central 80% safe zone, no text. No image generator, official logo or extracted artwork used. No replacement required for the prototype.

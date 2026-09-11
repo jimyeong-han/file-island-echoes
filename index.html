@@ -2,14 +2,24 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
     <meta name="theme-color" content="#081724"/>
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <link rel="icon" type="image/svg+xml" href="/assets/ui/favicon.svg">
+<link rel="manifest" href="%BASE_URL%manifest.webmanifest">
+    <link rel="apple-touch-icon" href="%BASE_URL%assets/pwa/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="우리들의 모험">
 <title>디지몬: 우리들의 모험</title>
   </head>
   <body>
     <div id="app"></div>
+    <section id="boot-recovery" hidden style="padding:24px;background:#081724;color:#d9f3ee;font:18px system-ui"><h1>게임 파일을 불러오지 못했습니다</h1><p>연결을 확인한 뒤 다시 시도하세요. 저장된 탐험은 지우지 않습니다.</p><button id="boot-retry" style="min-height:44px">다시 불러오기</button></section>
+    <script>
+      window.addEventListener('error',function(e){if(e.target&&e.target.tagName==='SCRIPT'&&!document.getElementById('app').children.length)document.getElementById('boot-recovery').hidden=false;},true);
+      document.getElementById('boot-retry').addEventListener('click',function(){location.reload();});
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

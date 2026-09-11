@@ -1,3 +1,4 @@
+import {preparedTouchAudio} from './touch-audio';
 import rawManifest from './audio-manifest.json';
 import type { Settings } from './types';
 
@@ -19,7 +20,7 @@ export function smoothLoopEdge(samples: Float32Array, length: number, window=64)
 type Voice = { source: AudioBufferSourceNode; gain: GainNode; id: string; group: string; started: number; offset: number; stopping?: boolean };
 export interface AudioStatus { enabled: boolean; playing: string; loading: boolean; failed: number; voices: number; musicVoices: number; context: string; level: number; lastCue: string; musicStarts: number }
 
-/** One lazy mixer. No context or download before a gesture. */
+/** One lazy mixer. No context before a gesture. Touch cue bytes may be prepared separately. */
 export class AudioManager {
   private ctx?: AudioContext;
   private master?: GainNode;
@@ -136,9 +137,9 @@ export class AudioManager {
         const file=cue.files.find(f=>f.endsWith('.'+format));if(!file)continue;
         const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
         try {
-          const response=await fetch(import.meta.env.BASE_URL+'assets/audio/'+file,{signal:controller.signal});
-          if(!response.ok)continue;
-          const buffer=await this.ctx!.decodeAudioData(await response.arrayBuffer());
+          let bytes=await preparedTouchAudio(file);
+          if(!bytes){const response=await fetch(import.meta.env.BASE_URL+'assets/audio/'+file,{signal:controller.signal});if(!response.ok)continue;bytes=await response.arrayBuffer();}
+          const buffer=await this.ctx!.decodeAudioData(bytes);
           if(cue.loop)for(let channel=0;channel<buffer.numberOfChannels;channel++)smoothLoopEdge(buffer.getChannelData(channel),Math.round(cue.duration*buffer.sampleRate),Math.round(.002*buffer.sampleRate));
           this.buffers.set(id,buffer);this.trimCache();return buffer;
         } catch { /* Try the alternate codec once. */ } finally {clearTimeout(timeout);}
