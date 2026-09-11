@@ -2,7 +2,7 @@ import { defaultSettings, emptyArchive, loadSave, SAVE_KEY, LEGACY_KEY, validRun
 import { freshAbility } from './engine';
 import type { Run, Save } from './types';
 
-export const APP_VERSION='0.7.1';
+export const APP_VERSION='0.8.0';
 export const MAX_SAVE_BYTES=1024*1024;
 const APP='file-island-echoes';
 type Dict=Record<string,unknown>;

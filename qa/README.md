@@ -13,3 +13,7 @@ App scheduling timestamps do not measure physical speaker/headphone onset. Real 
 ## Disposable save QA
 
 Run `node scripts/create-save-qa.mjs` to create synthetic JSON files under ignored `test-results/save-fixtures/`. Use a fresh localhost port with no real saves, then test the actual Settings → Data management file picker. `/file-island-echoes/qa/save-storage.html` provides explicit buttons to prepare an unrelated key and an empty legacy key and inspect their state. Never run this helper on an origin containing user records. Export, reset, and import the actual downloaded synthetic file; the unrelated key must remain. These helpers are not production build entries.
+
+## Combat UI checks
+
+`node scripts/create-visual-qa.mjs` creates the ignored local fixture page. Use a disposable port (e.g. 3008) and its `test-results/visual.html`. The visible controls choose partner, scene and enemy pattern. Run combat checks, Check enemy motions, Check evolution and results, Check card faces, and Check log scroll perform actual DOM actions and report in the page. No production hook is installed. `node scripts/verify-combat-baseline.mjs` compares against pre-v0.8 engine commit 340c57c using generated ignored files.

@@ -23,6 +23,7 @@ for (const path of images) {
   assert(/^(characters|backgrounds|portraits)\/[a-z0-9-]+\.(webp|svg)$/.test(path), `Invalid asset path: ${path}`);
   assert(statSync(join(root, 'assets', path)).size > 1000, `Missing or empty art: ${path}`);
 }
+assert(statSync(join(root, 'assets/ui/card-back.svg')).size > 1000, 'Dedicated card back is missing');
 let checked = 0, rawBytes = 0, compressedBytes = 0;
 function inspect(directory) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {

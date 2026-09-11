@@ -8,7 +8,7 @@ const audioManifest=JSON.parse(readFileSync('src/audio-manifest.json','utf8'));
 const built = readFileSync('dist/index.html', 'utf8');
 const refs = [...built.matchAll(/(?:src|href)="([^"]+)"/g)].map(x => x[1]);
 const fonts=readdirSync('public/assets/fonts').filter(p=>p.endsWith('.woff2')).map(p=>'assets/fonts/'+p);
-const paths = [...fonts,...Object.values(audioManifest).flatMap(c=>c.files.map(p=>'assets/audio/'+p)), '', 'index.html', 'robots.txt', ...refs, ...[
+const paths = [...fonts,...Object.values(audioManifest).flatMap(c=>c.files.map(p=>'assets/audio/'+p)), '', 'index.html', 'robots.txt', 'assets/ui/card-back.svg', ...refs, ...[
   ...Object.values(manifest.characters), ...manifest.backgrounds, ...Object.values(manifest.portraits),
 ].map(p => 'assets/' + p)];
 await Promise.all(paths.map(async path => {

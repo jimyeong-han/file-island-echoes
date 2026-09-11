@@ -1,6 +1,10 @@
 import { crestPaths } from './crests.ts';
 // Project-drawn interface symbols: one 24px grid, rounded 1.8px strokes, no emoji.
 export const iconPaths: Record<string,string> = {
+  archive:'<path d="M4 4h7l1 2 1-2h7v16h-7l-1 1-1-1H4Z"/><path d="M12 6v15M7 8h2m6 0h2M7 12h2m6 0h2"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 5 2c-2 1-2 2-2 3m0 3v.1"/>',
+  settings:'<path d="m9 3-1 3-3 1 1 3-2 2 2 2-1 3 3 1 1 3h6l1-3 3-1-1-3 2-2-2-2 1-3-3-1-1-3Z"/><circle cx="12" cy="12" r="3"/>',
+
   'sound-on':'<path d="M3 9h4l5-4v14l-5-4H3Z"/><path d="M16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>',
   'sound-off':'<path d="M3 9h4l5-4v14l-5-4H3Z"/><path d="m17 9 5 6m0-6-5 6"/>',
   "attack": "<path d=\"m5 19 3-3m-1-3 4 4m-1-5 9-9v6l-7 7M5 19l-2 2\"/>",
