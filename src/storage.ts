@@ -13,6 +13,7 @@ const cards=(x:any)=>list(x,c=>known(CARDS,c));
 export function validRun(x:unknown):x is Run {
  if(!obj(x)||!known(CHARACTERS,x.characterId)||!known(CHAPTERS,x.chapterId)||!known(FORMS,x.form)||FORMS[x.form].owner!==x.characterId||!['intro','map','battle','event','rest','reward','evolution','result'].includes(x.screen))return false;
  if(x.evolvedFrom!==undefined&&(!known(FORMS,x.evolvedFrom)||FORMS[x.evolvedFrom].owner!==x.characterId))return false;
+ if(x.lastVictory!==undefined&&(typeof x.lastVictory!=='string'||x.lastVictory.length>2048))return false;
  if(x.lastEvent!==undefined&&!known(STORIES,x.lastEvent))return false;if(x.legacyEvent!==undefined&&!known(STORIES,x.legacyEvent))return false;
  if(!['seed','row','hp','maxHp','evoEnergy','bond','burden','corruption','supplies','battles','started'].every(k=>num(x[k])))return false;
  if(!Number.isInteger(x.row)||x.row>10||x.maxHp<1||x.hp>x.maxHp||typeof x.won!=='boolean'||!cards(x.deck)||!x.deck.length||!cards(x.rewards)||!list(x.storyFlags,s=>typeof s==='string')||!['active','victory','defeat','retreat'].includes(x.outcome))return false;

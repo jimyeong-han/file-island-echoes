@@ -87,6 +87,7 @@ export class GameAudio {
   private scene='';
   private timer?: ReturnType<typeof setTimeout>;
   constructor(settings: Settings) {this.mixer=new AudioManager(settings);}
+  resetScene(){clearTimeout(this.timer);this.scene='';this.mixer.stopGroup('scene');this.mixer.stopGroup('effects');this.mixer.setMusic(null);}
   sync(view: GameView, modal: string, run: Run|null, zone: number|null) {
     const scene=sceneFor(view,modal,run,zone);if(scene===this.scene)return;
     this.scene=scene;clearTimeout(this.timer);this.mixer.stopGroup('scene');

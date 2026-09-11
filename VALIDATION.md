@@ -79,3 +79,7 @@ Chromium에서 화면에 표시된 카드/적 예고를 읽고 실제 버튼과 
 ## v0.6.2 · 2026-09-11
 
 테스트 53개, build/check:pages, 50개 알파 스프라이트 감사, 프로덕션 HTTP 214 URL 통과. 1280px 전투와 390px 실제 새 탐험 → 신나리 → 전투에서 가트몬 단독 에셋 교체·투명·크롭을 확인. [구현 기록](docs/version-prompts/v0.6.2-gatomon-battle-pose.md).
+
+## v0.7 · 2026-09-11
+
+저장 관리 29개 추가 포함 82개 테스트, 프로덕션 빌드·Pages·HTTP 214 URL 검사 통과. 실제 파일 다운로드, 초기화 후 동일 파일 복원, 구버전 이관, 손상 run 복구 안내, 320px 모달과 Escape 취소 확인. [상세](docs/v0.7-validation.md).

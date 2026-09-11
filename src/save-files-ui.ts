@@ -1,0 +1,13 @@
+import { CHARACTERS, CHAPTERS } from './data';
+import type { SavePreview } from './save-files';
+const escape=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
+export function dataPanel(preview:SavePreview|null,message:string,reading:boolean){
+ const r=preview?.save.run,a=preview?.save.archive;
+ return `<h2>데이터 관리</h2><p>현재 브라우저의 기록을 파일로 보관하거나 다른 기기에서 이어갈 수 있습니다. 파일은 서버로 전송하지 않습니다.</p>
+ <div class="data-actions"><button class="secondary wide" data-action="save-export">저장 파일 내보내기</button><p>진행 중인 전투·덱, 도감, 클리어·엔딩, 소리·접근성 설정을 JSON 파일로 내려받습니다.</p>
+ <label class="file-label" for="save-import">저장 파일 불러오기 <small>JSON · 최대 1MB</small></label><input id="save-import" type="file" accept=".json,application/json" aria-describedby="file-note" ${reading?'disabled':''}/><p id="file-note">파일을 고르면 내용을 먼저 확인합니다. 확인 버튼을 누르기 전까지 현재 기록은 유지됩니다.</p></div>
+ <p class="data-message" role="status" aria-live="polite">${escape(message)}</p>
+ ${preview?`<section class="save-preview" aria-label="불러올 기록 미리보기"><h3>불러올 기록</h3><dl><dt>앱 버전</dt><dd>${escape(preview.appVersion)}</dd><dt>내보낸 날짜</dt><dd>${escape(preview.exportedAt==='날짜 정보 없음'?preview.exportedAt:new Date(preview.exportedAt).toLocaleString('ko-KR'))}</dd><dt>진행 중 탐험</dt><dd>${r&&r.screen!=='result'?`${CHARACTERS[r.characterId].name} · ${CHAPTERS[r.chapterId].name} · ${r.row+1}번째 장소`:'없음'}</dd><dt>클리어 / 엔딩</dt><dd>${a!.wins}회 / ${a!.endings.length}개</dd><dt>발견한 도감</dt><dd>진화 ${a!.forms.length} · 적 ${a!.enemies.length} · 이야기 ${a!.events.length}</dd></dl>${preview.warnings.map(w=>`<p class="save-warning">${escape(w)}</p>`).join('')}<p><strong>현재 탐험·기록·설정 전체를 이 파일의 내용으로 교체합니다.</strong> 필요하면 먼저 현재 기록을 내보내세요.</p><button class="primary wide" data-action="save-import-confirm">불러와 현재 기록 교체</button><button class="quiet wide" data-action="save-import-cancel">불러오기 취소</button></section>`:''}
+ <section class="reset-section"><h3>처음부터 시작하기</h3><p>탐험과 도감, 클리어·엔딩, 모든 설정을 초기화합니다. 다음 화면에서 한 번 더 확인합니다.</p><button class="danger wide" data-action="save-reset">기록 초기화 확인</button></section>`;
+}
+export function resetPanel(message:string){return `<h2>모든 기록을 초기화할까요?</h2><p>이 브라우저에 있는 다음 기록을 삭제합니다.</p><ul><li>현재 탐험과 전투·덱</li><li>캐릭터별 챕터 클리어와 엔딩</li><li>진화체·적·이벤트 도감</li><li>소리·움직임 줄이기·안내 설정</li><li>이 게임의 이전 버전 저장</li></ul><p class="danger-note">초기화는 되돌릴 수 없습니다. 먼저 JSON 백업을 내려받으면 나중에 불러올 수 있습니다.</p><p>같은 주소에 저장된 다른 앱의 데이터는 삭제하지 않습니다.</p><p class="data-message" role="status" aria-live="polite">${escape(message)}</p><button class="secondary wide" data-action="save-export">먼저 저장 파일 내보내기</button><button class="danger wide" data-action="save-reset-confirm">모든 기록 초기화</button><button class="quiet wide" data-action="data">취소하고 돌아가기</button>`;}

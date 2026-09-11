@@ -9,3 +9,7 @@ These pages run through `npm run dev`; Vite does not include them in `dist`.
 To compare v0.5, place the original `src/audio.ts` from commit `9807f53` at `test-results/audio-baseline.ts`, copy `src/audio-manifest.json` beside it, and add `?baseline` to the latency page. Those baseline files remain ignored. The baseline module's type-only import is stripped by Vite.
 
 App scheduling timestamps do not measure physical speaker/headphone onset. Real iOS Safari/Android Chrome listening is still needed to verify device output latency.
+
+## Disposable save QA
+
+Run `node scripts/create-save-qa.mjs` to create synthetic JSON files under ignored `test-results/save-fixtures/`. Use a fresh localhost port with no real saves, then test the actual Settings → Data management file picker. `/file-island-echoes/qa/save-storage.html` provides explicit buttons to prepare an unrelated key and an empty legacy key and inspect their state. Never run this helper on an origin containing user records. Export, reset, and import the actual downloaded synthetic file; the unrelated key must remain. These helpers are not production build entries.

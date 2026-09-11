@@ -1,0 +1,6 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>Disposable save QA</title><h1>합성 저장 전용 검사</h1><p>테스트 전용 새 localhost 포트에서만 사용합니다. 사용자 기록이 있는 주소에서 실행하지 마세요.</p><button id="marker">다른 앱 합성 키와 빈 v1 키 준비</button><button id="inspect">키 상태 확인</button><pre id="output"></pre><script type="module">
+import {SAVE_KEY,LEGACY_KEY} from '../src/storage.ts';
+import {freshSave} from '../src/save-files.ts';
+const show=()=>document.querySelector('#output').textContent=JSON.stringify({other:localStorage.getItem('qa:unrelated-game'),legacy:localStorage.getItem(LEGACY_KEY)!==null,current:localStorage.getItem(SAVE_KEY)!==null,save:JSON.parse(localStorage.getItem(SAVE_KEY)||'null')},null,2);
+document.querySelector('#marker').onclick=()=>{localStorage.setItem('qa:unrelated-game','keep');localStorage.setItem(LEGACY_KEY,JSON.stringify({...freshSave(),version:1}));show();};document.querySelector('#inspect').onclick=show;show();
+</script></html>
