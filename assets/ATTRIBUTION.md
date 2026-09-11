@@ -171,3 +171,14 @@ SVG 생성 스크립트: `scripts/export-art.mjs`. 재생성: `npm run art`. 교
 ## v0.6.2 · 2026-09-11
 
 `characters/gatomon-balanced-battle.webp`: 사용자 정정에 따라 단독 스프라이트를 내장 imagegen으로 재제작. [생성 요청](prompts/v0.6.2/gatomon-balanced-battle.txt). 단색 녹색 배경을 알파 WebP로 최적화. 공식 추출 에셋 사용 없음. 초상화는 유지.
+
+## v0.7.1 · 2026-09-11 · 가트몬의 매끈한 셀 셰이딩
+
+프로젝트 기존 생성 이미지를 편집 대상으로 내장 imagegen을 사용했다. 공식 이미지·음원·추출 에셋은 사용하지 않았다.
+
+| 최종 파일 | 용도 | 생성 요청 | 후처리 |
+| --- | --- | --- | --- |
+| `portraits/kari-gatomon-smooth.webp` | 신나리 동반 초상화 | [원본 프롬프트](prompts/v0.7.1/kari-gatomon-smooth.txt) | 640px RGB WebP 최적화 |
+| `characters/gatomon-smooth-battle.webp` | 가트몬 단독 전투·공명·도감 | [원본 프롬프트](prompts/v0.7.1/gatomon-smooth-battle.txt) | 녹색 배경을 알파로 변환하고 가장자리 녹색 제거, 640px WebP 최적화 |
+
+가슴·목의 털 뭉치와 몸의 잔털 표현을 제거했다. 귀 끝과 꼬리의 보라색 실루엣은 유지했다. 기존 자세와 의상은 편집의 고정 조건으로 사용했다. 이전 두 파일은 위 파일로 교체했다. 추가 교체 필수 항목 없음. 생성 원본은 배포하지 않는다.

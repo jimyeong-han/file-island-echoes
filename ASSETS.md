@@ -113,3 +113,7 @@ v0.4는 이미지 66개를 사용합니다: 알파 WebP 전투/이벤트 캐릭�
 ## v0.6.2 · 2026-09-11
 
 `characters/gatomon-battle.webp` → `characters/gatomon-balanced-battle.webp` (640×640 알파 WebP). 머리·목·어깨·몸통·발의 방향과 무게중심을 다시 구성했습니다. 매니페스트가 전투·지도·공명·진화·도감에 공통 적용합니다.
+
+## v0.7.1 · 가트몬 털 질감 정리
+
+`portraits/kari-gatomon-short-hair.webp` → `portraits/kari-gatomon-smooth.webp` (68,960B), `characters/gatomon-balanced-battle.webp` → `characters/gatomon-smooth-battle.webp` (50,588B). 두 파일 모두 640×640이며 단독 전투 이미지에는 알파가 있다. 총 119,548B. 매니페스트 하나에서 기존 사용 화면 전체를 연결한다. 초상화는 캐릭터 선택 시, 단독 이미지는 해당 파트너 사용 시 로드되어 타이틀 초기 로딩에 추가되지 않는다.

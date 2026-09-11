@@ -27,7 +27,7 @@
     "etemon": "characters/etemon-battle.webp",
     "garudamon": "characters/garudamon-battle.webp",
     "garurumon": "characters/garurumon-battle.webp",
-    "gatomon": "characters/gatomon-balanced-battle.webp",
+    "gatomon": "characters/gatomon-smooth-battle.webp",
     "gazimon": "characters/gazimon-battle.webp",
     "gomamon": "characters/gomamon-battle.webp",
     "ikkakumon": "characters/ikkakumon-battle.webp",
@@ -68,7 +68,7 @@
     "mimi": "portraits/mimi-palmon.webp",
     "matt": "portraits/matt-gabumon.webp",
     "tk": "portraits/tk-patamon-adventure.webp",
-    "kari": "portraits/kari-gatomon-short-hair.webp",
+    "kari": "portraits/kari-gatomon-smooth.webp",
     "sora": "portraits/sora-biyomon.webp"
   }
 }
