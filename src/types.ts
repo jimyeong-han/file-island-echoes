@@ -32,4 +32,5 @@ export interface ChapterDefinition {id:ChapterId;name:string;subtitle:string;bos
 export interface Run {seed:number;screen:'intro'|'map'|'battle'|'event'|'rest'|'reward'|'evolution'|'result';characterId:CharacterId;chapterId:ChapterId;row:number;path:string[];node:string|null;hp:number;maxHp:number;form:Form;evoEnergy:number;bond:number;burden:number;corruption:number;supplies:number;deck:CardId[];battle:Battle|null;rewards:CardId[];won:boolean;battles:number;started:number;storyFlags:string[];evolvedFrom?:Form;legacyEvent?:string;lastEvent?:string;lastVictory?:string;outcome:'active'|'victory'|'defeat'|'retreat'}
 export interface Archive {forms:Form[];enemies:string[];events:string[];zones:number[];runs:number;wins:number;best:number;clears:Partial<Record<CharacterId,ChapterId[]>>;endings:string[]}
 export interface Settings {masterVolume:number;musicVolume:number;sfxVolume:number;muted:boolean;reducedMotion:boolean;guide:boolean}
-export interface Save {version:2;run:Run|null;archive:Archive;settings:Settings}
+export interface RunSlot {run:Run;updatedAt:number}
+export interface Save {version:3;runs:Partial<Record<CharacterId,RunSlot>>;activeCharacterId:CharacterId|null;archive:Archive;settings:Settings}

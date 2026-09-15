@@ -1,3 +1,4 @@
+import {saveRun} from './storage';
 import {describe,it,expect} from 'vitest';
 import {crestHUD,crestProgress,resourceChip,CREST_RESOURCES} from './crest-ui';
 import {newRun,enterNode,crestReady} from './engine';
@@ -37,7 +38,7 @@ describe('v0.8.2 compact crest presentation',()=>{
   for(const id of Object.keys(CHARACTERS) as CharacterId[]){const r=battle(id),spec=CREST_RESOURCES[id],chip=resourceChip(r);if(spec)expect(chip).toContain(`0/${spec.max}`);else expect(chip).toBe('');expect(chip).not.toMatch(/再生|재생|반격|중첩 없음/);}
  });
  it.each([true,false])('imports old guide=%s without changing the checkpoint',guide=>{
-  const s=freshSave();s.run=battle('tai');s.settings.guide=guide;
+  const s=freshSave();saveRun(s,battle('tai'),123);s.settings.guide=guide;
   const envelope=JSON.parse(exportSave(s).text);envelope.appVersion='0.8.1';
   expect(prepareImport(JSON.stringify(envelope)).save).toEqual(s);
  });

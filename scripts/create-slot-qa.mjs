@@ -1,0 +1,3 @@
+import {build} from 'esbuild';import {writeFileSync,mkdirSync} from 'node:fs';
+mkdirSync('test-results',{recursive:true});await build({entryPoints:['qa/slots.ts'],bundle:true,format:'esm',outfile:'test-results/slots.js'});
+writeFileSync('test-results/slots.html','<!doctype html><html lang="ko"><meta charset="utf-8"><title>Local slot diagnostics</title><h1>Disposable local slots</h1><a href="/file-island-echoes/">Game</a><button id="inspect">Inspect slots</button><button id="capture">Capture slots</button><button id="compare">Compare slots</button><button id="seed">Replace local fixtures with eight slots</button><button id="backup">Verify backup roundtrip</button><pre></pre><script type="module" src="/slots.js"></script></html>');

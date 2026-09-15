@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { exportSave, prepareImport, replaceSave, resetSave, freshSave, MAX_SAVE_BYTES } from './save-files';
-import { SAVE_KEY, LEGACY_KEY, loadSave } from './storage';
+import { SAVE_KEY, LEGACY_KEY, loadSave, activeRun, saveRun } from './storage';
 import { newRun, enterNode, playCard } from './engine';
 
 const fullSave=()=>{
- const s=freshSave();s.run=newRun(123,'kari');s.run.started=Date.parse('2026-09-11T00:00:00Z');s.run.screen='map';enterNode(s.run,'0a');playCard(s.run,0);
+ const s=freshSave();saveRun(s,newRun(123,'kari'),123);activeRun(s)!.started=Date.parse('2026-09-11T00:00:00Z');activeRun(s)!.screen='map';enterNode(activeRun(s)!,'0a');playCard(activeRun(s)!,0);
  s.archive={forms:['gatomon','angewomon'],enemies:['devimon'],events:[],zones:[0,1,2],runs:2,wins:1,best:11,clears:{kari:['file']},endings:['kari:file']};
  s.settings={masterVolume:.42,musicVolume:.16,sfxVolume:.72,muted:false,reducedMotion:true,guide:false};return s;
 };
@@ -27,7 +27,7 @@ describe('local save files',()=>{
  });
  it('reset deletes only the two owned keys and a backup restores everything',()=>{
   const io=memory(),s=fullSave(),backup=exportSave(s).text;io.setItem(SAVE_KEY,JSON.stringify(s));io.setItem(LEGACY_KEY,'old');io.setItem('unrelated:test','keep');
-  expect(resetSave(io)).toBe(true);expect([...io.values]).toEqual([['unrelated:test','keep']]);expect(loadSave(io).save.run).toBe(null);
+  expect(resetSave(io)).toBe(true);expect([...io.values]).toEqual([['unrelated:test','keep']]);expect(activeRun(loadSave(io).save)).toBe(null);
   expect(replaceSave(prepareImport(backup),io)).toBe(true);expect(loadSave(io).save).toEqual(s);
  });
  it('reports reset failures and restores both keys when the second removal fails',()=>{
@@ -39,21 +39,21 @@ describe('local save files',()=>{
  it('migrates raw v1 and v1 payloads using the existing storage migration',()=>{
   const s=fullSave(),r=newRun(123,'tai');r.screen='map';enterNode(r,'0a');const old={...s,version:1,run:r};
   for(const text of [JSON.stringify(old),JSON.stringify({...envelope(),payload:old})]){
-   const p=prepareImport(text);expect(p.save.version).toBe(2);expect(p.save.run?.characterId).toBe('tai');expect(p.save.archive.clears.tai).toEqual(['file']);expect(p.warnings.length).toBeGreaterThan(0);
+   const p=prepareImport(text);expect(p.save.version).toBe(3);expect(activeRun(p.save)?.characterId).toBe('tai');expect(p.save.archive.clears.tai).toEqual(['file']);expect(p.warnings.length).toBeGreaterThan(0);
   }
  });
  it('keeps archive and settings when run is corrupt',()=>{
-  const e=envelope();e.payload.run.form='not-a-form';const p=prepareImport(JSON.stringify(e));expect(p.save.run).toBe(null);expect(p.save.archive).toEqual(fullSave().archive);expect(p.save.settings).toEqual(fullSave().settings);expect(p.warnings.join(' ')).toContain('도감과 설정');
+  const e=envelope();e.payload.runs.kari.run.form='not-a-form';const p=prepareImport(JSON.stringify(e));expect(activeRun(p.save)).toBe(null);expect(p.save.archive).toEqual(fullSave().archive);expect(p.save.settings).toEqual(fullSave().settings);expect(p.warnings.join(' ')).toContain('도감과 설정');
  });
  it('removes unknown safe fields from all persisted levels',()=>{
-  const e=envelope();e.extra='okay';e.payload.extra='ignore';e.payload.run.extra='ignore';e.payload.run.battle.extra='ignore';e.payload.run.battle.ability.extra='ignore';e.payload.run.battle.enemies[0].extra='ignore';
+  const e=envelope();e.extra='okay';e.payload.extra='ignore';e.payload.runs.kari.run.extra='ignore';e.payload.runs.kari.run.battle.extra='ignore';e.payload.runs.kari.run.battle.ability.extra='ignore';e.payload.runs.kari.run.battle.enemies[0].extra='ignore';
   expect(prepareImport(JSON.stringify(e)).save).toEqual(fullSave());
  });
  it.each([
   ['invalid JSON','{'],['non-object','[]'],['wrong app',JSON.stringify({...envelope(),app:'another-app'})],
-  ['future format',JSON.stringify({...envelope(),formatVersion:2})],['missing payload',JSON.stringify({...envelope(),payload:null})],
+  ['future format',JSON.stringify({...envelope(),formatVersion:3})],['missing payload',JSON.stringify({...envelope(),payload:null})],
   ['empty archive',JSON.stringify({...envelope(),payload:{...fullSave(),archive:{}}})],
-  ['future schema',JSON.stringify({...envelope(),payload:{...fullSave(),version:3}})],
+  ['future schema',JSON.stringify({...envelope(),payload:{...fullSave(),version:4}})],
   ['bad date',JSON.stringify({...envelope(),exportedAt:'invalid'})],['bad version',JSON.stringify({...envelope(),appVersion:'<img onerror=1>'})],
   ['prototype pollution','{"app":"file-island-echoes","payload":{"__proto__":{"polluted":true}}}'],
   ['constructor pollution','{"constructor":{"prototype":{"polluted":true}}}'],
@@ -65,11 +65,11 @@ describe('local save files',()=>{
   const io=memory();io.setItem(SAVE_KEY,'original');expect(()=>prepareImport(text)).toThrow();expect(io.getItem(SAVE_KEY)).toBe('original');expect(({} as Record<string,unknown>).polluted).toBeUndefined();
  });
  it('rejects oversized files before parsing even if reported byte count is forged',()=>{
-  expect(()=>prepareImport('{}',MAX_SAVE_BYTES+1)).toThrow('1MB');expect(()=>prepareImport(' '.repeat(MAX_SAVE_BYTES+1),1)).toThrow('1MB');
+  expect(()=>prepareImport('{}',MAX_SAVE_BYTES+1)).toThrow('8MB');expect(()=>prepareImport(' '.repeat(MAX_SAVE_BYTES+1),1)).toThrow('8MB');
  });
  it('rejects excessive nesting',()=>{let x:unknown=0;for(let i=0;i<20;i++)x={x};expect(()=>prepareImport(JSON.stringify({...envelope(),extra:x}))).toThrow('복잡');});
  it('does not discard valid logs or optional victory copy',()=>{
-  const s=fullSave();s.run!.lastVictory='정화 완료';expect(prepareImport(exportSave(s).text).save).toEqual(s);
+  const s=fullSave();activeRun(s)!.lastVictory='정화 완료';expect(prepareImport(exportSave(s).text).save).toEqual(s);
  });
- it('recovers a run with malformed optional display fields',()=>{const e=envelope();e.payload.run.lastVictory={bad:true};expect(prepareImport(JSON.stringify(e)).save.run).toBe(null);});
+ it('recovers a run with malformed optional display fields',()=>{const e=envelope();e.payload.runs.kari.run.lastVictory={bad:true};expect(activeRun(prepareImport(JSON.stringify(e)).save)).toBe(null);});
 });
