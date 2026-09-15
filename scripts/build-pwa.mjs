@@ -1,3 +1,4 @@
+import {musicFiles} from '../pwa/pack.mjs';
 import {readFileSync,writeFileSync,readdirSync,statSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 const base='/file-island-echoes/';
@@ -6,15 +7,16 @@ const files=['index.html','manifest.webmanifest',...Array.from(html.matchAll(/(?
 const touch=JSON.parse(readFileSync('src/touch-sfx.json'));
 const audio=JSON.parse(readFileSync('src/audio-manifest.json'));
 files.push(...touch.flatMap(id=>audio[id].files.map(f=>'assets/audio/'+f)));
+const music=musicFiles(audio);files.push(...music);
 const unique=[...new Set(files)];
 const hash=createHash('sha256');for(const f of unique)hash.update(readFileSync('dist/'+f));
-const source=readFileSync('pwa/worker.mjs','utf8').replace('export function','function');hash.update(source);
+const source=readFileSync('pwa/worker.mjs','utf8').replaceAll('export ','');hash.update(source);
 const build=JSON.parse(readFileSync('package.json')).version+'-'+hash.digest('hex').slice(0,12);
 const revisions={};
 function scan(dir){for(const name of readdirSync('dist/'+dir)){const path=dir+'/'+name;if(statSync('dist/'+path).isDirectory())scan(path);else if(/\.(webp|png|svg|mp3|ogg|woff2)$/.test(path))revisions[base+path]=createHash('sha256').update(readFileSync('dist/'+path)).digest('hex').slice(0,12);}}
 scan('assets');
 const revisionHash=createHash('sha256').update(JSON.stringify(revisions)).digest('hex').slice(0,8);
-const config={base,build:build+'-'+revisionHash,files:unique,revisions};
-writeFileSync('dist/sw.js',source+`\nconst worker=createWorker(self,${JSON.stringify(config)});\nself.addEventListener('install',e=>e.waitUntil(worker.install()));\nself.addEventListener('activate',e=>e.waitUntil(worker.activate()));\nself.addEventListener('fetch',e=>{if(worker.eligible(e.request))e.respondWith(worker.fetchRequest(e.request));});\nself.addEventListener('message',e=>{if(e.data?.type==='APPLY_UPDATE')e.waitUntil(self.skipWaiting());});\n`);
+const config={base,build:build+'-'+revisionHash,files:unique,revisions,music,musicBytes:music.reduce((n,f)=>n+statSync('dist/'+f).size,0)};
+writeFileSync('dist/sw.js',source+`\nconst worker=createWorker(self,${JSON.stringify(config)});\nself.addEventListener('install',e=>e.waitUntil(worker.install()));\nself.addEventListener('activate',e=>e.waitUntil(worker.activate()));\nself.addEventListener('fetch',e=>{if(worker.eligible(e.request))e.respondWith(worker.fetchRequest(e.request));});\nself.addEventListener('message',e=>{if(e.data?.type==='APPLY_UPDATE')e.waitUntil(self.skipWaiting());if(e.data?.type==='MUSIC_STATUS')e.waitUntil(worker.musicStatus().then(status=>e.ports[0]?.postMessage(status)));});\n`);
 writeFileSync('dist/pwa-build.json',JSON.stringify({...config,bytes:unique.reduce((n,f)=>n+statSync('dist/'+f).size,0)},null,2));
 console.log('PWA shell:',build,unique.length,'files',JSON.parse(readFileSync('dist/pwa-build.json')).bytes,'bytes');

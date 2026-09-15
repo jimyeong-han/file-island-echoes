@@ -37,7 +37,6 @@
 .enemy:has(>.form-devimon){--enemy-species-height:199px}.enemy:has(>.form-elec),.enemy:has(>.form-nume){--enemy-species-height:148px}
 .enemy>.sprite{height:var(--enemy-sprite-height);position:relative;z-index:2}
 .enemy>.intent,.enemy>.fighter-label,.enemy>.status-tags,.enemy>.fighter-name,.enemy>.enemy-health{position:relative;z-index:3}
-.target-field{display:none;position:absolute;bottom:4px;left:-8%;width:116%;height:calc(var(--enemy-sprite-height)*.9);background:linear-gradient(to top,#54dfcb36,transparent 95%);mask-image:linear-gradient(to right,transparent,#000 25%,#000 75%,transparent);pointer-events:none;border-radius:50% 50% 12% 12%}
 .enemy.targeted:not(.defeated) .target-field{display:block}
 @media(max-width:760px), (max-height:500px) and (pointer:coarse){:root{--topbar-content:48px}.topbar .brand span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.top-actions{grid-template-columns:repeat(4,44px)}.top-actions .quiet{width:44px}.top-actions .quiet span{display:none}.topbar .brand{flex:none}.topbar{padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right));gap:4px}.topbar .brand .icon{width:25px;height:25px}}
 @media(max-width:760px){.battle-content{padding:12px 12px 30px}.battle-heading h1{font-size:1.125rem}.battle-heading .turn-info{gap:5px}.battle-heading [data-action=help]{display:none}.battlefield{padding:14px 8px 10px;min-height:260px;gap:3px}.fighter.player{width:39%;min-width:0}.enemy-group{width:60%;gap:2px}.enemy{padding:0 2px}.enemy:only-child{max-width:100%}.fighter-label{flex-direction:column;gap:1px}.fighter.player>.sprite{height:125px!important;max-height:125px!important;width:100%!important;margin-top:0}.enemy{--enemy-sprite-height:135px}.enemy>.sprite{height:var(--enemy-sprite-height)!important;max-height:var(--enemy-sprite-height)!important;width:100%!important}.fighter-base{width:80%;max-width:120px}.motion-status{font-size:.75rem}.hand-toolbar{padding:8px 0;gap:8px}.hand-toolbar .energy-orb{min-height:44px;min-width:48px;padding:4px}.hand-toolbar .energy-orb small{font-size:.75rem}.hand-toolbar .pile-counts{flex:1;font-size:.75rem}.hand-toolbar .end-turn{min-height:44px}.hand{gap:12px;min-height:340px;margin-inline:-3px}.game-card{flex-basis:184px;min-width:184px;width:184px;min-height:300px}.battlefield .boss-clock{position:relative;inset:auto;width:100%;font-size:.6875rem}.boss-field{flex-wrap:wrap}.boss-clock span{font-size:.6875rem}.character-detail .detail-art{top:0}.statusbar.combat-status{padding:10px 12px}.combat-status .health{display:none}}
@@ -68,9 +67,6 @@ dialog[open]{display:flex;flex-direction:column}
 .battle-heading .turn-info{white-space:nowrap;display:flex;flex-wrap:nowrap}
 .motion-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .enemy.targeted:after{content:none}
-.enemy .fighter-base{filter:none;z-index:1;background:transparent;pointer-events:none}
-.enemy .fighter-base:before{content:'';position:absolute;inset:0;background:#020a10aa;border-radius:50%;filter:blur(3px)}
-.enemy.targeted:not(.defeated) .fighter-base:after{content:'';position:absolute;inset:-4px 0;border:2px solid #72e7de;box-shadow:0 0 12px #4ce7d56b,inset 0 0 10px #64ecdb50;border-radius:50%;background:#5adaca38}
 .enemy:focus-visible{outline:3px dashed #ffe2a0;outline-offset:3px}
 @media(max-width:760px){.battle-heading{gap:8px}.battle-analysis{padding:6px;font-size:.75rem}.battle-heading .turn-info{gap:4px}.battle-title h1{font-size:1rem}.battle-title .eyebrow{font-size:.6875rem;letter-spacing:0}.dialog-top{padding:12px;gap:8px}.dialog-body{padding:14px 16px 20px}}
 @media(max-width:360px){.battle-heading{gap:5px}.battle-analysis{white-space:normal;max-width:90px}.battle-heading .turn-info{flex-direction:column;gap:0}.battle-title h1{font-size:.9375rem}}
@@ -104,3 +100,10 @@ dialog[open]{display:flex;flex-direction:column}
 .player .fighter-label .crest-resource{position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;width:max-content;max-width:100%;white-space:nowrap;border:1px solid #83b6a9;background:#102b30ed;border-radius:4px;padding:1px 5px;color:#dbedca;font-size:.6875rem;line-height:1.4}
 .crest-resource b{font-variant-numeric:tabular-nums}
 @media(max-width:760px){.crest-hud{grid-template-columns:20px minmax(0,1fr) max-content;column-gap:6px;row-gap:0;padding:4px 6px}.crest-symbol{grid-row:1/3}.crest-symbol .icon{width:20px;height:20px}.crest-title{grid-column:2;font-size:.75rem}.crest-progress{grid-column:2;font-size:.6875rem}.crest-button{grid-column:3;grid-row:1/3}}
+/* One measured contact plane: rear aura, ground pool and foreground arc. */
+.enemy .fighter-base{position:absolute;max-width:none;margin:0;filter:none;background:radial-gradient(ellipse,#020a1099,transparent 72%);border-radius:50%;z-index:auto;pointer-events:none}
+.target-field{display:none;position:absolute;bottom:50%;left:0;width:100%;height:var(--aura-height);z-index:1;pointer-events:none;background:radial-gradient(ellipse 54% 94% at 50% 100%,#50dac638 0%,#52e7d528 26%,#61e8d610 50%,transparent 75%);border-radius:50% 50% 0 0}
+.enemy.targeted:not(.defeated) .fighter-base{background:radial-gradient(ellipse,#5cebd518 5%,#5cebd532 42%,#83f7e580 57%,#54daca3b 66%,transparent 78%)}
+.enemy.targeted:not(.defeated) .fighter-base:after{content:'';position:absolute;inset:0;z-index:3;clip-path:inset(50% 0 0);border-radius:50%;background:radial-gradient(ellipse,transparent 42%,#95ffeea0 55%,#62e9d54a 65%,transparent 80%)}
+.enemy>.sprite{margin-bottom:4px}
+@media(max-width:760px){.enemy>.sprite{margin-bottom:2px}}

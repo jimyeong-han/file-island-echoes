@@ -1,6 +1,6 @@
 # 모바일 앱 설치와 오프라인
 
-v0.9.0. 기존 Vite + TypeScript 구조에 작은 service worker를 직접 구현했다. 새 런타임 의존성·계정·분석·추적·푸시·백그라운드 동기화는 없다.
+v0.9.1. 기존 Vite + TypeScript 구조에 작은 service worker를 직접 구현했다. 새 런타임 의존성·계정·분석·추적·푸시·백그라운드 동기화는 없다.
 
 ## 설치와 실행
 
@@ -14,8 +14,8 @@ v0.9.0. 기존 Vite + TypeScript 구조에 작은 service worker를 직접 구�
 `npm run build`는 Vite 빌드 뒤 `scripts/build-pwa.mjs`로 `sw.js`와 검사 메타데이터 `pwa-build.json`을 만든다. 프로덕션에서만 등록한다. manifest의 id/start_url/scope는 `./`이며 `/file-island-echoes/` 기준으로 해석된다. worker URL은 같은 경로의 `sw.js`, scope는 `/file-island-echoes/`다.
 
 - shell: HTML, 해시 JS/CSS, manifest, 로컬 폰트, UI SVG와 앱 PNG. 사용자 추가 요청에 따라 터치 7종의 OGG/MP3 14개도 포함한다. 약 2.50MiB, 64파일. install이 모두 성공해야 활성화된다.
-- 터치 효과음: 확인/선택/취소/거부/카드 선택/노드 선택/에너지 부족. 두 코덱 합계 63,235B. 첫 입력 전에는 지원 코덱의 압축 데이터만 미리 받고, AudioContext 생성·디코딩·재생은 기존 사용자 입력/음소거 정책을 따른다. 음악은 미리 받지 않는다.
-- runtime: 방문하며 실제 요청한 그림·음악만 cache-first. URL별 콘텐츠 해시를 키에 넣어 수정된 파일은 새로 받고, 변경되지 않은 파일은 업데이트 이후에도 재사용한다. 최대 180응답; 저장 공간 부족은 게임 실행을 막지 않는다.
+- 터치 효과음: 확인/선택/취소/거부/카드 선택/노드 선택/에너지 부족. 두 코덱 합계 63,235B. 첫 입력 전에는 지원 코덱의 압축 데이터만 미리 받고, AudioContext 생성·디코딩·재생은 기존 사용자 입력/음소거 정책을 따른다. 음악은 별도 필수 팩으로 선캐시한다.
+- runtime: 방문하며 실제 요청한 그림·효과음만 cache-first. URL별 콘텐츠 해시를 키에 넣어 수정된 파일은 새로 받고, 변경되지 않은 파일은 업데이트 이후에도 재사용한다. 최대 180응답; 저장 공간 부족은 게임 실행을 막지 않는다.
 - shell 캐시 이름은 앱 이름 + 제품 버전 + 내용 해시. runtime은 앱 전용 v1 캐시이며 파일별 내용 해시로 구분한다. activate는 다른 앱의 캐시를 건드리지 않고 오래된 자체 shell만 제거한다.
 - navigation은 해당 worker가 설치한 index.html을 반환한다. 온라인에서도 같은 빌드의 HTML과 JS를 짝지어 구버전 HTML/새 청크 혼합을 피한다. base 밖 요청, 외부 origin, GET 이외, Range 요청은 가로채지 않는다. 실패/opaque 응답은 저장하지 않는다.
 - 미캐시 이미지의 오프라인 실패는 기존 이미지 fallback으로, 음악 실패는 무음으로 처리한다. 최초 방문 자체가 오프라인이면 아직 앱을 저장하지 못했으므로 실행할 수 없다. 브라우저는 저장 공간 압박으로 캐시를 제거할 수 있다.
@@ -37,3 +37,7 @@ v0.9.0. 기존 Vite + TypeScript 구조에 작은 service worker를 직접 구�
 모바일 레이아웃은 Chromium CSS viewport로 확인했다. 실제 Android 설치 UI, iOS 홈 화면 앱, 노치 safe area, OS 전환/재개와 스피커 출력 지연은 실기기 미검증이다. in-app browser에서는 beforeinstallprompt가 제공되지 않아 설치 버튼을 숨긴 상태를 확인했다.
 
 참고: [Service worker lifecycle](https://web.dev/articles/service-worker-lifecycle), [beforeinstallprompt](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeinstallprompt_event), [Service worker caching](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching).
+
+## v0.9.1 필수 음악 팩
+
+12곡 MP3/OGG 24파일, 13,266,249바이트를 설치 때 모두 검증한다. 본체 포함 약 15.16MiB(88파일). 설치 실패는 새 캐시만 제거하고 활성 버전을 보존한다. 변경 없는 음악은 콘텐츠 해시로 이전 팩에서 복사하며 새 버전 활성화 후에만 구팩을 삭제한다. 설정의 음악 준비 상태는 실제 캐시 응답 수를 확인한다. runtime 복구는 음악 팩을 지우지 않는다. 브라우저가 캐시를 퇴거하면 오프라인 음악이 사라질 수 있다. 전곡을 디코딩하지 않으며 기존 최대 3곡 메모리 제한을 유지한다.

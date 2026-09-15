@@ -3,6 +3,7 @@ const base=import.meta.env.BASE_URL;
 export class Pwa {
  registration:ServiceWorkerRegistration|null=null;
  prompt:InstallPrompt|null=null;
+ musicState='오프라인 음악 준비 확인 중';
  installed=false; applying=false; message=''; reloaded=false;
  constructor(private changed:()=>void){
   this.installed=this.standalone();
@@ -18,15 +19,20 @@ export class Pwa {
   if(!import.meta.env.PROD||!('serviceWorker' in navigator))return;
   try{
    this.registration=await navigator.serviceWorker.register(base+'sw.js',{scope:base,updateViaCache:'none'});
-   const observe=()=>{const installing=this.registration?.installing;installing?.addEventListener('statechange',()=>{if(installing.state==='installed')this.changed();});this.changed();};
-   this.registration.addEventListener('updatefound',observe);observe();
+   const observe=()=>{const installing=this.registration?.installing;installing?.addEventListener('statechange',()=>{if(installing.state==='redundant'){this.message='새 오프라인 파일 준비에 실패했습니다. 연결과 저장 공간을 확인하고 다시 시도하세요.';}if(installing.state==='installed'||installing.state==='redundant')this.changed();});this.changed();};
+   this.registration.addEventListener('updatefound',observe);observe();void this.refreshMusicStatus();
    navigator.serviceWorker.addEventListener('controllerchange',()=>this.controllerChanged());
   }catch{this.message='오프라인 준비를 완료하지 못했습니다. 온라인 게임은 계속할 수 있습니다.';this.changed();}
  }
- controllerChanged(){if(this.applying&&!this.reloaded){this.reloaded=true;location.reload();}else {this.warmVisibleAssets();this.changed();}}
+ controllerChanged(){if(this.applying&&!this.reloaded){this.reloaded=true;location.reload();}else {this.warmVisibleAssets();void this.refreshMusicStatus();this.changed();}}
  warmVisibleAssets(){for(const entry of performance.getEntriesByType('resource')){const url=new URL(entry.name);if(url.origin===location.origin&&url.pathname.startsWith(base+'assets/')&&/\.(webp|png|svg|mp3|ogg)$/.test(url.pathname))void fetch(url.href).catch(()=>{});}}
+ async refreshMusicStatus(){
+  const active=this.registration?.active;if(!active){this.musicState='오프라인 음악 준비 중 · 온라인 연결이 필요합니다.';this.changed();return;}
+  const channel=new MessageChannel();const timer=setTimeout(()=>{channel.port1.close();this.musicState='오프라인 음악 미확인 · 업데이트 확인으로 다시 준비하세요.';this.changed();},4000);
+  channel.port1.onmessage=e=>{clearTimeout(timer);channel.port1.close();this.musicState=e.data?.ready?'오프라인 음악 준비됨':`오프라인 음악 미완료 · ${Number(e.data?.count)||0}/${Number(e.data?.total)||0}`;this.changed();};active.postMessage({type:'MUSIC_STATUS'},[channel.port2]);
+ }
  async install(){const prompt=this.prompt;if(!prompt)return;this.prompt=null;try{await prompt.prompt();await prompt.userChoice;}catch{this.message='브라우저에서 설치를 완료하지 못했습니다.';}this.changed();}
- async check(){if(!this.registration||!navigator.onLine)return;try{await this.registration.update();this.message=this.registration.waiting?'새 버전 사용 가능':'업데이트 확인 완료';}catch{this.message='업데이트를 확인하지 못했습니다. 연결을 확인하세요.';}this.changed();}
+ async check(){if(!navigator.onLine)return;if(!this.registration){await this.start();return;}try{await this.registration.update();void this.refreshMusicStatus();this.message=this.registration.waiting?'새 버전 사용 가능':'업데이트 확인 완료';}catch{this.message='업데이트를 확인하지 못했습니다. 연결을 확인하세요.';}this.changed();}
  async apply(safe:boolean,save:()=>boolean){
   if(this.applying)return;
   if(!navigator.onLine){this.message='온라인으로 연결한 뒤 적용하세요.';this.changed();return;}
@@ -50,6 +56,6 @@ export class Pwa {
  }
  panel(safe:boolean){
   const button=(label:string,action:string,disabled=false)=>`<button class="secondary wide" data-action="pwa-${action}" ${disabled?'disabled':''}>${label}</button>`;
-  return `<section class="pwa-settings"><h3>앱 설치와 오프라인</h3>${this.installed?'<p>앱으로 실행 중이거나 설치된 상태입니다.</p>':this.prompt?button('앱으로 설치','install'):this.iosSafari()?'<p>Safari의 공유 → 홈 화면에 추가로 설치할 수 있습니다.</p>':'<p>지원하는 브라우저의 메뉴에서 홈 화면에 추가할 수 있습니다.</p>'}<p>한 번 받은 화면·그림은 오프라인에서도 사용합니다. 아직 받지 않은 그림과 소리는 생략될 수 있습니다.</p><p>${navigator.onLine?'온라인':'오프라인 · 저장한 파일로 실행 중'}${this.registration?.active?' · 오프라인 본체 준비됨':''}</p>${this.registration?.waiting?`<p><strong>새 버전 사용 가능</strong>${safe?'':' · 전투를 마친 뒤 적용할 수 있습니다.'}</p>${button('저장하고 업데이트 적용','apply',!safe||!navigator.onLine||this.applying)}`:''}${this.registration?button('업데이트 확인','check',!navigator.onLine||this.applying)+button('그림·소리 캐시 복구','repair',!navigator.onLine||this.applying):''}<p role="status">${this.message}</p><p>같은 주소의 앱과 브라우저는 기록을 공유할 수 있습니다. 앱 제거·브라우저 데이터 삭제로 기록을 잃을 수 있으니 중요한 탐험은 데이터 관리에서 JSON으로 내보내세요.</p></section>`;
+  return `<section class="pwa-settings"><h3>앱 설치와 오프라인</h3>${this.installed?'<p>앱으로 실행 중이거나 설치된 상태입니다.</p>':this.prompt?button('앱으로 설치','install'):this.iosSafari()?'<p>Safari의 공유 → 홈 화면에 추가로 설치할 수 있습니다.</p>':'<p>지원하는 브라우저의 메뉴에서 홈 화면에 추가할 수 있습니다.</p>'}<p>첫 오프라인 준비 시 음악 약 12.65MiB를 함께 받습니다. 그림은 방문한 화면부터 저장합니다.</p><p role="status">${this.musicState}</p><p>${navigator.onLine?'온라인':'오프라인 · 저장한 파일로 실행 중'}${this.registration?.active?' · 오프라인 본체 준비됨':''}</p>${this.registration?.waiting?`<p><strong>새 버전 사용 가능</strong>${safe?'':' · 전투를 마친 뒤 적용할 수 있습니다.'}</p>${button('저장하고 업데이트 적용','apply',!safe||!navigator.onLine||this.applying)}`:''}${button('업데이트 확인','check',!navigator.onLine||this.applying)+button('그림·소리 캐시 복구','repair',!navigator.onLine||this.applying)}<p role="status">${this.message}</p><p>같은 주소의 앱과 브라우저는 기록을 공유할 수 있습니다. 앱 제거·브라우저 데이터 삭제로 기록을 잃을 수 있으니 중요한 탐험은 데이터 관리에서 JSON으로 내보내세요.</p></section>`;
  }
 }
