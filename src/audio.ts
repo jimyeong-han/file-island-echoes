@@ -56,8 +56,8 @@ export class AudioManager {
   get status(): AudioStatus {
     let level=0;
     if(this.analyser&&this.ctx?.state==='running'&&!this.settings.muted){const samples=new Float32Array(this.analyser.fftSize);this.analyser.getFloatTimeDomainData(samples);level=Math.sqrt(samples.reduce((sum,n)=>sum+n*n,0)/samples.length);}
-    return {enabled: !this.settings.muted, playing: this.current?.id || '', loading: this.loading,
-      failed: this.failed.size, voices: this.voices.size, musicVoices: [...this.voices].filter(v=>this.catalog[v.id].loop).length,
+    return {enabled: !this.settings.muted, playing: [...this.voices].find(v=>v.group==='evolution'&&!v.stopping)?.id || this.current?.id || '', loading: this.loading,
+      failed: this.failed.size, voices: this.voices.size, musicVoices: [...this.voices].filter(v=>this.catalog[v.id].kind==='music').length,
       context: this.ctx?.state || 'locked',level,lastCue:this.lastCue,musicStarts:this.musicStarts};
   }
   private report() { this.onStatus?.(this.status); }
@@ -114,6 +114,26 @@ export class AudioManager {
     if(!this.ctx||this.hidden||this.settings.muted)return;
     await Promise.all(ids.filter(id=>this.catalog[id]?.kind==='sfx').map(id=>this.load(id,true)));
   }
+  /** Optional preparation never delays opening the confirmation dialog. */
+  async prepareScore(id: string) {
+    if(this.ctx&&!this.hidden&&!this.settings.muted)await this.load(id,true);
+  }
+  /** A bounded, cancellable one-shot on the MUSIC bus. No late start after skip. */
+  async playScore(id: string, signal: AbortSignal): Promise<boolean> {
+    const ctx=this.ctx,cue=this.catalog[id],epoch=this.effectEpoch,groupEpoch=this.groupEpoch.get('evolution')||0;
+    if(!ctx||ctx.state!=='running'||this.hidden||this.settings.muted||this.settings.musicVolume===0||signal.aborted||cue?.kind!=='music'||cue.loop)return false;
+    let expired=false;
+    let timeout:ReturnType<typeof setTimeout>|undefined;
+    let abort:()=>void=()=>{};
+    const deadline=new Promise<null>(resolve=>{
+      abort=()=>{expired=true;resolve(null);};
+      timeout=setTimeout(abort,250);signal.addEventListener('abort',abort,{once:true});
+    });
+    const buffer=await Promise.race([this.load(id,true),deadline]);
+    clearTimeout(timeout);signal.removeEventListener('abort',abort);
+    if(!buffer||expired||signal.aborted||epoch!==this.effectEpoch||groupEpoch!==(this.groupEpoch.get('evolution')||0)||this.hidden||this.settings.muted||ctx.state!=='running')return false;
+    this.startVoice(id,buffer,'evolution');this.report();return true;
+  }
   playInput(id: string) {
     if(this.settings.muted||this.hidden)return;
     // Start a cached sound in this event's stack, before a full UI render.
@@ -152,7 +172,7 @@ export class AudioManager {
     try{return await promise;}finally{if(this.pending.get(id)===promise)this.pending.delete(id);}
   }
   private trimCache() {
-    const music=[...this.buffers.keys()].filter(k=>this.catalog[k].loop);
+    const music=[...this.buffers.keys()].filter(k=>this.catalog[k].kind==='music');
     while(music.length>3){const index=music.findIndex(k=>k!==this.current?.id&&k!==this.desired);if(index<0)break;this.buffers.delete(music.splice(index,1)[0]);}
   }
   setMusic(id: string|null) {
@@ -183,9 +203,9 @@ export class AudioManager {
     const variation=cue.variation;
     source.playbackRate.value=cue.loop?1:1+(Math.random()-.5)*variation;
     gain.gain.value=cue.loop?0:cue.volume*(1+(Math.random()-.5)*variation);
-    source.connect(gain).connect(cue.loop?this.musicBus!:this.sfxBus!);
+    source.connect(gain).connect(cue.kind==='music'?this.musicBus!:this.sfxBus!);
     const voice={source,gain,id,group,started:ctx.currentTime+delay,offset};this.voices.add(voice);
-    this.lastCue=id;if(cue.loop)this.musicStarts++;
+    this.lastCue=id;if(cue.kind==='music')this.musicStarts++;
     source.onended=()=>{this.voices.delete(voice);source.disconnect();gain.disconnect();this.report();};
     source.start(voice.started,offset);return voice;
   }

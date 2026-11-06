@@ -1958,5 +1958,61 @@
         "seamStep": null
       }
     ]
+  },
+  {
+    "id": "music-evolution",
+    "label": "마음이 닿는 순간",
+    "kind": "music",
+    "seconds": 5.6,
+    "files": [
+      {
+        "preparedSeamStep": null,
+        "path": "music/music-evolution.ogg",
+        "bytes": 42365,
+        "decodedSeconds": 5.6,
+        "onsetMsMinus60Db": 0.469,
+        "peakDb": -6.1,
+        "rmsDb": -20.02,
+        "seamStep": null
+      },
+      {
+        "preparedSeamStep": null,
+        "path": "music/music-evolution.mp3",
+        "bytes": 45548,
+        "decodedSeconds": 5.6,
+        "onsetMsMinus60Db": 0.406,
+        "peakDb": -6.42,
+        "rmsDb": -20.45,
+        "seamStep": null
+      }
+    ]
+  },
+  {
+    "id": "music-evolution-dark",
+    "label": "갈라진 신호",
+    "kind": "music",
+    "seconds": 5.6,
+    "files": [
+      {
+        "preparedSeamStep": null,
+        "path": "music/music-evolution-dark.ogg",
+        "bytes": 41856,
+        "decodedSeconds": 5.6,
+        "onsetMsMinus60Db": 0.438,
+        "peakDb": -6.49,
+        "rmsDb": -20.04,
+        "seamStep": null
+      },
+      {
+        "preparedSeamStep": null,
+        "path": "music/music-evolution-dark.mp3",
+        "bytes": 45548,
+        "decodedSeconds": 5.6,
+        "onsetMsMinus60Db": 0.531,
+        "peakDb": -7.18,
+        "rmsDb": -20.46,
+        "seamStep": null
+      }
+    ]
   }
 ]

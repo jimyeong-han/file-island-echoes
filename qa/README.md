@@ -25,3 +25,6 @@ v0.8.1: `Check v0.8.1 layout` 버튼은 공통 팝업의 44px 닫기/스크롤/�
 v0.8.2: `Check v0.8.2 layout`은 보상 카드 1/2/3장·긴 설명의 nowrap/폭/높이/포커스/휠과 덱 선택·건너뛰기를 검사합니다. 8명 HUD 및 고유 중첩 0→최대값, 사용/봉인 상태, 대상광 레이어, 상단 48/60px 높이와 소리 토글 10회의 메뉴 위치도 확인합니다. 200% text 버튼 및 viewport 변경 뒤 반복할 수 있습니다. `reward-long`, `hud-zero/rich/used/sealed`는 합성 fixture이며 배포에 포함하지 않습니다.
 
 PWA: `npm run build` 후 `node scripts/serve-pwa-qa.mjs`로 별도 origin 3012를 사용한다. `/qa.html`은 캐시/등록 읽기, 320px·200% iframe 및 미방문 이미지 실패/복구 검사용이다. 서버 종료 중 게임 URL reload로 origin 오프라인을 재현한다. 사용자 기록이 있는 origin에서는 사용하지 않는다. `touch-preload.html`은 dev 서버에서 최초 압축 데이터 준비 전후의 AudioContext source.start 시점을 비교하며 측정용 200ms fetch 지연을 사용한다.
+
+
+v0.13: `create-visual-qa.mjs`에 `evolution-fixture.ts`를 결합한다. `v0.13 전체 검사`는 17개 경로의 실제 확정 버튼, 단계·이미지·비용·저장 일치, 취소/지도 음악 복귀를 확인한다. `QA 움직임 전환` 후 표시되는 설정을 확인하고 반복한다. `create-evolution-qa.mjs`와 `serve-pwa-qa.mjs 3022`는 별도 origin의 `/evolution.html`에서 합성 지도 저장을 준비한다. 사용자 기록이 있는 origin에 이 fixture를 쓰지 않는다. 해당 origin의 서버를 종료하고 게임 reload로 오프라인 동작을 확인한다.

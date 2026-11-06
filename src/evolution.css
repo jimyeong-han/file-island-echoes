@@ -1,0 +1,39 @@
+.evo-sequence{--evo-accent:#94e8dc;position:relative;isolation:isolate;max-width:920px;margin:auto;padding:24px 30px 32px;scroll-margin-top:64px;background:radial-gradient(ellipse at 50% 40%,#1f475a 0,#101f2e 46%,#0a141f 85%);border:1px solid #44636c}
+.evo-sequence[data-mode=forced]{background:radial-gradient(ellipse at 50% 40%,#4c2945,#1a1628 48%,#100f1d 85%)}
+.evo-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;position:relative;z-index:3}
+.evo-heading p{margin:0}.evo-crest{display:flex;align-items:center;gap:8px;margin-top:7px!important;color:#e5f4ed}.evo-crest .icon{width:25px;height:25px;color:var(--evo-accent)}
+.evo-skip{flex-shrink:0;min-height:44px;padding:8px 12px;font-size:12px}.evo-skip:disabled{opacity:.45}
+.evo-stage{position:relative;height:350px;max-width:650px;margin:auto;overflow:hidden;contain:layout paint}
+.evo-grid{position:absolute;inset:20px 0 0;opacity:.25;background:linear-gradient(transparent 97%,#7ccecf55 97%),linear-gradient(90deg,transparent 97%,#7ccecf55 97%);background-size:44px 44px;mask-image:radial-gradient(ellipse,#000,transparent 70%);transform:perspective(240px) rotateX(45deg);transform-origin:50% 100%}
+.evo-orbit{position:absolute;left:50%;top:57%;width:280px;height:280px;border:1px solid color-mix(in srgb,var(--evo-accent) 45%,transparent);border-radius:50%;transform:translate(-50%,-50%) rotateX(22deg);opacity:.35}
+.orbit-two{width:320px;height:320px;border-style:dashed;transform:translate(-50%,-50%) rotateX(45deg) rotateZ(25deg)}
+.evo-device{position:absolute;top:12px;left:50%;width:70px;height:70px;transform:translateX(-50%);color:#ecf7e8;z-index:5;border-radius:50%;background:#142f3c;box-shadow:0 0 0 1px #87bdc65c,0 0 30px #82e5cf30}
+.evo-device>.icon{width:70px;height:70px;stroke-width:1.4}.evo-device>span{position:absolute;inset:22px;display:grid;place-items:center;background:#132c35;color:var(--evo-accent);border-radius:4px}.evo-device>span .icon{width:25px;height:25px}
+.evo-signal{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:var(--evo-accent);stroke-width:2;stroke-dasharray:280;stroke-dashoffset:280;opacity:0;filter:drop-shadow(0 0 4px var(--evo-accent))}
+.evo-old,.evo-new{position:absolute;inset:82px 35px 30px;display:flex;align-items:center;justify-content:center;transition:opacity .45s ease,filter .55s ease,transform .55s ease}
+.evo-stage .sprite{width:100%;height:100%;max-height:235px;max-width:450px;object-fit:contain;filter:drop-shadow(0 12px 10px #0009);margin:0}
+.evo-new{opacity:0;transform:scale(.92);filter:brightness(0) sepia(1) saturate(0)}
+.evo-shell{position:absolute;inset:104px 15% 45px;border:1px solid transparent;border-radius:50%;pointer-events:none;opacity:0;transform:scale(.85);transition:opacity .35s,transform .6s,border-color .3s}
+.evo-shell i{position:absolute;height:5px;background:var(--evo-accent);box-shadow:0 0 12px var(--evo-accent);transform:rotate(calc(var(--i)*30deg))}
+.evo-crest-seal{position:absolute;left:50%;top:50%;transform:translate(-50%,-25%);color:var(--evo-accent);opacity:0;transition:opacity .3s}.evo-crest-seal .icon{width:110px;height:110px;stroke-width:1}
+.evo-caption{position:absolute;bottom:0;left:0;right:0;margin:0!important;font-size:13px;letter-spacing:.08em;color:var(--evo-accent);text-shadow:0 1px 3px #000}
+.evo-lineage{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;color:#adc3ce;font-size:13px;padding:15px 0 5px}.evo-lineage strong{color:var(--evo-accent)}
+.evo-result{max-width:560px;margin:0 auto 20px}.evo-result h1{margin:8px 0;font-size:clamp(23px,4vw,35px)}.evo-result .evolution-effect{margin:12px auto 0;line-height:1.65;min-height:0}.evo-resonance-note{color:#ffeaab;font-size:13px}
+.evo-sequence[data-phase=device] .evo-device{animation:evo-device .8s ease both}
+.evo-sequence[data-phase=signal] .evo-signal{opacity:.85;stroke-dashoffset:0;transition:stroke-dashoffset .8s linear}
+.evo-sequence[data-phase=data] .evo-old{filter:brightness(0);opacity:.55;transform:scale(.96)}
+.evo-sequence[data-phase=data] .evo-shell{opacity:.9;transform:scale(1);border-color:var(--evo-accent);box-shadow:inset 0 0 40px #72cbe12b,0 0 35px #72cbe12b}
+.evo-sequence[data-phase=data] .evo-shell i{animation:evo-data 1.6s ease-in-out both;animation-delay:calc(var(--i)*-90ms)}
+.evo-sequence[data-phase=data] .evo-crest-seal{opacity:.6}
+.evo-sequence[data-phase=reveal] .evo-old,.evo-sequence[data-phase=complete] .evo-old{opacity:0}
+.evo-sequence[data-phase=reveal] .evo-new,.evo-sequence[data-phase=complete] .evo-new{opacity:1;transform:none;filter:none}
+.evo-sequence[data-phase=reveal] .evo-orbit{animation:evo-wave 1.2s ease-out both}
+.evo-sequence[data-mode=resonance] .evo-new{filter:none;transform:none}.evo-sequence[data-mode=resonance][data-phase=data] .evo-old{filter:drop-shadow(0 0 14px #ffe9a1);opacity:.85;transform:none}
+.evo-sequence[data-mode=forced] .evo-shell{border-style:dashed}.evo-sequence[data-mode=forced] .evo-signal{stroke-dasharray:18 6}
+@keyframes evo-device{from{box-shadow:0 0 0 1px #87bdc65c,0 0 5px #82e5cf20}to{box-shadow:0 0 0 6px #87bdc622,0 0 40px var(--evo-accent)}}
+@keyframes evo-data{0%{translate:0 25px;opacity:0}35%{opacity:.9}100%{translate:0 -24px;opacity:.25}}
+@keyframes evo-wave{from{opacity:.85;scale:.8}to{opacity:.15;scale:1.2}}
+.reduced-motion .evo-sequence *{animation:none!important;transition:none!important}.reduced-motion .evo-grid,.reduced-motion .evo-shell,.reduced-motion .evo-signal{display:none}
+@media(prefers-reduced-motion:reduce){.evo-sequence *{animation:none!important;transition:none!important}.evo-grid,.evo-shell,.evo-signal{display:none}}
+@media(max-width:600px){.evo-sequence{padding:18px 12px 24px}.evo-heading{gap:6px}.evo-crest{font-size:13px}.evo-stage{height:320px}.evo-device{top:10px}.evo-old,.evo-new{inset:86px 8px 32px}.evo-stage .sprite{max-height:205px}.evo-result .evolution-effect{font-size:14px}.evo-lineage{gap:8px;font-size:12px}.evo-orbit{width:220px;height:220px}.orbit-two{width:265px;height:265px}}
+@media(max-height:500px) and (min-width:600px){.evo-sequence{padding:12px 20px 20px;display:grid;grid-template-columns:1fr 1fr;gap:0 20px}.evo-heading{grid-column:1/-1}.evo-stage{grid-column:1;grid-row:2/5;width:100%;height:280px}.evo-old,.evo-new{inset:78px 0 28px}.evo-lineage{align-self:end}.evo-result{margin:0 0 8px}.evo-result h1{font-size:25px}.evo-result .evolution-effect{font-size:13px}.evo-sequence>[data-action=evolution-done]{align-self:start}}

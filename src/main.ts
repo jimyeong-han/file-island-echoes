@@ -1,3 +1,6 @@
+import {EvolutionSequence} from './evolution-sequence';
+import {evolutionScreen,evolutionFrame} from './evolution-ui';
+import './evolution.css';
 import {BugReportUI} from './bug-report-ui';
 import {ErrorJournal} from './bug-report';
 import './bug-report.css';
@@ -58,6 +61,8 @@ const prefersMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 const reduced=()=>save.settings.reducedMotion||prefersMotion.matches;
 const root=document.querySelector<HTMLDivElement>('#app')!;
 const bugReport=new BugReportUI(root);
+let evolutionArmed=false;
+const evolutionSequence=new EvolutionSequence({score:(forced,signal)=>gameAudio.mixer.playScore(forced?'music-evolution-dark':'music-evolution',signal),stopScore:()=>gameAudio.mixer.stopGroup('evolution'),frame:phase=>evolutionFrame(root,phase)});
 installArtFallback(root);
 window.addEventListener('resize',()=>syncGround(root));
 root.addEventListener('load',()=>syncGround(root),true);
@@ -173,7 +178,7 @@ function battle(r:Run){const b=r.battle!;const {incoming,recoil,damage}=turnThre
 function eventScreen(r:Run){const s=storyOf(r);return `<main class="story-screen"><div class="story-art">${background(sceneAt(r))}${storyPortrait(r)}<span class="eyebrow">${chapterOf(r).zones[zoneAt(r.row)]}</span></div><div class="story-copy"><div class="eyebrow">${icon('event')} 이야기 이벤트</div><h1>${s.title}</h1><p class="speaker">${s.speaker}</p><blockquote>${s.quote}</blockquote><p>${s.body}</p><div class="choices">${s.choices.map((c,i)=>btn(`<strong>${c.label}<span>→</span></strong>`,`choice:${i}`,'choice')).join('')}</div></div></main>`;}
 function restScreen(r:Run){return `<main class="center-screen rest-screen">${background(sceneAt(r),'page-backdrop')}<div class="eyebrow">휴식</div><div class="camp-art">${portrait(r.characterId)}<div class="camp-partner">${sprite(r.form)}</div></div><h1 tabindex="-1">${nodeOf(r)!.name}</h1><p class="speaker">${CHARACTERS[r.characterId].name} · ${CHARACTERS[r.characterId].partner}</p><blockquote>“서로의 숨소리가 들릴 만큼, 잠깐 쉬어 가자.”</blockquote><div class="choices rest-choices">${btn(`<strong>파트너와 푹 쉰다 →</strong><small>체력 +${RECOVERY.rest} · 부담 -4 · 오염 -2 · 유대 +2</small>`,'rest:rest','choice')}${btn(`<strong>짧게 쉬고 함께 훈련한다 →</strong><small>체력 +${RECOVERY.train} · 진화 에너지 +5 · 부담 +2</small>`,'rest:train','choice')}</div></main>`;}
 function rewardScreen(r:Run){return `<main class="center-screen reward-screen">${background(sceneAt(r),'page-backdrop')}<div class="eyebrow">전투 승리</div><p class="purification">${esc(r.lastVictory||'막혔던 길이 열렸습니다.')}</p><h1>어떤 기술을 기억할까?</h1><p>덱에 추가할 카드 1장을 선택하세요. 넘어가도 괜찮습니다.</p><div class="reward-summary">${icon('energy')} 진화 에너지 +${nodeOf(r)?.type==='elite'?7:5} <span>${icon('bond')} 유대 +1</span></div><div class="reward-cards">${r.rewards.map(id=>card(id,`reward:${id}`,r)).join('')}</div>${btn('카드를 받지 않고 계속 →','skip','secondary')}</main>`;}
-function evolutionScreen(r:Run){return `<main class="center-screen evolution-screen ${r.form==='skull'?'forced-evolution':''}"><div class="evolution-rays"></div><div class="eyebrow">${r.form==='skull'?'강제 진화':r.form==='gatomon-resonance'?'빛의 공명':'파트너 진화'}</div><p>${FORMS[r.evolvedFrom||CHARACTERS[r.characterId].forms[0]].name}, ${r.form==='gatomon-resonance'?'빛을 모아!':'진화!'}</p><div class="evolution-chamber"><div class="data-ring ring-one"></div><div class="data-ring ring-two"></div><div class="evolution-before">${sprite(r.evolvedFrom||CHARACTERS[r.characterId].forms[0])}</div><div class="evolution-sprite">${sprite(r.form)}</div><div class="evolution-flash"></div><div class="data-particles" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div><h1>${FORMS[r.form].name}</h1><span class="form-tag">${FORMS[r.form].tag}</span><p class="evolution-effect">${FORMS[r.form].description}</p>${btn('함께 앞으로 →','evolution-done','primary large')}</main>`;}
+
 function resultScreen(r:Run){return `<main class="center-screen result-screen ${r.won?'victory':'defeat'}">${background(r.won?0:2,'page-backdrop')}<div class="eyebrow">${r.won?'탐험 완료':'탐험 종료'}</div><div class="result-companion">${r.won?portrait(r.characterId,'ending-portrait'):''}${sprite(r.form)}<span class="result-seal">${icon(r.won?'evolution':'bond')}</span></div><h1>${r.won?'다시 이어진 목소리':'모험은 아직 끝나지 않았어'}</h1><blockquote>${r.won?CHARACTERS[r.characterId].ending:CHARACTERS[r.characterId].retry}</blockquote><p>${r.won?chapterOf(r).ending:'파트너를 데리고 안전한 곳으로 돌아왔습니다.<br/>발견한 도감과 이야기는 다음 모험에도 남습니다.'}</p><div class="result-stats"><div><b>${r.path.length}</b><span>완료한 장소</span></div><div><b>${r.battles}</b><span>전투 승리</span></div><div><b>${FORMS[r.form].name}</b><span>도달 진화체</span></div></div><p class="checkpoint">${icon('check')} 도감과 탐험 기록 저장 완료 · 다음 탐험은 선택한 파트너의 시작 덱으로 출발합니다.</p><div class="result-actions">${btn('다음 챕터 · 재도전 →','chapters','primary')}${btn('다른 아이 선택','new','secondary')}${btn('도감 보기','archive','secondary')}${btn('타이틀로','home','quiet')}</div></main>`;}
 function abilityCopy(id:CharacterId){const c=CHARACTERS[id];return `<dl class="ability-copy"><dt>지속 능력</dt><dd>${c.passive}</dd><dt>${c.ability.name}</dt><dd>${c.ability.text}</dd><dt>발동 조건</dt><dd class="ability-condition">${c.ability.condition}</dd></dl>`;}
 function help(){const chapter=HELP_CHAPTERS[helpChapter];return `<h2>모험 안내서</h2><div class="help-tabs" role="tablist" aria-label="도움말 책갈피">${HELP_CHAPTERS.map((ch,i)=>btn(ch.title,'help-tab:'+i,'',`id="help-tab-${i}" role="tab" aria-selected="${i===helpChapter}" aria-controls="help-panel" tabindex="${i===helpChapter?0:-1}"`)).join('')}</div><section class="help-panel" id="help-panel" role="tabpanel" aria-labelledby="help-tab-${helpChapter}" tabindex="0"><h3 aria-live="polite">${chapter.title}</h3>${chapter.items.map(([name,text])=>`<section><h3>${name}</h3><p>${text}</p></section>`).join('')}${helpChapter===1?Object.values(CHARACTERS).map(c=>`<section class="help-character"><h3>${icon(c.icon)} ${c.crest} · ${c.name}</h3>${abilityCopy(c.id)}</section>`).join(''):''}</section><p class="muted">반복 사건과 진화 조건은 팬게임의 창작 설정입니다.</p>`;}
@@ -186,6 +191,7 @@ function modalContent(){if(modal==='report')return bugReport.panel();const r=act
  if(modal==='evo'&&r&&pendingForm){const f=FORMS[pendingForm],o=evolutionOptions(r).find(e=>e.form===pendingForm)!;return `<div class="eyebrow">${pendingForm==='skull'?icon('burden')+' 강제 진화 경고':'진화 미리보기'}</div><h2>${f.name}${pendingForm==='gatomon-resonance'?'으로 강화':'으로 진화'}</h2><div class="modal-sprite">${sprite(pendingForm)}</div><p>${f.description}</p>${pendingForm==='skull'?'<div class="danger-note"><b>이 진화는 이번 탐험 동안 되돌릴 수 없습니다.</b><p>매 턴 종료 체력 2 소모. 전용 공격은 추가로 체력 5를 소모합니다. 자기 손상으로 패배할 수 있으며 메탈그레이몬 경로를 선택할 수 없게 됩니다.</p></div>':''}<p>비용: 진화 에너지 ${o.cost} · 현재 ${r.evoEnergy}<br/>진화 후 에너지 ${r.evoEnergy-o.cost} · 최대 체력 ${f.hp}</p><p class="muted">팬게임용 진화 조건이며 공식 진화 규칙이 아닙니다.</p>${btn(pendingForm==='skull'?'위험을 이해하고 강제 진화':pendingForm==='gatomon-resonance'?'빛의 공명 시작':'파트너와 함께 진화','evolve',pendingForm==='skull'?'danger wide':'primary wide')}${btn('아직은 기다린다','close','quiet wide')}`;}return '';}
 function render(){
  const r=presented||activeRun(save)!;
+ if(evolutionSequence.running&&(view!=='game'||r?.screen!=='evolution'||!!modal||reduced()))evolutionSequence.finish();
  gameAudio.mixer.configure(save.settings);gameAudio.sync(view,modal,r,mapZone);
  const focusedAction=(document.activeElement as HTMLElement|null)?.dataset.action;
  const closingModal=!!renderedModal&&!modal;
@@ -217,6 +223,8 @@ function render(){
  const newLog=root.querySelector<HTMLDetailsElement>('.battle-log'),newList=newLog?.querySelector('ol');if(newLog&&logOpen)newLog.open=true;if(newList)newList.scrollTop=followLog?newList.scrollHeight:logTop;
  root.dataset.combatBusy=String(motion.busy);
  if(motion.busy)root.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(b=>{if(!['home','help','settings','credits','report'].includes(b.dataset.action||''))b.disabled=true;});
+ evolutionFrame(root,evolutionSequence.phase);
+ if(evolutionArmed){evolutionArmed=false;if(!warning&&view==='game'&&r?.screen==='evolution'){void evolutionSequence.start(r.form==='skull',reduced());root.querySelector<HTMLButtonElement>('[data-action="evolution-skip"]')?.focus({preventScroll:true});}}
  updateAudioStatus();
 }
 function start(ch:ChapterId){if(!chapterUnlocked(save,selected,ch))return;saveRun(save,newRun(Date.now()>>>0,selected,ch));if(!persist(null))return;mapZone=null;view='game';modal='';pendingChapter=null;render();window.scrollTo(0,0);}
@@ -237,8 +245,9 @@ root.addEventListener('click',e=>{const el=(e.target as HTMLElement).closest<HTM
  if(action==='continue'&&Object.hasOwn(CHARACTERS,value)){if(!activateSlot(save,value as CharacterId)||!persist(activeRun(save),false))return;mapZone=null;view='game';modal='';render();if(activeRun(save)?.screen==='battle'){void dealHand(0);focusBattle();}return;}
  if(['settings','archive','deck','help','credits'].includes(action)){modal=action;render();if(action==='settings')void pwa.refreshMusicStatus();return;}
  if(['sound','motion'].includes(action)){const k=action==='sound'?'muted':'reducedMotion';save.settings[k]=!save.settings[k];persist(activeRun(save),false);gameAudio.mixer.configure(save.settings);if(k==='muted'&&!save.settings.muted)gameAudio.mixer.playInput('ui-confirm');render();return;}
- if(action==='preview'){pendingForm=value as Form;modal='evo';render();return;}
- if(action==='evolve'){modal='';act(r=>{if(pendingForm)evolve(r,pendingForm);});window.scrollTo(0,0);return;}
+ if(action==='preview'){pendingForm=value as Form;void gameAudio.mixer.prepareScore(value==='skull'?'music-evolution-dark':'music-evolution');modal='evo';render();return;}
+ if(action==='evolve'){modal='';act(r=>{if(pendingForm)evolutionArmed=evolve(r,pendingForm);});root.querySelector('.evo-sequence')?.scrollIntoView({block:'start'});return;}
+ if(action==='evolution-skip'){evolutionSequence.finish();root.querySelector<HTMLButtonElement>('[data-action="evolution-done"]')?.focus({preventScroll:true});return;}
  if(action==='evolution-done'){act(r=>{if(r.screen==='evolution')r.screen='map';});return;}
  if(action==='view-zone'){if(['0','1','2'].includes(value)){mapZone=+value;render();}return;}
  if(action==='node'){mapZone=null;act(r=>enterNode(r,value));window.scrollTo(0,0);if(activeRun(save)!?.screen==='battle'){void dealHand(0);focusBattle();}return;}
@@ -277,9 +286,9 @@ root.addEventListener('input',e=>{
  input.setAttribute('aria-valuetext',n+'퍼센트');const out=root.querySelector(`[data-volume-output="${key}"]`);if(out)out.textContent=n+'%';
  gameAudio.mixer.configure(save.settings);void gameAudio.mixer.unlock();if(!persist(activeRun(save),false)){gameAudio.mixer.configure(save.settings);render();}
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden)motion.finish();void gameAudio.mixer.visibility(document.hidden);});
-prefersMotion.addEventListener('change',()=>{motion.finish();render();});
-window.addEventListener('pagehide',()=>{motion.finish();void gameAudio.mixer.visibility(true);});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){motion.finish();evolutionSequence.finish();}void gameAudio.mixer.visibility(document.hidden);});
+prefersMotion.addEventListener('change',()=>{motion.finish();evolutionSequence.finish();render();});
+window.addEventListener('pagehide',()=>{motion.finish();evolutionSequence.finish();void gameAudio.mixer.visibility(true);});
 window.addEventListener('pageshow',()=>void gameAudio.mixer.visibility(document.hidden));
 
 setInterval(()=>{if(modal==="settings"&&!document.hidden)updateAudioStatus();},250);

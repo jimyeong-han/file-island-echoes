@@ -1048,5 +1048,35 @@
     "cooldown": 0.14,
     "variation": 0.035,
     "fade": 0.08
+  },
+  "music-evolution": {
+    "label": "마음이 닿는 순간",
+    "kind": "music",
+    "files": [
+      "music/music-evolution.ogg",
+      "music/music-evolution.mp3"
+    ],
+    "volume": 0.72,
+    "loop": false,
+    "duration": 5.6,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
+  },
+  "music-evolution-dark": {
+    "label": "갈라진 신호",
+    "kind": "music",
+    "files": [
+      "music/music-evolution-dark.ogg",
+      "music/music-evolution-dark.mp3"
+    ],
+    "volume": 0.72,
+    "loop": false,
+    "duration": 5.6,
+    "limit": 1,
+    "cooldown": 0.45,
+    "variation": 0,
+    "fade": 0.08
   }
 }

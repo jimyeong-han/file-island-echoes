@@ -29,6 +29,26 @@ beforeEach(()=>{vi.stubEnv('BASE_URL','/file-island-echoes/');Context.all=[];vi.
 afterEach(()=>{vi.unstubAllGlobals();vi.unstubAllEnvs();vi.useRealTimers();});
 
 describe('audio mixer lifecycle',()=>{
+  it('routes a one-shot score through music volume, even with SFX at zero, and stops it on skip',async()=>{
+    const a=new AudioManager({...on(),sfxVolume:0}),connect=vi.spyOn(Node.prototype,'connect');await a.unlock();
+    expect(await a.playScore('music-evolution',new AbortController().signal)).toBe(true);
+    expect(connect.mock.calls.some(c=>c[0]===Context.all[0].gains[1])).toBe(true);
+    expect(a.status.playing).toBe('music-evolution');expect(a.status.musicVoices).toBe(1);expect(Context.all[0].sources.at(-1)?.loop).toBe(false);
+    a.stopGroup('evolution');expect(a.status.musicVoices).toBe(0);connect.mockRestore();
+  });
+  it('bounds slow score loading and ignores its eventual arrival after skip',async()=>{
+    vi.useFakeTimers();const a=new AudioManager(on());await a.unlock();let release!:(v:any)=>void;
+    vi.mocked(fetch).mockImplementation(()=>new Promise(r=>release=r) as Promise<Response>);
+    const abort=new AbortController(),p=a.playScore('music-evolution',abort.signal);await vi.advanceTimersByTimeAsync(250);expect(await p).toBe(false);
+    release({ok:true,arrayBuffer:async()=>new ArrayBuffer(8)});await tick();expect(a.status.musicVoices).toBe(0);
+    const second=new AbortController();const q=a.playScore('music-evolution-dark',second.signal);second.abort();expect(await q).toBe(false);release({ok:true,arrayBuffer:async()=>new ArrayBuffer(8)});await tick();expect(a.status.musicVoices).toBe(0);
+  });
+  it('keeps scores silent when locked, muted or music volume is zero, and backgrounding cancels playback',async()=>{
+    const a=new AudioManager(on());expect(await a.playScore('music-evolution',new AbortController().signal)).toBe(false);expect(fetch).not.toHaveBeenCalled();
+    await a.unlock();a.configure({...on(),musicVolume:0});expect(await a.playScore('music-evolution',new AbortController().signal)).toBe(false);
+    a.configure({...on(),muted:true});expect(await a.playScore('music-evolution',new AbortController().signal)).toBe(false);
+    a.configure(on());await a.playScore('music-evolution',new AbortController().signal);await a.visibility(true);await a.visibility(false);expect(a.status.musicVoices).toBe(0);
+  });
   it('keeps the three-song cache independent of prepared effects',async()=>{
     const a=new AudioManager(on());await a.unlock();
     for(const id of ['music-title','music-selection','music-map','music-battle']){a.setMusic(id);await tick();}

@@ -1,0 +1,3 @@
+import {build} from 'esbuild';import {writeFileSync,mkdirSync} from 'node:fs';
+mkdirSync('test-results',{recursive:true});await build({entryPoints:['qa/evolution-saves.ts'],bundle:true,format:'esm',outfile:'test-results/evolution.js'});
+writeFileSync('test-results/evolution.html','<!doctype html><html lang="ko"><meta charset="utf-8"><title>Local evolution diagnostics</title><h1>Disposable evolution checkpoint fixtures</h1><select aria-label="Evolution path"></select><button id="seed">Seed eligible map</button><button id="inspect">Inspect saved evolution</button><a href="/file-island-echoes/">Game</a><a href="/qa.html">PWA cache diagnostics</a><pre></pre><script type="module" src="/evolution.js"></script></html>');

@@ -78,7 +78,6 @@ export function transitionCues(before: Run, after: Run, action: string): CueEven
   if(after.burden<before.burden)add('burden-relief',.2);
   if(after.evoEnergy>before.evoEnergy)add('evolution-energy',.25);
   if(action.startsWith('reward:'))add('card-acquire');
-  if(action==='evolution-done'){add('evolution-complete');add('card-upgrade',.35);}
   return cues;
 }
 
@@ -94,16 +93,14 @@ export class GameAudio {
     this.mixer.setMusic(musicForScene(scene));
     if(scene.includes('battle'))void this.mixer.preload(['attack-fire','attack-water','attack-electric','attack-plant','attack-light','attack-dark','hit-normal','hit-heavy','enemy-hit','player-hit','card-guard']);
     const later=(id:string,ms:number)=>{this.timer=setTimeout(()=>{if(this.scene===scene)this.mixer.setMusic(id);},ms);};
-    if(scene==='evolution'||scene==='evolution-forced') {
-      void this.mixer.play(scene==='evolution'?'evolution-start':'evolution-forced',0,'scene');
-      void this.mixer.play('data-gather',.3,'scene');
-    } else if(scene.startsWith('victory:')) {
+    if(scene.startsWith('victory:')) {
       void this.mixer.play('battle-victory',0,'scene');void this.mixer.play('reward-reveal',.3,'scene');later(scene.slice(8),2800);
     } else if(scene==='ending'||scene==='defeat') {
       void this.mixer.play(scene==='ending'?'chapter-complete':'battle-defeat',0,'scene');later('music-story',scene==='ending'?5000:3200);
     }
   }
   transition(before: Run, after: Run, action: string, discovered=false,group='effects',attackPresented=false) {
+    if(after.screen==='evolution')return; // The original score contains the reveal; no stacked legacy stingers.
     const skill=action.startsWith('card:')?CARDS[before.battle?.hand[Number(action.split(':')[1])]||'']?.audioId:'';
     for(const cue of transitionCues(before,after,action))if(!attackPresented||![skill,'card-attack','card-evolved','hit-normal','hit-heavy','enemy-hit','player-hit','block-break'].includes(cue.id))void this.mixer.play(cue.id,cue.delay,group);
     if(discovered)void this.mixer.play('archive-unlock',.65);
