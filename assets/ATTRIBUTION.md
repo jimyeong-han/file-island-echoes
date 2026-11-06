@@ -190,3 +190,7 @@ SVG 생성 스크립트: `scripts/export-art.mjs`. 재생성: `npm run art`. 교
 ## PWA icons · 2026-09-11
 
 `public/assets/pwa/icon-192.png`, `icon-512.png`, `maskable-192.png`, `maskable-512.png`, `apple-touch-icon.png`: existing project-authored circular device motif redrawn in Python/Pillow by `scripts/create-pwa-icons.py`, then antialiased downsampling. Design brief: navy field, cyan circular device and screen, orange data trace, central 80% safe zone, no text. No image generator, official logo or extracted artwork used. No replacement required for the prototype.
+
+## v0.12 · 2026-11-06 · 전투 효과
+
+`src/combat-effects.ts`, `src/combat-effects.css`: 프로젝트 전용 SVG/CSS로 직접 제작. 디자인 요구: 불꽃·전기·덩굴·물·발톱·광궁·발사구 등 13종의 시전, 궤적, 폭발/물보라/조임과 방어. 공식 프레임/추출 에셋/외부 이미지를 사용하지 않았다. 이미지 생성 도구를 사용하지 않은 벡터 코드이며 별도 래스터 프롬프트/파일 없음. 기존 자체 제작 효과음을 재사용. 교체 위치 및 ID 목록은 docs/combat-effect-map.md.

@@ -1,0 +1,18 @@
+.combat-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;overflow:hidden;contain:strict}
+.fx-active .acting-enemy>.sprite{animation:none!important}
+.fx-hit>.sprite{animation:skill-hit 230ms ease-out!important}
+.fx-guard>.sprite{animation:skill-guard 190ms ease-out!important}
+@keyframes skill-hit{25%{transform:translateX(5px) rotate(2deg)}65%{transform:translateX(-2px)}100%{transform:none}}
+@keyframes skill-guard{40%{filter:drop-shadow(0 0 7px #a4eaff)}100%{filter:none}}
+.fx-active .health-hit>.sprite{animation:none}
+.fx-caster>.sprite{animation:skill-recoil var(--cast-duration) ease-out!important;transform-origin:50% 85%}
+.fx-caster.cast-claw>.sprite,.fx-caster.cast-fist>.sprite{animation-name:skill-dash!important}
+.fx-caster.cast-bolt>.sprite,.fx-caster.cast-gate>.sprite{animation-name:skill-rise!important}
+.fx-caster.cast-vine>.sprite{animation-name:skill-root!important}
+@keyframes skill-recoil{20%{transform:translateX(calc(-4px * var(--cast-direction))) rotate(calc(-1deg * var(--cast-direction)))}55%{transform:translateX(calc(3px * var(--cast-direction)))}100%{transform:none}}
+@keyframes skill-dash{20%{transform:translateX(calc(-5px * var(--cast-direction))) rotate(calc(-2deg * var(--cast-direction)))}70%{transform:translateX(calc(12px * var(--cast-direction))) rotate(calc(3deg * var(--cast-direction)))}100%{transform:none}}
+@keyframes skill-rise{45%{transform:translateY(-4px)}100%{transform:none}}
+@keyframes skill-root{35%{transform:scaleY(.97) rotate(calc(2deg * var(--cast-direction)))}100%{transform:none}}
+.reduced-motion .fx-caster>.sprite{animation:none!important}
+.reduced-motion .fx-hit>.sprite,.reduced-motion .fx-guard>.sprite{animation:none!important}
+@media(prefers-reduced-motion:reduce){.fx-hit>.sprite,.fx-guard>.sprite,.fx-caster>.sprite{animation:none!important}}

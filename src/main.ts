@@ -10,6 +10,8 @@ import {battleHeading, dialogFrame, targetAttributes} from './combat-layout';
 import { cardFace } from './card-ui';
 import { logEntries } from './combat-log';
 import { MotionQueue } from './combat-motion';
+import {CombatEffects,cardAttackPlan,enemyAttackPlan} from './combat-effects';
+import './combat-effects.css';
 import type { TurnFrame } from './engine';
 import { APP_VERSION, MAX_SAVE_BYTES, exportSave, prepareImport, replaceSave, resetSave, freshSave } from './save-files';
 import type { SavePreview } from './save-files';
@@ -50,6 +52,7 @@ let modalOpener:string|undefined,renderedModal='';
 let mapZone:number|null=null;
 let selected:CharacterId='tai', order:number[]=[];let pendingChapter:ChapterId|null=null;
 const motion=new MotionQueue();
+const combatEffects=new CombatEffects();
 let presented:Run|null=null,dealStart=-1,motionLabel='',enemyMotion:TurnFrame|null=null,hpFeedback='';
 const prefersMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 const reduced=()=>save.settings.reducedMotion||prefersMotion.matches;
@@ -83,7 +86,7 @@ function title(){const r=recentSlot(save)?.run;return `<main class="title-screen
 
 function partnerHealth(r:Run){return `<div class="partner-health ${r.hp<=r.maxHp*.25?'health-danger':''}" aria-label="${FORMS[r.form].name} 체력"><span><b>${r.hp}</b> / ${r.maxHp}${r.hp<=r.maxHp*.25?' · 위험':''}</span><meter min="0" max="${r.maxHp}" value="${r.hp}" low="${r.maxHp*.25}" optimum="${r.maxHp}" aria-label="${FORMS[r.form].name} 남은 체력"></meter></div>`;}
 function beginMotion(){
- return motion.begin(()=>{presented=null;enemyMotion=null;hpFeedback='';dealStart=-1;motionLabel='';attack=false;enemyActing=false;root.ownerDocument.querySelectorAll('.card-flight').forEach(e=>e.remove());gameAudio.mixer.stopGroup('combat');render();});
+ return motion.begin(()=>{combatEffects.stop();presented=null;enemyMotion=null;hpFeedback='';dealStart=-1;motionLabel='';attack=false;enemyActing=false;root.ownerDocument.querySelectorAll('.card-flight').forEach(e=>e.remove());gameAudio.mixer.stopGroup('combat');render();});
 }
 async function dealHand(start:number,token?:number){
  const r=activeRun(save)!;if(!r?.battle||r.screen!=='battle'||start>=r.battle.hand.length)return;
@@ -97,21 +100,25 @@ async function animateCard(index:number){
  if(motion.busy||r?.screen!=='battle'||!r.battle||index<0||!r.battle.hand[index])return;
  const source=root.querySelector<HTMLButtonElement>(`[data-action="card:${index}"]`),rect=source?.getBoundingClientRect();
  const clone=source?.cloneNode(true) as HTMLElement|undefined;
- const before=structuredClone(r),c=cardStats(r,r.battle.hand[index]);
+ const before=structuredClone(r),cardId=r.battle.hand[index],c=cardStats(r,cardId);
  if(!playCard(r,index))return;
- if(!persist(before))return;const after=structuredClone(r),token=beginMotion();
+ if(!persist(before))return;const after=structuredClone(r),plan=cardAttackPlan(before,after,cardId),token=beginMotion();
  presented=before;motionLabel=c.name+' 사용';render();
+ if(plan){combatEffects.stage(root,plan,'travel',reduced());void gameAudio.mixer.play(plan.spec.audio,0,'combat');}
  if(clone&&rect&&!reduced()){
   clone.removeAttribute('data-action');clone.removeAttribute('aria-label');clone.setAttribute('aria-hidden','true');clone.inert=true;
   clone.classList.add('card-flight');clone.classList.remove('card-selected');clone.style.cssText=`left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;`;
   document.body.append(clone);
   clone.animate([{transform:'translateY(0) scale(1)',opacity:1},{transform:'translateY(-56px) scale(1.05)',opacity:1,offset:.45},{transform:'translateY(-76px) scale(.98)',opacity:0}],{duration:340,easing:'ease-out',fill:'forwards'});
  }
- if(!await motion.wait(reduced()?0:145,token))return;
+ if(!await motion.wait(reduced()?0:plan?.spec.travel??145,token))return;
  presented=structuredClone(after);if(presented.battle)presented.battle.hand=[...before.battle!.hand];if(before.screen==='battle'&&after.screen!=='battle')presented.screen='battle';
- attack=true;cardEffect=c.damage?'attack':c.block?'guard':c.heal?'heal':'support';impactTarget=c.all?-1:before.battle!.target;
- hpFeedback=after.hp<before.hp?'health-hit':after.hp>before.hp?'health-heal':'';render();const used=root.querySelector<HTMLElement>(`[data-action="card:${index}"]`);if(used){used.style.visibility='hidden';used.setAttribute('aria-hidden','true');}gameAudio.transition(before,after,`card:${index}`);
- if(!await motion.wait(reduced()?50:195,token))return;
+ attack=!plan;cardEffect=c.damage?'attack':c.block?'guard':c.heal?'heal':'support';impactTarget=c.all?-1:before.battle!.target;
+ hpFeedback=after.hp<before.hp?'health-hit':after.hp>before.hp?'health-heal':'';render();
+ if(plan){combatEffects.stage(root,plan,'impact',reduced());void gameAudio.mixer.play(plan.contacts.some(c=>c.damage)?'enemy-hit':plan.contacts.some(c=>c.blocked)?'card-guard':'ui-denied',0,'combat');}
+ const used=root.querySelector<HTMLElement>(`[data-action="card:${index}"]`);if(used){used.style.visibility='hidden';used.setAttribute('aria-hidden','true');}gameAudio.transition(before,after,`card:${index}`,false,'combat',!!plan);
+ if(!await motion.wait(reduced()?120:plan?.spec.impact??195,token))return;
+ combatEffects.stop();
  document.querySelectorAll('.card-flight').forEach(e=>e.remove());attack=false;
  const drawn=after.battle?after.battle.hand.length-(before.battle!.hand.length-1):0;
  if(drawn>0&&after.screen==='battle')await dealHand(after.battle!.hand.length-drawn,token);
@@ -126,14 +133,18 @@ async function animateTurn(){
  let previous=before;
  for(const frame of frames){
   if(!motion.live(token))return;
+  const plan=enemyAttackPlan(previous,frame);
+  if(plan){presented=previous;enemyMotion=frame;motionLabel=ENEMIES[previous.battle!.enemies[frame.enemy].id].name+' · '+frame.action!.label;render();combatEffects.stage(root,plan,'travel',reduced());void gameAudio.mixer.play(plan.spec.audio,0,'combat');if(!await motion.wait(reduced()?0:plan.spec.travel,token))return;}
   presented=frame.run;enemyMotion=frame.action?frame:null;
-  hpFeedback=frame.run.hp<previous.hp?'health-hit':frame.run.hp>previous.hp?'health-heal':'';
+  hpFeedback=!plan&&frame.run.hp<previous.hp?'health-hit':frame.run.hp>previous.hp?'health-heal':'';
   motionLabel=frame.action?ENEMIES[frame.run.battle!.enemies[frame.enemy].id].name+' · '+frame.action.label+(frame.action.hits?' · '+frame.action.hits+'연타':'')+(frame.action.extra?' · '+effectName(frame.action.extra):''):'턴 종료 · 남은 상태 효과';
   render();
-  if(frame.action){const a=frame.action;void gameAudio.mixer.play(a.type==='defend'?'block-gain':a.type==='drain'?'attack-dark':a.type==='attack'?ENEMIES[frame.run.battle!.enemies[frame.enemy].id].audioId||'hit-normal':'status-apply',0,'combat');}
-  if(frame.run.hp<previous.hp)void gameAudio.mixer.play('player-hit',0,'combat');
+  if(plan){combatEffects.stage(root,plan,'impact',reduced());void gameAudio.mixer.play(plan.contacts[0].damage?'player-hit':plan.contacts[0].blocked?'card-guard':'ui-denied',0,'combat');}
+  else if(frame.action){const a=frame.action;void gameAudio.mixer.play(a.type==='defend'?'block-gain':'status-apply',0,'combat');}
+  if(!plan&&frame.run.hp<previous.hp)void gameAudio.mixer.play('player-hit',0,'combat');
   if(frame.action?.type==='drain')void gameAudio.mixer.play('heal',.1,'combat');
-  if(!await motion.wait(reduced()?40:frame.action?350:80,token))return;
+  if(!await motion.wait(reduced()?120:plan?.spec.impact??(frame.action?350:80),token))return;
+  combatEffects.stop();
   previous=frame.run;
  }
  enemyMotion=null;hpFeedback=r.hp>previous.hp?'health-heal':'';presented=null;
@@ -158,7 +169,7 @@ function map(r:Run){
  <aside class="partner-panel"><div class="partner-stage">${sprite(r.form)}</div><p class="eyebrow">${CHARACTERS[r.characterId].name}의 파트너</p><h2>${FORMS[r.form].name}</h2><p class="partner-quote">${r.burden>=6?'“조금 힘들어. 함께 쉬어 갈까?”':r.hp<r.maxHp*.4?'“잠깐 쉬었다 가자.”':'“어느 쪽으로 함께 갈까?”'}</p><div class="evolution-list">${evolutionOptions(r).map(e=>btn(`<small>${e.form==='skull'?'강제 진화':e.form==='gatomon-resonance'?'공명 강화':'진화'}</small><strong>${FORMS[e.form].name} →</strong><span>${e.condition}</span>`,`preview:${e.form}`,`evolve-option ${e.form==='skull'?'risky':''}`,!e.ready?'disabled':'')).join('')||'<p class="complete-form">'+icon('evolution')+' 완전체 · 전용 카드 적용 중</p>'}</div><details class="journey-log"><summary>지나온 길 · ${r.path.length}곳</summary><ol>${r.path.map(id=>`<li>${chapterOf(r).map.flat().find(n=>n.id===id)?.name||id}</li>`).join('')||'<li>이곳에서 첫 발을 내딛습니다.</li>'}</ol></details></aside></div></main>`;
 }
 function card(id:CardId,action:string,r:Run,disabled=false){return cardFace(id,action,r,disabled);}
-function battle(r:Run){const b=r.battle!;const {incoming,recoil,damage}=turnThreat(r);const rage=bossRageBonus(b.turn);return `<main class="battle-content">${battleHeading(chapterOf(r).zones[zoneAt(r.row)]+' / '+kindName(nodeOf(r)!.type),nodeOf(r)!.name,b.turn)}<div class="battlefield ${nodeOf(r)?.type==='boss'?'boss-field':''} ${attack?'action-flash effect-'+cardEffect:''} ${enemyActing?'enemy-action':''}">${background(nodeOf(r)?.type==='boss'&&r.chapterId==='file'?3:sceneAt(r))}${nodeOf(r)?.type==='boss'?`<div class="boss-clock">${icon('burden')} ${rage?`폭주 · 공격 +${rage}`:'폭주 전'}<span>${BOSS_RAGE.turn}턴부터 ${BOSS_RAGE.interval}턴마다 공격 +${BOSS_RAGE.damage}</span></div>`:''}<div class="data-particles" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="fighter player ${hpFeedback}"><div class="fighter-label">${resourceChip(r)}<span>${icon('guard')} 방어 ${b.block}</span></div><div class="status-tags">${playerStates(r)}${r.corruption?`<span>${icon('corruption')} 오염 ${r.corruption} · 턴 종료 체력 소모</span>`:''}${r.form==='skull'?'<span>반동 · 턴 종료 체력 -2</span>':''}</div>${sprite(r.form,'player-sprite')}<div class="fighter-base"></div><strong class="fighter-name">${FORMS[r.form].name}</strong>${partnerHealth(r)}</div><div class="enemy-group">${b.enemies.map((e,i)=>{const a=enemyMotion?.enemy===i&&enemyMotion.action?enemyMotion.action:intent(r,i);return `<button class="fighter enemy ${enemyMotion?.enemy===i?'acting-enemy intent-'+enemyMotion.action?.type:''} ${b.target===i?'targeted':''} ${attack&&cardEffect==='attack'&&(impactTarget===i||impactTarget===-1)?'hit-target':''} ${e.hp<=0?'defeated':''}" data-action="target:${i}" ${e.hp<=0?'disabled':''} ${targetAttributes(ENEMIES[e.id].name,b.target===i,e.hp<=0)}><div class="intent ${a.type}">${e.hp<=0?'정화 완료':`${icon(a.type)} ${a.label} <b>${a.value}</b>${a.hits&&a.hits>1?' · '+a.hits+'연타':''}${a.extra?' · '+effectName(a.extra)+' '+a.amount:''}`}</div>${enemyMotion?.enemy===i&&enemyMotion.action?`<span class="enemy-effect" aria-hidden="true">${icon(enemyMotion.action.type)}${Array.from({length:Math.min(enemyMotion.action.hits||1,8)},(_,h)=>`<i style="--pulse-delay:${h*65}ms"></i>`).join('')}</span>`:''}<div class="fighter-label"><span>${icon('guard')} 방어 ${e.block}</span></div><div class="status-tags enemy-badges">${enemyStates(e)}</div>${sprite(e.id)}<div class="fighter-base"><i class="target-field" aria-hidden="true"></i></div><strong class="fighter-name">${ENEMIES[e.id].name}</strong><div class="enemy-health"><span>${e.hp} / ${e.maxHp}</span><meter min="0" max="${e.maxHp}" value="${e.hp}" aria-label="${ENEMIES[e.id].name} 체력"></meter></div></button>`;}).join('')}</div></div>${crestHUD(r)}<p class="motion-status" role="status" aria-live="polite">${motionLabel}</p><div class="hand-toolbar"><div class="energy-orb">${b.energy}<small>에너지</small></div><div class="threat-readout ${damage>=r.hp?'lethal':''}"><small>이번 턴 예상 피해</small><strong>${damage}${damage>=r.hp?' · 쓰러질 위험':''}</strong><span>공격 ${incoming} − 방어 ${Math.min(incoming,b.block)}${recoil?` + 오염·반동 ${recoil}`:''}</span></div><div class="pile-counts">뽑기 <b>${b.draw.length}</b><span> / </span>버림 <b>${b.discard.length}</b></div>${btn('턴 종료 →','end','primary end-turn')}</div><div class="hand" aria-label="손패" aria-busy="${motion.busy}">${b.hand.map((id,i)=>{let html=card(id,`card:${i}`,r,cardStats(r,id).cost>b.energy);if(dealStart>=0&&i>=dealStart)html=html.replace('class="game-card','aria-hidden="true" inert style="--deal-delay:'+Math.min(i-dealStart,9)*75+'ms" class="game-card is-dealing');return html;}).join('')||'<p class="empty-hand">손패를 모두 사용했습니다. 턴을 종료하세요.</p>'}</div><details class="battle-log"><summary>전투 기록 · ${esc(logEntries(b.log).at(-1)?.text||'')}</summary><ol>${logEntries(b.log).map(l=>`<li value="${l.number}">${esc(l.text)}</li>`).join('')}</ol></details></main>`;}
+function battle(r:Run){const b=r.battle!;const {incoming,recoil,damage}=turnThreat(r);const rage=bossRageBonus(b.turn);return `<main class="battle-content">${battleHeading(chapterOf(r).zones[zoneAt(r.row)]+' / '+kindName(nodeOf(r)!.type),nodeOf(r)!.name,b.turn)}<div class="battlefield ${nodeOf(r)?.type==='boss'?'boss-field':''} ${attack?'action-flash effect-'+cardEffect:''} ${enemyActing?'enemy-action':''}">${background(nodeOf(r)?.type==='boss'&&r.chapterId==='file'?3:sceneAt(r))}${nodeOf(r)?.type==='boss'?`<div class="boss-clock">${icon('burden')} ${rage?`폭주 · 공격 +${rage}`:'폭주 전'}<span>${BOSS_RAGE.turn}턴부터 ${BOSS_RAGE.interval}턴마다 공격 +${BOSS_RAGE.damage}</span></div>`:''}<div class="data-particles" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="fighter player ${hpFeedback}"><div class="fighter-label">${resourceChip(r)}<span>${icon('guard')} 방어 ${b.block}</span></div><div class="status-tags">${playerStates(r)}${r.corruption?`<span>${icon('corruption')} 오염 ${r.corruption} · 턴 종료 체력 소모</span>`:''}${r.form==='skull'?'<span>반동 · 턴 종료 체력 -2</span>':''}</div>${sprite(r.form,'player-sprite')}<div class="fighter-base"></div><strong class="fighter-name">${FORMS[r.form].name}</strong>${partnerHealth(r)}</div><div class="enemy-group">${b.enemies.map((e,i)=>{const a=enemyMotion?.enemy===i&&enemyMotion.action?enemyMotion.action:intent(r,i);return `<button class="fighter enemy ${enemyMotion?.enemy===i?'acting-enemy intent-'+enemyMotion.action?.type:''} ${b.target===i?'targeted':''} ${attack&&cardEffect==='attack'&&(impactTarget===i||impactTarget===-1)?'hit-target':''} ${e.hp<=0?'defeated':''}" data-action="target:${i}" ${e.hp<=0?'disabled':''} ${targetAttributes(ENEMIES[e.id].name,b.target===i,e.hp<=0)}><div class="intent ${a.type}">${e.hp<=0?'정화 완료':`${icon(a.type)} ${a.label} <b>${a.value}</b>${a.hits&&a.hits>1?' · '+a.hits+'연타':''}${a.extra?' · '+effectName(a.extra)+' '+a.amount:''}`}</div>${enemyMotion?.enemy===i&&enemyMotion.action&&!['attack','drain'].includes(enemyMotion.action.type)?`<span class="enemy-effect" aria-hidden="true">${icon(enemyMotion.action.type)}${Array.from({length:Math.min(enemyMotion.action.hits||1,8)},(_,h)=>`<i style="--pulse-delay:${h*65}ms"></i>`).join('')}</span>`:''}<div class="fighter-label"><span>${icon('guard')} 방어 ${e.block}</span></div><div class="status-tags enemy-badges">${enemyStates(e)}</div>${sprite(e.id)}<div class="fighter-base"><i class="target-field" aria-hidden="true"></i></div><strong class="fighter-name">${ENEMIES[e.id].name}</strong><div class="enemy-health"><span>${e.hp} / ${e.maxHp}</span><meter min="0" max="${e.maxHp}" value="${e.hp}" aria-label="${ENEMIES[e.id].name} 체력"></meter></div></button>`;}).join('')}</div></div>${crestHUD(r)}<p class="motion-status" role="status" aria-live="polite">${motionLabel}</p><div class="hand-toolbar"><div class="energy-orb">${b.energy}<small>에너지</small></div><div class="threat-readout ${damage>=r.hp?'lethal':''}"><small>이번 턴 예상 피해</small><strong>${damage}${damage>=r.hp?' · 쓰러질 위험':''}</strong><span>공격 ${incoming} − 방어 ${Math.min(incoming,b.block)}${recoil?` + 오염·반동 ${recoil}`:''}</span></div><div class="pile-counts">뽑기 <b>${b.draw.length}</b><span> / </span>버림 <b>${b.discard.length}</b></div>${btn('턴 종료 →','end','primary end-turn')}</div><div class="hand" aria-label="손패" aria-busy="${motion.busy}">${b.hand.map((id,i)=>{let html=card(id,`card:${i}`,r,cardStats(r,id).cost>b.energy);if(dealStart>=0&&i>=dealStart)html=html.replace('class="game-card','aria-hidden="true" inert style="--deal-delay:'+Math.min(i-dealStart,9)*75+'ms" class="game-card is-dealing');return html;}).join('')||'<p class="empty-hand">손패를 모두 사용했습니다. 턴을 종료하세요.</p>'}</div><details class="battle-log"><summary>전투 기록 · ${esc(logEntries(b.log).at(-1)?.text||'')}</summary><ol>${logEntries(b.log).map(l=>`<li value="${l.number}">${esc(l.text)}</li>`).join('')}</ol></details></main>`;}
 function eventScreen(r:Run){const s=storyOf(r);return `<main class="story-screen"><div class="story-art">${background(sceneAt(r))}${storyPortrait(r)}<span class="eyebrow">${chapterOf(r).zones[zoneAt(r.row)]}</span></div><div class="story-copy"><div class="eyebrow">${icon('event')} 이야기 이벤트</div><h1>${s.title}</h1><p class="speaker">${s.speaker}</p><blockquote>${s.quote}</blockquote><p>${s.body}</p><div class="choices">${s.choices.map((c,i)=>btn(`<strong>${c.label}<span>→</span></strong>`,`choice:${i}`,'choice')).join('')}</div></div></main>`;}
 function restScreen(r:Run){return `<main class="center-screen rest-screen">${background(sceneAt(r),'page-backdrop')}<div class="eyebrow">휴식</div><div class="camp-art">${portrait(r.characterId)}<div class="camp-partner">${sprite(r.form)}</div></div><h1 tabindex="-1">${nodeOf(r)!.name}</h1><p class="speaker">${CHARACTERS[r.characterId].name} · ${CHARACTERS[r.characterId].partner}</p><blockquote>“서로의 숨소리가 들릴 만큼, 잠깐 쉬어 가자.”</blockquote><div class="choices rest-choices">${btn(`<strong>파트너와 푹 쉰다 →</strong><small>체력 +${RECOVERY.rest} · 부담 -4 · 오염 -2 · 유대 +2</small>`,'rest:rest','choice')}${btn(`<strong>짧게 쉬고 함께 훈련한다 →</strong><small>체력 +${RECOVERY.train} · 진화 에너지 +5 · 부담 +2</small>`,'rest:train','choice')}</div></main>`;}
 function rewardScreen(r:Run){return `<main class="center-screen reward-screen">${background(sceneAt(r),'page-backdrop')}<div class="eyebrow">전투 승리</div><p class="purification">${esc(r.lastVictory||'막혔던 길이 열렸습니다.')}</p><h1>어떤 기술을 기억할까?</h1><p>덱에 추가할 카드 1장을 선택하세요. 넘어가도 괜찮습니다.</p><div class="reward-summary">${icon('energy')} 진화 에너지 +${nodeOf(r)?.type==='elite'?7:5} <span>${icon('bond')} 유대 +1</span></div><div class="reward-cards">${r.rewards.map(id=>card(id,`reward:${id}`,r)).join('')}</div>${btn('카드를 받지 않고 계속 →','skip','secondary')}</main>`;}
@@ -205,12 +216,12 @@ function render(){
  const hand=root.querySelector('.hand');if(hand)hand.scrollLeft=handScroll;
  const newLog=root.querySelector<HTMLDetailsElement>('.battle-log'),newList=newLog?.querySelector('ol');if(newLog&&logOpen)newLog.open=true;if(newList)newList.scrollTop=followLog?newList.scrollHeight:logTop;
  root.dataset.combatBusy=String(motion.busy);
- if(motion.busy)root.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(b=>b.disabled=true);
+ if(motion.busy)root.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(b=>{if(!['home','help','settings','credits','report'].includes(b.dataset.action||''))b.disabled=true;});
  updateAudioStatus();
 }
 function start(ch:ChapterId){if(!chapterUnlocked(save,selected,ch))return;saveRun(save,newRun(Date.now()>>>0,selected,ch));if(!persist(null))return;mapZone=null;view='game';modal='';pendingChapter=null;render();window.scrollTo(0,0);}
 root.addEventListener('click',e=>{const el=(e.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');if(!el)return;if(el.disabled)return;const [action,value]=el.dataset.action!.split(':');currentAction=el.dataset.action!;notice='';
- if(motion.busy)return;
+ if(motion.busy){if(['home','help','settings','credits','report'].includes(action))motion.finish();else return;}
  if(action==='report'){bugReport.open(reportContext());modal='report';render();root.querySelector<HTMLInputElement>('#report-title')?.focus();return;}
  if(modal==='report'&&bugReport.handle(action))return;
  if(session.changed()&&!['save-export','reload-save','settings','data','close'].includes(action)){warning='다른 탭에서 기록이 바뀌었습니다. 최신 기록을 불러온 뒤 계속하세요.';render();return;}
