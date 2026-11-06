@@ -28,6 +28,7 @@ const hideQA=document.createElement('button');hideQA.textContent='Hide fixture c
 const moduleName='visual-main-'+Date.now()+'.ts';
 main+='\n'+readFileSync('qa/effects-fixture.ts','utf8');
 main+='\n'+readFileSync('qa/evolution-fixture.ts','utf8');
+main+='\n'+readFileSync('qa/animation-fixture.ts','utf8');
 writeFileSync('test-results/'+moduleName,main);
 writeFileSync('test-results/visual.html','<!doctype html><html lang="ko"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Visual fixtures (local only)</title><div id="app"></div><script type="module" src="./'+moduleName+'"></script></html>');
 console.log('Local visual fixtures written to test-results/visual.html; no production hooks.');

@@ -1,0 +1,8 @@
+{
+  "id": "etemon",
+  "original": "public/assets/characters/etemon-battle.webp",
+  "source": "exec-77622d8c-fa9b-4aeb-afa2-a9ae9213d231.png",
+  "date": "2026-11-06",
+  "method": "OpenAI imagegen; project-created fan art",
+  "prompt": "Create ONE transparent-background 2D animation sprite sheet for the provided fan-art character. Six NEW whole-body poses in a precise 3-column by 2-row grid. Clean cel shading and exact character design/colors from reference. Each cell has SAME right-facing three-quarter camera, identical scale and grounded foot baseline (or stable hover baseline). IMPORTANT all drawings fit inside their own cell with 10% empty margin on EVERY side, no overlap. No background, ground shadow, effects, words, labels, watermark. Row1: neutral, windup/anticipation, ranged release. Row2: melee release, hit reaction from right (body hunches LEFT with limbs braced, no extra attacker), recovery toward neutral. Movement must redraw jaws, limbs, knees and torso anatomically, NOT warp the entire body. Preserve all horns, armor and limb counts. Do not mirror reference designs. Ranged and melee poses details:  EVERY CELL MUST FACE RIGHT. NO attack energy drawn. Etemon orange monkey singer with black sunglasses, microphone and white collar. Windup bends knees, mic near mouth, free hand pulls back. Ranged release microphone points RIGHT, mouth open singing, free hand gestures forward. Melee free fist punches right. Hit torso hunches, tail curls, mic stays held."
+}

@@ -3,10 +3,12 @@ import type {EffectSpec} from './effect-data';
 import {CARDS} from './data';
 import type {Run} from './types';
 import type {TurnFrame} from './engine';
+import {bodyOrigin,poseFrame,setPose} from './battle-poses';
+import type {PosePhase} from './battle-poses';
 
 export type Actor='player'|`enemy:${number}`;
 export type Contact={actor:Actor;damage:number;blocked:number;reaction:'hit'|'guard'|'null';defeated:boolean};
-export type AttackPlan={key:string;from:Actor;contacts:Contact[];spec:EffectSpec};
+export type AttackPlan={key:string;from:Actor;contacts:Contact[];spec:EffectSpec;hits:number};
 function contact(actor:Actor,hp:number,nextHp:number,block:number,nextBlock:number):Contact {
  const damage=Math.max(0,hp-nextHp),blocked=Math.max(0,block-nextBlock);
  return {actor,damage,blocked,reaction:damage?'hit':blocked?'guard':'null',defeated:hp>0&&nextHp<=0};
@@ -15,12 +17,31 @@ export function cardAttackPlan(before:Run,after:Run,id:string):AttackPlan|null {
  const b=before.battle,n=after.battle,c=CARDS[id];if(!b||!n||!c?.damage)return null;
  const target=b.enemies[b.target]?.hp>0?b.target:b.enemies.findIndex(e=>e.hp>0);
  const contacts=b.enemies.flatMap((e,i)=>{const next=n.enemies[i];return e.hp>0&&next&&(c.all||i===target)?[contact(`enemy:${i}`,e.hp,next.hp,c.dispel?0:e.block,next.block)]:[];});
- return {key:id,from:'player',contacts,spec:cardEffectSpec(id)};
+ return {key:id,from:'player',contacts,spec:cardEffectSpec(id),hits:1};
 }
 export function enemyAttackPlan(before:Run,frame:TurnFrame):AttackPlan|null {
  const a=frame.action,e=before.battle?.enemies[frame.enemy];if(!a||!e||!['attack','drain'].includes(a.type))return null;
  // Drain may heal the attacker and counter/burn may hurt it; neither is a second attack on the player.
- return {key:enemyEffectKey(e.id,e.step),from:`enemy:${frame.enemy}`,contacts:[contact('player',before.hp,frame.run.hp,before.battle!.block,frame.run.battle!.block)],spec:enemyEffectSpec(e.id,e.step)};
+ return {key:enemyEffectKey(e.id,e.step),from:`enemy:${frame.enemy}`,contacts:[contact('player',before.hp,frame.run.hp,before.battle!.block,frame.run.battle!.block)],spec:enemyEffectSpec(e.id,e.step),hits:a.hits||1};
+}
+/** Split the already committed total for presentation only. Never re-run damage/RNG. */
+export function attackBeats(plan:AttackPlan):AttackPlan[]{
+ const count=Math.max(1,Math.min(8,plan.hits));
+ return Array.from({length:count},(_,i)=>({...plan,hits:1,contacts:plan.contacts.map(c=>{
+  const total=c.damage+c.blocked,end=Math.floor(total*(i+1)/count),start=Math.floor(total*i/count);
+  const blocked=Math.max(0,Math.min(end,c.blocked)-Math.min(start,c.blocked));
+  const damage=end-start-blocked;
+  return {...c,damage,blocked,reaction:damage?'hit':blocked?'guard':'null',defeated:c.defeated&&i===count-1};
+ })}));
+}
+export function contactSnapshot(before:Run,after:Run,beats:AttackPlan[],through:number):Run{
+ const last=through===beats.length-1,r=structuredClone(last?after:before);
+ if(!last)for(const beat of beats.slice(0,through+1))for(const c of beat.contacts){
+  if(c.actor==='player'){r.hp=Math.max(0,r.hp-c.damage);r.battle!.block=Math.max(0,r.battle!.block-c.blocked);}
+  else {const e=r.battle!.enemies[Number(c.actor.slice(6))];e.hp=Math.max(0,e.hp-c.damage);e.block=Math.max(0,e.block-c.blocked);}
+ }
+ if(before.screen==='battle')r.screen='battle';
+ return r;
 }
 export type Point={x:number;y:number};
 export const between=(a:Point,b:Point,t:number):Point=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
@@ -118,9 +139,38 @@ export function effectSvg(plan:AttackPlan,from:Point,points:Point[],phase:'trave
 /** SVG overlay follows live sprite rectangles; no fixed viewport coordinates or game mutations. */
 export class CombatEffects {
  private raf=0;private node:SVGSVGElement|null=null;private host:HTMLElement|null=null;private root:HTMLElement|null=null;
- private plan:AttackPlan|null=null;private phase:'travel'|'impact'='travel';private start=0;private minimal=false;
- stage(root:HTMLElement,plan:AttackPlan,phase:'travel'|'impact',minimal:boolean){this.stop();this.root=root;this.plan=plan;this.phase=phase;this.minimal=minimal;this.start=performance.now();this.attach();const tick=()=>{this.paint();this.raf=requestAnimationFrame(tick);};tick();}
- private attach(){this.host=this.root?.querySelector<HTMLElement>('.battlefield')||null;if(!this.host)return;this.host.classList.add('fx-active');this.node=document.createElementNS('http://www.w3.org/2000/svg','svg');this.node.classList.add('combat-fx');this.node.setAttribute('aria-hidden','true');this.node.dataset.skill=this.plan!.key;this.node.dataset.phase=this.phase;this.host.append(this.node);if(this.phase==='impact')for(const c of this.plan!.contacts){const el=this.root?.querySelector(actorSelector(c.actor));el?.classList.add('fx-'+c.reaction);}else if(!this.minimal){const actor=this.root?.querySelector<HTMLElement>(actorSelector(this.plan!.from));actor?.classList.add('fx-caster','cast-'+this.plan!.spec.kind);actor?.style.setProperty('--cast-direction',this.plan!.from==='player'?'1':'-1');actor?.style.setProperty('--cast-duration',this.plan!.spec.travel+'ms');}}
- private paint(){if(!this.host?.isConnected||!this.node||!this.plan)return;const box=this.host.getBoundingClientRect();const point=(actor:Actor,source=false)=>{const el=this.root!.querySelector(actorSelector(actor)+' > .sprite'),r=el?.getBoundingClientRect();if(!r)return null;const anchor=source?sourceAnchor(this.plan!.spec.kind,actor,r.width,r.height):{x:r.width*.5,y:r.height*.48};return {x:r.left+anchor.x-box.left,y:r.top+anchor.y-box.top};};const from=point(this.plan.from,true);if(!from)return;const points=this.plan.contacts.map(c=>point(c.actor)||from);this.node.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);const duration=this.phase==='travel'?this.plan.spec.travel:this.plan.spec.impact;this.node.innerHTML=effectSvg(this.plan,from,points,this.phase,(performance.now()-this.start)/duration,this.minimal);}
- stop(){cancelAnimationFrame(this.raf);this.raf=0;this.node?.remove();this.host?.classList.remove('fx-active');this.root?.querySelectorAll('.fx-hit,.fx-guard,.fx-null,.fx-caster').forEach(e=>{e.classList.remove('fx-hit','fx-guard','fx-null','fx-caster');for(const c of Array.from(e.classList))if(c.startsWith('cast-'))e.classList.remove(c);});this.node=null;this.host=null;this.plan=null;}
+ private plan:AttackPlan|null=null;private phase:PosePhase='travel';private start=0;private minimal=false;
+ stage(root:HTMLElement,plan:AttackPlan,phase:PosePhase,minimal:boolean){
+  this.stop();this.root=root;this.plan=plan;this.phase=phase;this.minimal=minimal;this.start=performance.now();
+  this.host=root.querySelector<HTMLElement>('.battlefield');if(!this.host)return;
+  this.host.classList.add('fx-active');this.node=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  this.node.classList.add('combat-fx');this.node.setAttribute('aria-hidden','true');this.node.dataset.skill=plan.key;this.node.dataset.phase=phase;this.host.append(this.node);
+  if(!minimal){
+   setPose(root.querySelector(actorSelector(plan.from)+' > .sprite'),poseFrame(phase,plan.spec.kind,plan.key));
+   if(phase==='impact'||phase==='recover')for(const c of plan.contacts){
+    const el=root.querySelector(actorSelector(c.actor));el?.classList.add('fx-'+c.reaction);
+    setPose(el?.querySelector(':scope > .sprite')||null,c.reaction==='null'?0:phase==='recover'?5:c.reaction==='guard'?1:4);
+   }
+  }
+  const tick=()=>{this.paint();if(this.node)this.raf=requestAnimationFrame(tick);};tick();
+ }
+ private paint(){
+  if(!this.host?.isConnected||!this.node||!this.plan){this.stop();return;}
+  if(this.phase==='prepare'||this.phase==='recover')return;
+  const box=this.host.getBoundingClientRect();
+  const point=(actor:Actor,source=false)=>{
+   const el=this.root!.querySelector<HTMLElement>(actorSelector(actor)+' > .sprite'),r=el?.getBoundingClientRect();if(!r)return null;
+   const anchor=source?(el?.dataset.pose?bodyOrigin(el.dataset.pose,this.plan!.spec.kind,actor!=='player',r.width,r.height,this.plan!.key):sourceAnchor(this.plan!.spec.kind,actor,r.width,r.height)):{x:r.width*.5,y:r.height*.48};
+   return {x:r.left+anchor.x-box.left,y:r.top+anchor.y-box.top};
+  };
+  const from=point(this.plan.from,true);if(!from)return;
+  const points=this.plan.contacts.map(c=>point(c.actor)||from);this.node.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);
+  const duration=this.phase==='travel'?this.plan.spec.travel:this.plan.spec.impact;
+  this.node.innerHTML=effectSvg(this.plan,from,points,this.phase,(performance.now()-this.start)/duration,this.minimal);
+ }
+ stop(){
+  cancelAnimationFrame(this.raf);this.raf=0;this.node?.remove();this.host?.classList.remove('fx-active');
+  this.root?.querySelectorAll('.fx-hit,.fx-guard,.fx-null,.fx-caster').forEach(e=>e.classList.remove('fx-hit','fx-guard','fx-null','fx-caster'));
+  this.root?.querySelectorAll('.battle-pose').forEach(e=>setPose(e,0));this.node=null;this.host=null;this.plan=null;
+ }
 }

@@ -7,7 +7,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.jso
 createServer((req,res)=>{
  res.setHeader('X-Robots-Tag','noindex, nofollow, noarchive, nosnippet');
  let path=new URL(req.url,'http://localhost').pathname;
- const fixtures=['/slots.html','/slots.js','/evolution.html','/evolution.js'];
+ const fixtures=['/slots.html','/slots.js','/evolution.html','/evolution.js','/animation.html','/animation.js'];
  if(path==='/qa.html'||fixtures.includes(path)){
   const file=path==='/qa.html'?'qa/pwa.html':'test-results'+path;
   res.setHeader('Content-Type',types[extname(file)]);res.end(readFileSync(file,'utf8').replaceAll('/file-island-echoes/',base));return;

@@ -1,0 +1,8 @@
+{
+  "id": "dark-tyrannomon",
+  "original": "public/assets/characters/dark-tyrannomon-battle.webp",
+  "source": "exec-825b399c-6d9f-4827-b30e-b1d4d302bda8.png",
+  "date": "2026-11-06",
+  "method": "OpenAI imagegen; newly drawn poses using project-created fan art",
+  "prompt": "Create ONE transparent-background 2D animation sprite sheet for the provided fan-art character. Six NEW whole-body poses in a precise 3-column by 2-row grid. Clean cel shading and exact character design/colors from reference. Each cell has SAME right-facing three-quarter camera, identical scale and grounded foot baseline (or stable hover baseline). IMPORTANT all drawings fit inside their own cell with 10% empty margin on EVERY side, no overlap. No background, ground shadow, effects, words, labels, watermark. Row1: neutral, windup/anticipation, ranged release. Row2: melee release, hit reaction from right (body hunches LEFT with limbs braced, no extra attacker), recovery toward neutral. Movement must redraw jaws, limbs, knees and torso anatomically, NOT warp the entire body. Preserve all horns, armor and limb counts. Do not mirror reference designs. Ranged and melee poses details:  EVERY CELL MUST FACE RIGHT. NO attack energy drawn. DarkTyrannomon black dinosaur with grey belly red dorsal spines. Windup crouches, head lifts, jaws close. Ranged release open mouth thrust RIGHT breathing fire (no effects drawn). Melee foreclaw swipe right. Hit neck recoils and forearms curl, knees flex. Two legs two arms."
+}

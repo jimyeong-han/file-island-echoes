@@ -30,6 +30,9 @@ evoCheck.onclick=async()=>{
    fxAssert(!evolutionSequence.running,'timer '+e.to);
    if(!reduced())fxAssert(['device','signal','data','reveal','complete'].every(p=>phases.has(p)),'phases '+e.to);
    const images=[...root.querySelectorAll<HTMLImageElement>('.evo-stage img')];await Promise.all(images.map(img=>img.decode().catch(()=>{})));fxAssert(images.length===2&&images.every(img=>img.complete&&img.naturalWidth>0),'images '+e.to);
+   // Existing scene music fades out over 450ms; reduced visuals complete at 180ms.
+   // Verify its bounded tail separately from the already checked visual completion.
+   if(reduced())await fxPause(320);
    fxAssert(gameAudio.mixer.status.musicVoices===0,'music leak '+e.to);
    fxAssert(r.evoEnergy===before.evoEnergy-EVOLUTIONS.find(e=>e.to===r.form)!.energy,'cost '+e.to);
    fxAssert(JSON.stringify(loadSave().save.runs[r.characterId]!.run)===JSON.stringify(r),'saved '+e.to);

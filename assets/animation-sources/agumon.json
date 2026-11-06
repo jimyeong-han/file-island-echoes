@@ -1,0 +1,8 @@
+{
+  "id": "agumon",
+  "original": "public/assets/characters/agumon-battle.webp",
+  "source": "exec-7c057784-55bc-4959-b321-1ea722c3c629.png",
+  "date": "2026-11-06",
+  "method": "OpenAI imagegen; newly drawn poses using project-created fan art",
+  "prompt": "Create one production 2D battle animation sprite sheet for the provided fan-made Agumon design. Preserve exact colors, clean cel shading, smooth skin, eyes, three claws, proportions. TRANSPARENT background, NO text labels, NO effects, NO shadow, NO border. 3 columns x 2 rows with six completely separate full-body drawings, uniform grid cells, generous separation. Same right-facing 3/4 view, same scale, feet baseline and body placement in each cell; no camera movement. Row1 cells: (1) neutral battle stance matching reference, (2) anticipation: crouch knees, lean torso slightly back, close jaw, lift head, pull front arm back; (3) breath attack RELEASE: head thrust forward, jaw OPEN wide toward right, planted bent legs, arms splayed for balance, no flame drawn. Row2: (4) claw attack RELEASE: low planted stance, forward arm reaches RIGHT with three claws extended while other arm pulled back, torso clearly turns; (5) hit reaction: shoulders hunch, head recoils LEFT, forearms pull to chest, knees flex, feet remain at baseline; (6) recovery: head settles, arms lower, legs straighten back toward neutral. Each is an anatomically coherent newly drawn pose, not a warped or sliced version of the original. Feet and whole tail entirely inside each grid cell. Crisp dark outlines readable at 160px. No words, watermark or extra creatures."
+}

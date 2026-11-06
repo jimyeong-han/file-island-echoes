@@ -1,0 +1,3 @@
+import {build} from 'esbuild';import {mkdirSync,writeFileSync} from 'node:fs';
+mkdirSync('test-results',{recursive:true});await build({entryPoints:['qa/animation-saves.ts'],bundle:true,format:'esm',outfile:'test-results/animation.js'});
+writeFileSync('test-results/animation.html','<!doctype html><html lang="ko"><meta charset="utf-8"><title>Local animation update QA</title><h1>Disposable near-victory checkpoint</h1><button id="seed">Seed near victory</button><button id="inspect">Inspect checkpoint</button><a href="/file-island-echoes/">Game</a><pre></pre><script type="module" src="/animation.js"></script></html>');

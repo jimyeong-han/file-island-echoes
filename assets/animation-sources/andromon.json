@@ -1,0 +1,16 @@
+{
+  "id": "andromon",
+  "original": "public/assets/characters/andromon-battle.webp",
+  "source": "exec-c2ea328e-6072-47fd-8997-4e7a8a057a8e.png",
+  "date": "2026-11-06",
+  "method": "OpenAI imagegen; newly drawn poses using project-created fan art",
+  "prompt": "Create ONE transparent-background 2D animation sprite sheet for the provided fan-art character. Six NEW whole-body poses in a precise 3-column by 2-row grid. Clean cel shading and exact character design/colors from reference. Each cell has SAME right-facing three-quarter camera, identical scale and grounded foot baseline (or stable hover baseline). IMPORTANT all drawings fit inside their own cell with 10% empty margin on EVERY side, no overlap. No background, ground shadow, effects, words, labels, watermark. Row1: neutral, windup/anticipation, ranged release. Row2: melee release, hit reaction from right (body hunches LEFT with limbs braced, no extra attacker), recovery toward neutral. Movement must redraw jaws, limbs, knees and torso anatomically, NOT warp the entire body. Preserve all horns, armor and limb counts. Do not mirror reference designs. Ranged and melee poses details:  EVERY CELL MUST FACE RIGHT. NO attack energy drawn. Andromon silver cyborg with exposed machinery and helmet. Windup draws blade forearm back, legs bend. Ranged release mechanical forearm thrust RIGHT, blade panel visible. Melee forearm blade slashes right. Hit shoulders and mechanical joints fold. No extra weapon or armor.",
+  "refinement": {
+    "id": "andromon",
+    "original": "public/assets/characters/andromon-battle.webp",
+    "source": "exec-650e31c1-0563-492d-a16d-8b822c5f714e.png",
+    "date": "2026-11-06",
+    "method": "OpenAI imagegen; project-created fan art; refinement",
+    "prompt": "Edit this six-pose transparent sprite sheet in the same 3-column 2-row grid. Preserve the full-body cyborg character identity, proportions, rendering and armor. ALL SIX poses must face screen RIGHT. Turn heads and torso toward the right target. Top left neutral right-facing. Top middle crouched windup facing right. Top right arm fully extended aiming right, cyborg looking along the extended arm to the RIGHT. Bottom left strong arm blade slash to the RIGHT, head looks right. Bottom middle hit-recoil with knees bent while body still oriented right. Bottom right right-facing recovery. Keep both feet entirely inside each cell and identical scale. Transparent background with no shadows, no attack effects, no light glows, no text."
+  }
+}

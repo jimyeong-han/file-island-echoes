@@ -1,0 +1,8 @@
+{
+  "id": "meramon",
+  "original": "public/assets/characters/meramon-battle.webp",
+  "source": "exec-747673a5-10d6-4d5e-b2dc-ac98a954812b.png",
+  "date": "2026-11-06",
+  "method": "OpenAI imagegen; newly drawn poses using project-created fan art",
+  "prompt": "Create ONE transparent-background 2D animation sprite sheet for the provided fan-art character. Six NEW whole-body poses in a precise 3-column by 2-row grid. Clean cel shading and exact character design/colors from reference. Each cell has SAME right-facing three-quarter camera, identical scale and grounded foot baseline (or stable hover baseline). IMPORTANT all drawings fit inside their own cell with 10% empty margin on EVERY side, no overlap. No background, ground shadow, effects, words, labels, watermark. Row1: neutral, windup/anticipation, ranged release. Row2: melee release, hit reaction from right (body hunches LEFT with limbs braced, no extra attacker), recovery toward neutral. Movement must redraw jaws, limbs, knees and torso anatomically, NOT warp the entire body. Preserve all horns, armor and limb counts. Do not mirror reference designs. Ranged and melee poses details:  CRITICAL: all six poses must face RIGHT, including neutral/windup/recovery. If the reference faces left, redraw it facing RIGHT. Keep limb counts and overall design. NO painted attack projectile or energy streak anywhere. Meramon humanoid living orange flames. Windup pulls flame fist back, crouches. Ranged release both flame hands thrust RIGHT; melee rightward punch. Hit elbows close, torso hunches, legs flex. Keep clean readable cel-shaded flame-body silhouette, no background fire."
+}

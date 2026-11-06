@@ -12,7 +12,9 @@ const refs = [...built.matchAll(/<(?:script|link)\b[^>]*(?:src|href)="([^"]+)"/g
 const fonts=readdirSync('public/assets/fonts').filter(p=>p.endsWith('.woff2')).map(p=>'assets/fonts/'+p);
 const pwaIcons=JSON.parse(readFileSync(root+'/manifest.webmanifest','utf8')).icons.map(i=>i.src);
 const chunks=readdirSync(root+'/assets').filter(p=>/\.(js|css)$/.test(p)).map(p=>'assets/'+p);
-const paths = ['sw.js','pwa-build.json','deployment.json',...chunks,...pwaIcons,...fonts,...Object.values(audioManifest).flatMap(c=>c.files.map(p=>'assets/audio/'+p)), '', 'index.html', 'robots.txt', 'assets/ui/card-back.svg', ...refs, ...[
+const poses=Object.values(JSON.parse(readFileSync('src/pose-manifest.json','utf8'))).map(p=>'assets/'+p.path);
+const fallback=readdirSync(root+'/art').filter(p=>p.endsWith('.svg')).map(p=>'art/'+p);
+const paths = ['sw.js','pwa-build.json','deployment.json',...poses,...fallback,...chunks,...pwaIcons,...fonts,...Object.values(audioManifest).flatMap(c=>c.files.map(p=>'assets/audio/'+p)), '', 'index.html', 'robots.txt', 'assets/ui/card-back.svg', ...refs, ...[
   ...Object.values(manifest.characters), ...manifest.backgrounds, ...Object.values(manifest.portraits),
 ].map(p => 'assets/' + p)];
 await Promise.all(paths.map(async path => {

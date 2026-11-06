@@ -57,19 +57,19 @@ faces.onclick=async()=>{
  try{
   await fixture('tai');click('[data-action="end"]');
   let sawBack=false,sawFront=false,leaked=false;
-  for(let i=0;i<35;i++){
+  for(let i=0;i<75;i++){
    await sleep(40);const c=document.querySelector('.hand .is-dealing');if(!c)continue;
    const front=getComputedStyle(c.querySelector('.card-front')!).visibility==='visible',back=getComputedStyle(c.querySelector('.card-back')!).visibility==='visible';
    if(back)sawBack=true;if(front)sawFront=true;if(front&&back)leaked=true;
   }
   await waitReady();assert(sawBack&&sawFront&&!leaked,'front/back overlap or absent flip');
   document.querySelector('#qa-faces')?.remove();const sheet=document.createElement('section');sheet.id='qa-faces';sheet.style.cssText='display:flex;gap:24px;flex-wrap:wrap;padding:30px;justify-content:center;background:#102730';
-  for(const [label,time] of [['뒷면 · 배분 중 (120ms)',120],['앞면 · 뒤집힘 완료 (460ms)',460]] as const){
+  for(const [label,time] of [['뒷면 · 배분 중 (120ms)',120],['앞면 · 뒤집힘 완료 (360ms)',360]] as const){
    const cell=document.createElement('div'),title=document.createElement('h2');title.textContent=label;title.style.fontSize='16px';cell.append(title);
    const c=document.querySelector('.hand .game-card')!.cloneNode(true) as HTMLElement;c.removeAttribute('data-action');c.setAttribute('aria-hidden','true');c.inert=true;c.classList.add('is-dealing');c.style.cssText='--deal-delay:0ms;min-height:330px;';cell.append(c);sheet.append(cell);
   }
   document.body.insertBefore(sheet,nav);await sleep(30);
-  [...sheet.querySelectorAll('.game-card')].forEach((c,i)=>c.getAnimations({subtree:true}).forEach(a=>{a.pause();a.currentTime=i?460:120;}));
+  [...sheet.querySelectorAll('.game-card')].forEach((c,i)=>c.getAnimations({subtree:true}).forEach(a=>{a.pause();a.currentTime=i?360:120;}));
   sheet.scrollIntoView({block:'center'});output.textContent='BACK → FRONT PASS: dedicated SVG back; no simultaneous front/back exposure. Paused samples shown below.';
  }catch(e){output.textContent='FAIL '+String(e);}finally{faces.disabled=false;}
 };

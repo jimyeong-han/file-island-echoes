@@ -1,6 +1,7 @@
 import { ENEMIES, FORMS, NPCS } from './data';
 import manifest from './asset-manifest.json';
 import type { Form } from './types';
+import {poseMarkup} from './battle-poses';
 export const assetUrl = (path: string) => `${import.meta.env.BASE_URL}assets/${path}`;
 const fallbackUrl = (id: string) => `${import.meta.env.BASE_URL}art/${id}.svg`;
 export function sprite(id: string, extra = '') {
@@ -10,6 +11,9 @@ export function sprite(id: string, extra = '') {
   const old=['agumon','greymon','metal','skull','kuwaga','elec','meramon','nume','andromon','ogre','devimon'];
   const fallback=fallbackUrl(old.includes(id)?id:'data-silhouette');
   return `<img class="sprite ${extra} form-${id} stage-${FORMS[id]?.stage??1}" src="${path ? assetUrl(path) : fallback}" data-fallback="${fallback}" width="640" height="640" alt="${name}" draggable="false" decoding="async" loading="lazy"/>`;
+}
+export function battleSprite(id:string,extra=''){
+  return poseMarkup(id,FORMS[id]?.name||ENEMIES[id]?.name||'디지몬',`${extra} stage-${FORMS[id]?.stage??1}`,sprite(id,extra));
 }
 export function background(zone: number, extra = '') {
   return `<img class="scene-background ${extra}" src="${assetUrl(manifest.backgrounds[zone] || manifest.backgrounds[0])}" width="1536" height="864" alt="" draggable="false" decoding="async"/>`;

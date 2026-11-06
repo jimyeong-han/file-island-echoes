@@ -14,6 +14,8 @@ const html=readFileSync('dist/index.html','utf8');
 const refs=Array.from(html.matchAll(/<(?:script|link)\b[^>]*(?:src|href)="([^"]+)"/g),m=>m[1]);
 for(const ref of refs)assert(ref.startsWith(base),'Vite reference outside deployment base: '+ref);
 const files=['index.html','manifest.webmanifest','deployment.json',...refs.map(ref=>ref.slice(base.length)),...readdirSync('dist/assets/fonts').filter(f=>f.endsWith('.woff2')).map(f=>'assets/fonts/'+f),...readdirSync('dist/assets/ui').filter(f=>f.endsWith('.svg')).map(f=>'assets/ui/'+f),...readdirSync('dist/assets/pwa').map(f=>'assets/pwa/'+f)];
+// Lightweight silhouettes remain available even for an atlas never visited online.
+files.push(...readdirSync('dist/art').filter(f=>f.endsWith('.svg')).map(f=>'art/'+f));
 const touch=JSON.parse(readFileSync('src/touch-sfx.json'));
 const audio=JSON.parse(readFileSync('src/audio-manifest.json'));
 files.push(...touch.flatMap(id=>audio[id].files.map(f=>'assets/audio/'+f)));

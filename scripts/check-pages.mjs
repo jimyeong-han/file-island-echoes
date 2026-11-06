@@ -49,7 +49,15 @@ inspect(root);
 const audioManifest=JSON.parse(readFileSync('src/audio-manifest.json','utf8'));
 const audioBytes=Object.values(audioManifest).flatMap(c=>c.files).reduce((n,p)=>n+statSync(join(root,'assets/audio',p)).size,0);
 assert(audioBytes<15*1024*1024,'Audio exceeds the separate 15 MiB budget');
-assert(compressedBytes-audioBytes<10*1024*1024,'Non-audio deployment exceeds 10 MiB');
+// Battle pose atlases are fetched only for the current combatants, never at startup.
+const poses=JSON.parse(readFileSync('src/pose-manifest.json','utf8'));
+const poseBytes=Object.values(poses).reduce((n,p)=>n+statSync(join(root,'assets',p.path)).size,0);
+assert(poseBytes<8*1024*1024,'Optional battle pose library exceeds 8 MiB');
+assert(compressedBytes-audioBytes-poseBytes<10*1024*1024,'Base non-audio deployment exceeds 10 MiB');
+for(const p of Object.values(poses)){assert(p.frames.length===6);assert(statSync(join(root,'assets',p.path)).size===p.bytes);}
+const largestBattle=Object.values(poses).map(p=>p.bytes).sort((a,b)=>b-a).slice(0,3).reduce((a,b)=>a+b,0);
+assert(largestBattle<800*1024,'Three active pose atlases exceed the battle transfer budget');
+console.log(`On-demand poses: ${Object.keys(poses).length} atlases / ${poseBytes} bytes; largest three ${largestBattle} bytes.`);
 assert.doesNotMatch(readFileSync(join(root,refs.find(r=>r.endsWith('.js')).slice(base.length)),'utf8'),/data:audio\/.*base64/);
 console.log('Audio checks: '+Object.keys(audioManifest).length+' cues / '+audioBytes+' bytes (both codecs).');
 console.log(`${target.target} checks passed: ${checked} files, ${images.length} manifest images; paths, crawler directives, common credential/path patterns. All files: ${rawBytes} raw bytes / ${compressedBytes} estimated transferred bytes.`);

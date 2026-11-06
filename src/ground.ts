@@ -8,7 +8,7 @@ export function syncGround(root:HTMLElement){
  if(frame)cancelAnimationFrame(frame);
  const update=()=>{let moving=false;for(const enemy of Array.from(root.querySelectorAll<HTMLElement>('.enemy'))){
   const img=enemy.querySelector<HTMLImageElement>(':scope > .sprite'),base=enemy.querySelector<HTMLElement>('.fighter-base');if(!img||!base)continue;
-  const id=Array.from(img.classList).find(c=>c.startsWith('form-'))?.slice(5);const m=metrics[id as keyof typeof metrics]||{x:.5,y:.95,width:.65,w:640,h:640};
+  const id=Array.from(img.classList).find(c=>c.startsWith('form-'))?.slice(5);const m=img.classList.contains('battle-pose')?{x:.5,y:.963,width:.56,w:320,h:320}:metrics[id as keyof typeof metrics]||{x:.5,y:.95,width:.65,w:640,h:640};
   const rect=img.getBoundingClientRect(),parent=enemy.getBoundingClientRect();const g=groundGeometry(rect.width,rect.height,m);
   base.style.cssText=`left:${rect.left-parent.left+g.x-g.width/2}px;top:${rect.top-parent.top+g.y-g.width*.07}px;width:${g.width}px;height:${g.width*.14}px;--aura-height:${g.height*.85}px`;
   moving ||= img.getAnimations().some(a=>a.playState==='running');
