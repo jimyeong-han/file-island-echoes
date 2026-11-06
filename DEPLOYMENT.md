@@ -1,6 +1,6 @@
 # Vercel와 GitHub Pages 배포
 
-2026-11-06 기준. 게임은 정적 Vite 빌드이며 서버, 계정 로그인, 분석 도구를 추가하지 않는다. 저장소 공개 범위와 사이트의 접근 정책은 별개다. 이번 이전에서 저장소를 비공개로 바꾸거나 배포 인증 정책을 변경하지 않는다.
+2026-11-06 기준. 게임은 정적 Vite 빌드다. v0.15부터 선택적 계정 저장에 외부 Supabase Auth/Postgres를 사용하며 자체 서버나 분석 도구는 추가하지 않는다. 저장소 공개 범위와 사이트의 접근 정책은 별개다. 이번 이전에서 저장소를 비공개로 바꾸거나 배포 인증 정책을 변경하지 않는다.
 
 ## 환경별 명령
 
@@ -13,7 +13,7 @@ Node.js 24, `npm ci` 후 실행한다. 두 빌드 모두 `dist/`를 새로 만�
 
 기존 `npm run build`는 Pages다. `config/deployment.mjs`가 두 환경의 기준이며 Vite, PWA 생성, 검사 도구가 같은 값을 사용한다. `deployment.json`은 빌드 대상, `pwa-build.json`은 리소스 해시와 base를 기록한다. manifest id/start_url/scope와 worker URL도 대상에 맞게 생성한다. 그림·폰트·오디오는 Vite BASE_URL을 사용한다. `/` 또는 프로젝트 경로 및 그 안의 `index.html`로 직접 접근한다. 게임 내부 화면은 별도 서버 경로가 아니다.
 
-Vercel 설정은 `vercel.json`에 있다. framework는 Vite, install은 `npm ci`, build는 `npm run build:vercel && npm run check:vercel`, output은 `dist`다. 모든 응답에 X-Robots-Tag를 설정하고 worker/manifest/빌드 메타데이터는 재검증하도록 한다. 비밀 환경 변수는 필요 없다. `.vercel/`, `.env*`, 로컬 QA와 원본 제작 자료는 CLI 업로드에서 제외한다. 클라이언트에 토큰을 넣지 않는다.
+Vercel 설정은 `vercel.json`에 있다. framework는 Vite, install은 `npm ci`, build는 `npm run build:vercel && npm run check:vercel`, output은 `dist`다. 모든 응답에 X-Robots-Tag를 설정하고 worker/manifest/빌드 메타데이터는 재검증하도록 한다. 비밀 환경 변수는 필요 없다. `.vercel/`, `.env*`, 로컬 QA와 원본 제작 자료는 CLI 업로드에서 제외한다. 클라이언트 빌드에는 Supabase 공개 URL/publishable 키만 설정한다. 관리 토큰이나 service-role 키는 넣지 않는다. 인증 후 사용자 세션은 SDK가 별도로 관리한다.
 
 Pages Actions는 main에서 테스트 → Vercel 빌드 검사 → Pages 빌드 검사 후 Pages 산출물만 배포한다. `PAGES_ENABLED=true`일 때만 공개 배포하며 기존 주소를 유지한다.
 
@@ -43,10 +43,14 @@ Pages와 Vercel은 서로 다른 origin이므로 localStorage와 홈 화면 앱�
 4. 사용자가 확인해야 대상 주소의 기록이 교체된다. 취소하면 그대로다. 원래 Pages 기록은 삭제하거나 변경하지 않는다.
 5. 새 주소에서 이어하기를 확인한 뒤 필요하면 Vercel 주소를 홈 화면에 새로 추가한다. 기존 Pages 앱은 별도 설치로 남는다.
 
-저장 schema는 3이며 이전 appVersion의 호환 JSON도 지원한다. JSON은 개인 백업 파일이므로 공개 이슈에 첨부할 필요가 없다. 계정 간 자동 동기화는 v0.14 범위에 없다.
+저장 schema는 3이며 이전 appVersion의 호환 JSON도 지원한다. JSON은 개인 백업 파일이므로 공개 이슈에 첨부할 필요가 없다. v0.15부터 같은 계정의 클라우드 저장을 통해서도 두 주소 사이 기록을 옮길 수 있다. 첫 연결마다 명시적으로 저장 방향을 선택하며, 양쪽 로컬 기록은 자동 합쳐지지 않는다. [계정 설정과 운영](CLOUD_SAVE.md)을 참고한다.
 
 ## 공개 범위와 검증
 
 noindex, robots.txt, X-Robots-Tag는 검색 노출을 줄이기 위한 지시이며 URL 접근을 막는 보안 기능이 아니다. 소스 비공개 여부와 관계없이 브라우저가 받은 게임 코드·에셋은 사용자에게 전달된다. 가짜 비밀번호 화면은 만들지 않는다.
 
 실제 배포 주소, Git 연결과 브라우저 검증 결과는 [v0.14 검증 기록](docs/v0.14-validation.md)에 기록한다. 설치·오프라인 제약은 [PWA.md](PWA.md)를 참고한다.
+
+## v0.15 공개 환경변수
+
+Vercel Production 환경변수와 GitHub Actions repository variables에 `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`를 등록했다. Pages 빌드 job이 이를 읽는다. 값 변경 후에는 재배포해야 한다. 두 값이 없으면 계정 기능만 준비 중으로 표시하고 로컬 게임은 실행한다. 실제 배포 검증은 [v0.15](docs/v0.15-validation.md)에 기록한다.

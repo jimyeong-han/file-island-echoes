@@ -1,0 +1,11 @@
+import {freshSave,exportSave,prepareImport} from '../src/save-files';
+import {newRun,enterNode,playCard} from '../src/engine';
+import {saveRun,SAVE_KEY,loadSave} from '../src/storage';
+import {CHARACTER_IDS} from '../src/types';
+import {signature} from '../src/cloud/model';
+if(location.hostname!=='127.0.0.1'||!['3040','3041'].includes(location.port))throw Error('Isolated local QA origins only');
+const out=document.querySelector('pre')!;
+const show=()=>{const s=loadSave().save;out.textContent=JSON.stringify({count:Object.keys(s.runs).length,active:s.activeCharacterId,settings:s.settings,wins:s.archive.wins,slots:CHARACTER_IDS.map(id=>({id,hp:s.runs[id]?.run.hp,form:s.runs[id]?.run.form}))},null,2);};
+document.querySelector('#inspect')!.addEventListener('click',show);
+document.querySelector('#seed')!.addEventListener('click',()=>{const s=freshSave();for(const [i,id]of CHARACTER_IDS.entries()){const r=newRun(100+i,id);r.started=1000+i;r.screen='map';enterNode(r,'0a');playCard(r,0);saveRun(s,r,2000+i);}s.settings={muted:true,reducedMotion:true,masterVolume:.4,musicVolume:.3,sfxVolume:.6,guide:false};s.archive={forms:['agumon','greymon'],enemies:['kuwaga','devimon'],events:['gear'],zones:[0,1,2],runs:3,wins:1,best:11,clears:{tai:['file']},endings:['tai:file']};localStorage.setItem(SAVE_KEY,JSON.stringify(s));show();});
+document.querySelector('#backup')!.addEventListener('click',()=>{const s=loadSave().save,f=exportSave(s);out.textContent=JSON.stringify({roundtrip:signature(prepareImport(f.text).save)===signature(s),bytes:new TextEncoder().encode(f.text).length,slots:Object.keys(s.runs).length});});

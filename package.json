@@ -1,7 +1,7 @@
 {
   "name": "file-island-echoes",
   "description": "Small browser game prototype",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,14 +21,21 @@
     "build:pages": "node scripts/build.mjs pages",
     "build:vercel": "node scripts/build.mjs vercel",
     "preview:vercel": "vite preview --mode vercel --host 127.0.0.1 --port 3001",
-    "check:vercel": "node scripts/check-pages.mjs vercel"
+    "check:vercel": "node scripts/check-pages.mjs vercel",
+    "test:cloud": "node scripts/test-cloud.mjs",
+    "dev:cloud": "node scripts/dev-cloud.mjs"
   },
   "devDependencies": {
+    "jsdom": "^29.1.1",
+    "supabase": "^3.0.0",
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
     "vitest": "^4.1.11"
   },
   "engines": {
     "node": "24.x"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0"
   }
 }

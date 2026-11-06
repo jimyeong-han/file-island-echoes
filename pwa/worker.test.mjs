@@ -10,6 +10,7 @@ test('runtime cache is bounded',async()=>{const h=harness();for(let i=0;i<183;i+
 
 test('revised runtime content does not reuse stale bytes while identical revisions do',async()=>{const h=harness(),r=req('/file-island-echoes/assets/pic.webp');const config={base:'/file-island-echoes/',build:'one',files:[],revisions:{'/file-island-echoes/assets/pic.webp':'a'}};await createWorker(h.env,config).fetchRequest(r);const count=h.calls.length;await createWorker(h.env,{...config,build:'two'}).fetchRequest(r);assert.equal(h.calls.length,count);await createWorker(h.env,{...config,revisions:{'/file-island-echoes/assets/pic.webp':'b'}}).fetchRequest(r);assert.equal(h.calls.length,count+1);});
 test('update connectivity probes always bypass cached responses',()=>{const {worker}=harness();assert(!worker.eligible(req('/file-island-echoes/sw.js')));assert(!worker.eligible(req('/file-island-echoes/pwa-build.json')));assert(!worker.eligible(req('/file-island-echoes/assets/a.js',{cache:'no-store'})));});
+test('authenticated responses and account payloads never enter PWA caches',()=>{const {worker}=harness();for(const r of [req('/file-island-echoes/profile',{headers:{Authorization:'Bearer disposable-test'}}),req('/file-island-echoes/profile',{method:'POST',body:'private profile'}),new Request('https://project.supabase.co/rest/v1/fie_profiles')])assert(!worker.eligible(r));});
 import {musicFiles} from './pack.mjs';
 import {readFileSync} from 'node:fs';
 test('both one-shot evolution scores and codecs install and serve offline',async()=>{

@@ -6,7 +6,7 @@ export function createWorker(env, config) {
  const music=config.music||[],pack=prefix+'music-'+config.build;
  const keyFor=path=>{const u=new URL(path,base);u.searchParams.set('__asset',config.revisions?.[u.pathname]||config.build);return u.href;};
  const urls=config.files.filter(f=>!music.includes(f)).map(p=>new URL(p,base).href);
- const eligible=req=>{const u=new URL(req.url);return req.method==='GET'&&req.cache!=='no-store'&&u.origin===base.origin&&u.pathname.startsWith(base.pathname)&&!['sw.js','pwa-build.json'].some(p=>u.pathname===base.pathname+p)&&!req.headers.has('range');};
+ const eligible=req=>{const u=new URL(req.url);return req.method==='GET'&&req.cache!=='no-store'&&!req.headers.has('authorization')&&u.origin===base.origin&&u.pathname.startsWith(base.pathname)&&!['sw.js','pwa-build.json'].some(p=>u.pathname===base.pathname+p)&&!req.headers.has('range');};
  async function install(){const cache=await env.caches.open(shell);try{
   await cache.addAll(urls);const target=await env.caches.open(pack),older=(await env.caches.keys()).filter(n=>n.startsWith(prefix+'music-')&&n!==pack);
   for(const path of music){const key=keyFor(path);let response;for(const name of older){response=await(await env.caches.open(name)).match(key);if(response?.status===200)break;}

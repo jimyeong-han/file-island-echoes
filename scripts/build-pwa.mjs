@@ -18,6 +18,8 @@ const touch=JSON.parse(readFileSync('src/touch-sfx.json'));
 const audio=JSON.parse(readFileSync('src/audio-manifest.json'));
 files.push(...touch.flatMap(id=>audio[id].files.map(f=>'assets/audio/'+f)));
 const music=musicFiles(audio);files.push(...music);
+// Include hashed lazy account/auth chunks so offline startup never depends on a network import.
+files.push(...readdirSync('dist/assets').filter(f=>/\.(js|css)$/.test(f)).map(f=>'assets/'+f));
 const unique=[...new Set(files)];
 const hash=createHash('sha256');for(const f of unique)hash.update(readFileSync('dist/'+f));
 const source=readFileSync('pwa/worker.mjs','utf8').replaceAll('export ','');hash.update(source);

@@ -40,7 +40,7 @@ function inspect(directory) {
     if (!isText) { checked++; continue; }
     const text = bytes.toString('utf8');
     assert.doesNotMatch(text, /[A-Z]:[\\/]|\/(?:Users|home)\//, 'Personal filesystem path in output');
-    assert.doesNotMatch(text, /gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|sk-[A-Za-z0-9_-]{32,}|-----BEGIN [A-Z ]*PRIVATE KEY-----/, 'Credential-like value in output');
+    assert.doesNotMatch(text, /gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|sk-[A-Za-z0-9_-]{32,}|sb_secret_[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----/, 'Credential-like value in output');
     assert.doesNotMatch(text, /data:image\/(?:png|webp|jpeg);base64,/, 'Raster art must be separate files');
     checked++;
   }
