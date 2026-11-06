@@ -1,0 +1,25 @@
+import {describe,it,expect} from 'vitest';
+import {newDraft,validateDraft,makeReport,markdown,issueLink,ErrorJournal,copyReport,escapeHtml,ISSUE_URL,TEMPLATE} from './bug-report';
+import {sceneFor} from './audio-events';
+import {newRun} from './engine';
+import mainSource from './main.ts?raw';
+import uiSource from './bug-report-ui.ts?raw';
+import reportSource from './bug-report.ts?raw';
+import templateSource from '../.github/ISSUE_TEMPLATE/bug_report.yml?raw';
+const draft=()=>({...newDraft(),title:'전투 & 카드? 😀',actual:'한글\n<카드>가 멈춤',expected:'카드가 사용됨',steps:'1. 전투 진입\n2. 카드 선택'});
+const source={environment:{version:'0.11.0',pathname:'/file-island-echoes/'},game:{character:'tk'},audio:{muted:true},errors:[]};
+describe('bug reports',()=>{
+ it.each(['title','actual','expected','steps'] as const)('rejects missing %s',key=>expect(validateDraft({...draft(),[key]:'  '})).not.toBe(''));
+ it('rejects length and option tampering without silent truncation',()=>{expect(validateDraft({...draft(),steps:'가'.repeat(3001)})).not.toBe('');expect(validateDraft({...draft(),frequency:'unknown'})).not.toBe('');expect(validateDraft(draft())).toBe('');});
+ it('copies only explicitly selected groups and never changes the source',()=>{const old=structuredClone(source);const r=makeReport(draft(),source,['game']);expect(r.diagnostics).toEqual({game:{character:'tk'}});expect(makeReport(draft(),source,[]).diagnostics).toEqual({});expect(source).toEqual(old);(r.diagnostics.game as any).character='kari';expect(source).toEqual(old);});
+ it('keeps Unicode, newlines and reserved characters intact through URL encoding',()=>{const r=makeReport(draft(),source,[],true),link=issueLink(r),url=new URL(link.url);expect(link.fallback).toBe(false);expect(url.origin+url.pathname).toBe(ISSUE_URL);expect(url.searchParams.get('template')).toBe(TEMPLATE);expect(url.searchParams.get('title')).toBe(r.title);expect(url.searchParams.get('body')).toBe(markdown(r));expect(markdown(r)).toContain('😀');expect(markdown(r)).toContain('> 1. 전투 진입\n> 2. 카드 선택');});
+ it('escapes HTML in UI and quotes user markup in Markdown',()=>{expect(escapeHtml('</textarea><script>')).toBe('&lt;/textarea&gt;&lt;script&gt;');expect(markdown(makeReport(draft(),source,[]))).toContain('&lt;카드&gt;');});
+ it('uses a blank template for long reports, never a truncated report',()=>{const r=makeReport({...draft(),steps:'한'.repeat(3000)},source,[],true);const link=issueLink(r);expect(link.fallback).toBe(true);expect(new URL(link.url).searchParams.has('body')).toBe(false);expect(markdown(r)).toContain('한'.repeat(3000));});
+ it('roundtrips the structured file and review flag',()=>{const r=makeReport(draft(),source,['environment','audio'],true);expect(JSON.parse(JSON.stringify(r))).toEqual(r);expect(markdown(r)).toContain('- [x]');});
+ it('records only bounded error categories, never raw messages, objects or paths',()=>{const j=new ErrorJournal();j.add('runtime',new TypeError('token=private C:/Users/name mail@example.com'));j.add('runtime',new TypeError('another'));expect(j.snapshot()).toHaveLength(1);j.add('promise',{toString(){throw Error('no');},secret:'secret'});j.add('runtime',new RangeError('https://test/?auth=secret#private'));expect(j.snapshot()).toHaveLength(2);expect(JSON.stringify(j.snapshot())).not.toMatch(/secret|private|Users|example.com/);});
+ it('uses manual selection when clipboard is rejected or missing',async()=>{let selected=false;const message=await copyReport('hello',async()=>{throw Error('denied');},()=>{selected=true;});expect(selected).toBe(true);expect(message).toContain('직접');let copied='';expect(await copyReport('한글',async s=>{copied=s;},()=>{})).toContain('복사했습니다');expect(copied).toBe('한글');});
+ it('keeps game audio scenes on report open and close',()=>{const r=newRun(12,'tk');for(const screen of ['map','battle','event','evolution','result'] as const){r.screen=screen;expect(sceneFor('game','report',r)).toBe(sceneFor('game','',r));}});
+ it('uses allowlisted diagnostics, no local storage dump, and a query/hash-free path',()=>{const main=mainSource.split('function reportContext()')[1];expect(main).toContain('pathname:location.pathname');expect(main).not.toMatch(/location\.(search|hash|href)|localStorage|\.deck|\.seed|JSON\.stringify|\.stack/);});
+ it('provides a same-tab link so popup blocking cannot strand the report',()=>{const ui=uiSource;expect(ui).toContain('현재 탭에서 열기');expect(ui).toContain('rel="noopener noreferrer"');expect(ui).not.toContain('window.open');expect(ui).toContain('data-report-field');});
+ it('matches GitHub form body ID and does not submit issues automatically',()=>{const yaml=templateSource;expect(yaml).toContain('id: body');expect(yaml).toContain('개인정보');for(const source of [reportSource,uiSource])expect(source).not.toMatch(/fetch\(|XMLHttpRequest|sendBeacon|localStorage/);});
+});

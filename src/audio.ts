@@ -44,6 +44,7 @@ export class AudioManager {
   private effectEpoch = 0;
   private duckUntil = 0;
   private formats?: string[];
+  diagnosticFormat='아직 디코딩하지 않음';
   private loading = false;
   private lastCue = '';
   private musicStarts = 0;
@@ -140,6 +141,7 @@ export class AudioManager {
           let bytes=await preparedTouchAudio(file);
           if(!bytes){const response=await fetch(import.meta.env.BASE_URL+'assets/audio/'+file,{signal:controller.signal});if(!response.ok)continue;bytes=await response.arrayBuffer();}
           const buffer=await this.ctx!.decodeAudioData(bytes);
+          this.diagnosticFormat=format;
           if(cue.loop)for(let channel=0;channel<buffer.numberOfChannels;channel++)smoothLoopEdge(buffer.getChannelData(channel),Math.round(cue.duration*buffer.sampleRate),Math.round(.002*buffer.sampleRate));
           this.buffers.set(id,buffer);this.trimCache();return buffer;
         } catch { /* Try the alternate codec once. */ } finally {clearTimeout(timeout);}

@@ -2,7 +2,7 @@
 
 플레이: https://jimyeong-han.github.io/file-island-echoes/
 
-1999년 TV 애니메이션 기반의 **비공식 팬메이드 웹게임 v0.10.0**입니다. 반복 현상, 사건, 육성 수치와 진화 조건은 이 게임의 창작 설정입니다. 원작 이미지·음원 추출물을 사용하지 않았습니다.
+1999년 TV 애니메이션 기반의 **비공식 팬메이드 웹게임 v0.11.0**입니다. 반복 현상, 사건, 육성 수치와 진화 조건은 이 게임의 창작 설정입니다. 원작 이미지·음원 추출물을 사용하지 않았습니다.
 
 개발자와 지인 1–2명이 URL로 테스트하는 소규모 비영리 팬 프로토타입입니다. 공개 홍보를 목적으로 하지 않으며 광고, 후원, 결제, 분석 도구, 사용자 추적 기능을 넣지 않습니다.
 
@@ -48,6 +48,7 @@ npm run preview  # http://127.0.0.1:3001/file-island-echoes/에서 dist 검증
 | 호스팅 | GitHub Pages, GitHub Actions 빌드/배포 |
 | Topics / Releases | 추가·발행하지 않음 |
 | Discussions / Wiki | 사용하지 않음, 비활성화 |
+| Issues | 버그 신고 수집함으로 사용 |
 | 프로젝트 전체 라이선스 | 추가하지 않음. 의존성 자체의 라이선스는 별개 |
 
 워크플로: [.github/workflows/pages.yml](.github/workflows/pages.yml). [GitHub의 Pages 공식 안내](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)에 따라 빌드와 배포 작업을 분리합니다.
@@ -107,6 +108,10 @@ GitHub 프로젝트 페이지에서는 이 파일이 `/file-island-echoes/robots
 
 기존 v2/v1은 자동으로 해당 캐릭터 슬롯에 이관합니다. 성공한 v3 기록 전에 원본을 삭제하지 않습니다. 손상 슬롯만 제외하고 정상 슬롯은 보존합니다. 저장 실패는 변경 전 상태로 복구하며 다른 탭의 변경을 감지하면 최신 기록을 다시 읽도록 안내합니다. 전체 8슬롯 JSON 백업·복원과 자세한 정책은 [SAVE.md](SAVE.md), 검증은 [v0.10 기록](docs/v0.10-validation.md)에 있습니다.
 
+## 버그 신고
+
+상단 **설정 → 버그 신고** 또는 하단 **정보 · 크레딧 → 버그 신고**에서 작성합니다. 선택한 진단 정보만 미리 보여 주며, 개인정보 확인 후 GitHub 작성 화면을 열거나 Markdown/JSON을 복사·다운로드합니다. 최종 제출은 사용자가 GitHub에서 직접 합니다. 초안은 페이지를 새로고침하기 전까지 유지되고 자동 전송·추적은 없습니다. 공개 이슈에 민감한 정보를 올리지 마세요. [신고 방법과 관리 절차](BUG_REPORTING.md)를 참고하세요.
+
 ## 코드와 에셋
 
 | 위치 | 역할 |
@@ -117,6 +122,7 @@ GitHub 프로젝트 페이지에서는 이 파일이 `/file-island-echoes/robots
 | `src/content/chapters.ts`, `stories.ts` | 챕터·노드·개인 이벤트 |
 | `src/types.ts`, `engine.ts` | 상태 타입, 화면과 독립된 전투/진화 규칙 |
 | `src/storage.ts` | 저장 검증·v1/v2 이관·8슬롯 원자 저장 |
+| `src/bug-report.ts`, `bug-report-ui.ts`, `bug-report.css` | 보고서·오류 정제·신고 입력과 내보내기 |
 | `src/main.ts`, `expansion.css` | 선택·상세·챕터·문장 HUD·게임 화면 |
 | `src/asset-manifest.json`, `src/art.ts` | Pages base를 적용한 이미지 연결·fallback |
 | `public/assets/` | 배경·캐릭터·초상화·UI 에셋 |
@@ -125,7 +131,7 @@ GitHub 프로젝트 페이지에서는 이 파일이 `/file-island-echoes/robots
 
 ## 확인된 범위와 제한
 
-- 최신 버전은 146개 자동 테스트를 통과했습니다. [v0.10 검증](docs/v0.10-validation.md)을 참조하세요. 초기 버전에서는 8명 모두의 3챕터 승리 가능성, 1,600회 전략 비교를 수행했습니다. [VALIDATION.md](VALIDATION.md)에 브라우저 조작과 결과를 기록했습니다.
+- 최신 버전은 162개 자동 테스트를 통과했습니다. Codex 앱 내 브라우저에서 신고·다운로드·모바일 입력·전투 유지 등을 확인했습니다. [v0.11 검증](docs/v0.11-validation.md)을 참조하세요. 초기 버전에서는 8명 모두의 3챕터 승리 가능성, 1,600회 전략 비교를 수행했습니다. [VALIDATION.md](VALIDATION.md)에 브라우저 조작과 결과를 기록했습니다.
 - 비오디오 Pages 전송량 약 5.4MiB, 타이틀 초기 리소스 약 0.4MiB입니다. 오디오는 입력 후 지연 로딩하며 별도 전체 용량은 13.82MiB입니다. 원본 PNG와 사용하지 않는 전체 이미지 묶음을 초기 로딩하지 않습니다.
 - 10~15분은 설계 목표이며 사람 대상 소요 시간·승률 조사는 아직 하지 않았습니다. 자동 전략에서 태일과 소라가 비교적 쉽습니다.
 - 세 챕터가 모두 플레이 가능하지만 개인 이벤트는 공통 틀 안의 3개 장면을 재사용합니다. 후속 챕터 전용 개인 장면과 4장은 추후 콘텐츠입니다.

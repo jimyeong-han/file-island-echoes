@@ -15,7 +15,7 @@
   </head>
   <body>
     <div id="app"></div>
-    <section id="boot-recovery" hidden style="padding:24px;background:#081724;color:#d9f3ee;font:18px system-ui"><h1>게임 파일을 불러오지 못했습니다</h1><p>연결을 확인한 뒤 다시 시도하세요. 저장된 탐험은 지우지 않습니다.</p><button id="boot-retry" style="min-height:44px">다시 불러오기</button></section>
+    <section id="boot-recovery" hidden style="padding:24px;background:#081724;color:#d9f3ee;font:18px system-ui"><h1>게임 파일을 불러오지 못했습니다</h1><p>연결을 확인한 뒤 다시 시도하세요. 저장된 탐험은 지우지 않습니다.</p><button id="boot-retry" style="min-height:44px">다시 불러오기</button><p><a style="color:#91e4cf" href="https://github.com/jimyeong-han/file-island-echoes/issues/new?template=bug_report.yml" rel="noreferrer">GitHub에서 버그 신고 작성</a> · 공개 이슈에 개인정보나 저장 파일을 올리지 마세요.</p></section>
     <script>
       window.addEventListener('error',function(e){if(e.target&&e.target.tagName==='SCRIPT'&&!document.getElementById('app').children.length)document.getElementById('boot-recovery').hidden=false;},true);
       document.getElementById('boot-retry').addEventListener('click',function(){location.reload();});

@@ -10,7 +10,7 @@ assert.match(html, /<meta\s+name="robots"\s+content="noindex, nofollow, noarchiv
 assert.equal(readFileSync(join(root, 'robots.txt'), 'utf8').trim(), 'User-agent: *\nDisallow: /');
 assert.doesNotMatch(html, /application\/ld\+json|property=["']og:|name=["']twitter:|rel=["']canonical/i);
 
-const refs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(match => match[1]);
+const refs = [...html.matchAll(/<(?:script|link)\b[^>]*(?:src|href)="([^"]+)"/g)].map(match => match[1]);
 assert(refs.some(ref => ref.endsWith('.js')), 'Built entry script is missing');
 for (const ref of refs) {
   assert(ref.startsWith(base), `Resource is outside the project path: ${ref}`);

@@ -3,7 +3,7 @@ import {readFileSync,writeFileSync,readdirSync,statSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 const base='/file-island-echoes/';
 const html=readFileSync('dist/index.html','utf8');
-const files=['index.html','manifest.webmanifest',...Array.from(html.matchAll(/(?:src|href)="([^"]+)"/g),m=>m[1].slice(base.length)),...readdirSync('dist/assets/fonts').filter(f=>f.endsWith('.woff2')).map(f=>'assets/fonts/'+f),...readdirSync('dist/assets/ui').filter(f=>f.endsWith('.svg')).map(f=>'assets/ui/'+f),...readdirSync('dist/assets/pwa').map(f=>'assets/pwa/'+f)];
+const files=['index.html','manifest.webmanifest',...Array.from(html.matchAll(/<(?:script|link)\b[^>]*(?:src|href)="([^"]+)"/g),m=>m[1].slice(base.length)),...readdirSync('dist/assets/fonts').filter(f=>f.endsWith('.woff2')).map(f=>'assets/fonts/'+f),...readdirSync('dist/assets/ui').filter(f=>f.endsWith('.svg')).map(f=>'assets/ui/'+f),...readdirSync('dist/assets/pwa').map(f=>'assets/pwa/'+f)];
 const touch=JSON.parse(readFileSync('src/touch-sfx.json'));
 const audio=JSON.parse(readFileSync('src/audio-manifest.json'));
 files.push(...touch.flatMap(id=>audio[id].files.map(f=>'assets/audio/'+f)));
