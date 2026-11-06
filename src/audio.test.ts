@@ -29,6 +29,10 @@ beforeEach(()=>{vi.stubEnv('BASE_URL','/file-island-echoes/');Context.all=[];vi.
 afterEach(()=>{vi.unstubAllGlobals();vi.unstubAllEnvs();vi.useRealTimers();});
 
 describe('audio mixer lifecycle',()=>{
+  it('loads music and small interaction cues from the Vercel root base',async()=>{
+    vi.stubEnv('BASE_URL','/');const a=new AudioManager(on());a.setMusic('music-title');await a.unlock();await tick();
+    expect(a.status.playing).toBe('music-title');expect(vi.mocked(fetch).mock.calls.every(c=>String(c[0]).startsWith('/assets/audio/'))).toBe(true);
+  });
   it('routes a one-shot score through music volume, even with SFX at zero, and stops it on skip',async()=>{
     const a=new AudioManager({...on(),sfxVolume:0}),connect=vi.spyOn(Node.prototype,'connect');await a.unlock();
     expect(await a.playScore('music-evolution',new AbortController().signal)).toBe(true);

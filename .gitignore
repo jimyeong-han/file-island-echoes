@@ -152,3 +152,4 @@ test-results/
 *.pem
 *.key
 __pycache__/
+.vercel/

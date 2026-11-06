@@ -1,6 +1,6 @@
 # 모바일 앱 설치와 오프라인
 
-v0.9.1. 기존 Vite + TypeScript 구조에 작은 service worker를 직접 구현했다. 새 런타임 의존성·계정·분석·추적·푸시·백그라운드 동기화는 없다.
+v0.14.0. 기존 Vite + TypeScript 구조에 작은 service worker를 직접 구현했다. 새 런타임 의존성·계정·분석·추적·푸시·백그라운드 동기화는 없다.
 
 ## 설치와 실행
 
@@ -11,7 +11,7 @@ v0.9.1. 기존 Vite + TypeScript 구조에 작은 service worker를 직접 구�
 
 ## 빌드와 캐시
 
-`npm run build`는 Vite 빌드 뒤 `scripts/build-pwa.mjs`로 `sw.js`와 검사 메타데이터 `pwa-build.json`을 만든다. 프로덕션에서만 등록한다. manifest의 id/start_url/scope는 `./`이며 `/file-island-echoes/` 기준으로 해석된다. worker URL은 같은 경로의 `sw.js`, scope는 `/file-island-echoes/`다.
+`npm run build`는 Vite 빌드 뒤 `scripts/build-pwa.mjs`로 `sw.js`와 검사 메타데이터 `pwa-build.json`을 만든다. 프로덕션에서만 등록한다. manifest의 id/start_url/scope는 Pages 빌드에서 `/file-island-echoes/`, Vercel 빌드에서 `/`로 생성된다. worker URL은 각 base의 `sw.js`이며 같은 scope로 등록한다. `npm run build:vercel`과 `npm run preview:vercel`은 루트 배포용이다.
 
 - shell: HTML, 해시 JS/CSS, manifest, 로컬 폰트, UI SVG와 앱 PNG. 사용자 추가 요청에 따라 터치 7종의 OGG/MP3 14개도 포함한다. 약 2.50MiB, 64파일. install이 모두 성공해야 활성화된다.
 - 터치 효과음: 확인/선택/취소/거부/카드 선택/노드 선택/에너지 부족. 두 코덱 합계 63,235B. 첫 입력 전에는 지원 코덱의 압축 데이터만 미리 받고, AudioContext 생성·디코딩·재생은 기존 사용자 입력/음소거 정책을 따른다. 음악은 별도 필수 팩으로 선캐시한다.
@@ -43,3 +43,9 @@ v0.9.1. 기존 Vite + TypeScript 구조에 작은 service worker를 직접 구�
 12곡 MP3/OGG 24파일, 13,266,249바이트를 설치 때 모두 검증한다. 본체 포함 약 15.16MiB(88파일). 설치 실패는 새 캐시만 제거하고 활성 버전을 보존한다. 변경 없는 음악은 콘텐츠 해시로 이전 팩에서 복사하며 새 버전 활성화 후에만 구팩을 삭제한다. 설정의 음악 준비 상태는 실제 캐시 응답 수를 확인한다. runtime 복구는 음악 팩을 지우지 않는다. 브라우저가 캐시를 퇴거하면 오프라인 음악이 사라질 수 있다. 전곡을 디코딩하지 않으며 기존 최대 3곡 메모리 제한을 유지한다.
 
 게임 기록은 v0.10부터 단일 v3 프로필 안에 8슬롯을 저장한다. 업데이트 전 저장과 JSON 백업은 전체 슬롯을 보존한다. 자세한 이관·충돌 정책: [SAVE.md](SAVE.md).
+
+## v0.14 배포 주소별 분리
+
+Pages는 기존 `file-island-echoes-`, Vercel 루트는 `file-island-echoes-root-` 캐시 이름을 사용한다. 같은 origin에서 두 경로를 테스트해도 상대 경로의 shell·음악·runtime 캐시를 정리하지 않는다. 그림·소리 복구도 현재 base의 runtime만 지운다. 저장 schema는 3으로 유지한다.
+
+v0.14의 설치 목록은 93파일, 약 15.38MiB이며 음악 28파일 12.82MiB를 포함한다. 최초 타이틀 렌더링과 전체 PWA 설치 용량은 다르다. 배포 origin이 바뀌면 JSON 내보내기/불러오기로 사용자가 직접 저장을 옮기고 새 홈 화면 앱을 설치한다. [자세한 이전 절차](DEPLOYMENT.md).

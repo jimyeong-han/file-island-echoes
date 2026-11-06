@@ -20,3 +20,22 @@ test('both one-shot evolution scores and codecs install and serve offline',async
 test('music list follows manifest additions and removes nonmusic',()=>{assert.deepEqual(musicFiles({a:{kind:'music',files:['music/a.ogg','music/a.mp3']},b:{kind:'sfx',files:['sfx/a.mp3']}}),['assets/audio/music/a.ogg','assets/audio/music/a.mp3']);assert.deepEqual(musicFiles({}),[]);});
 test('all music verified, unchanged tracks reused and changed track fetched',async()=>{const h=harness(),music=['assets/audio/music/a.ogg','assets/audio/music/b.mp3'],revisions=Object.fromEntries(music.map(p=>['/file-island-echoes/'+p,'one']));const config={base:'/file-island-echoes/',build:'old',files:['index.html',...music],music,revisions};const a=createWorker(h.env,config);await a.install();assert.equal((await a.musicStatus()).ready,true);const before=h.calls.length;const b=createWorker(h.env,{...config,build:'new',revisions:{...revisions,['/file-island-echoes/'+music[1]]:'two'}});await b.install();assert.equal(h.calls.length-before,1);assert.equal((await b.musicStatus()).count,2);h.setOffline();assert.equal((await b.fetchRequest(req('/file-island-echoes/'+music[0]))).status,200);await b.activate();assert(!h.stores.has(a.pack));});
 test('missing music or quota failure cannot replace active pack',async()=>{for(const quota of [false,true]){const h=harness();await h.env.caches.open('file-island-echoes-music-active');const music=['assets/audio/music/'+(quota?'ok':'missing')+'.ogg'];const w=createWorker(h.env,{base:'/file-island-echoes/',build:'failed',files:['index.html',...music],music});if(quota)(await h.env.caches.open(w.pack)).put=async()=>{throw Error('quota');};await assert.rejects(w.install());assert(!h.stores.has(w.shell));assert(!h.stores.has(w.pack));assert(h.stores.has('file-island-echoes-music-active'));}});
+test('root and Pages scopes retain independent installed shells, runtime assets and music',async()=>{
+ const h=harness(),music=['assets/audio/music/a.ogg'];
+ const pages=createWorker(h.env,{base:'/file-island-echoes/',build:'pages',files:['index.html',...music],music});
+ const root=createWorker(h.env,{base:'/',build:'root',files:['index.html',...music],music});
+ await pages.install();await root.install();await pages.activate();await root.activate();
+ for(const w of [pages,root]){assert(h.stores.has(w.shell));assert(h.stores.has(w.pack));assert((await w.musicStatus()).ready);}
+ assert.notEqual(pages.runtime,root.runtime);h.setOffline();
+ for(const [base,w] of [['/',root],['/file-island-echoes/',pages]]){
+  const r={url:'https://example.test'+base,method:'GET',mode:'navigate',headers:new Headers()};assert.match(await(await w.fetchRequest(r)).text(),new RegExp(base+'index.html'));
+  assert.equal((await w.fetchRequest(req(base+music[0]))).status,200);
+  assert(!w.eligible(req(base+'sw.js')));assert(!w.eligible(req(base+'pwa-build.json')));
+ }
+});
+test('root updates keep cached music but replace only their own previous installation',async()=>{
+ const h=harness(),music=['assets/audio/music/a.mp3'],config={base:'/',build:'one',files:['index.html',...music],music,revisions:{'/assets/audio/music/a.mp3':'same'}};
+ const old=createWorker(h.env,config);await old.install();const calls=h.calls.length;
+ await h.env.caches.open('file-island-echoes-shell-pages');const next=createWorker(h.env,{...config,build:'two'});await next.install();assert.equal(h.calls.length,calls);await next.activate();
+ assert(!h.stores.has(old.shell));assert(h.stores.has(next.shell));assert(h.stores.has('file-island-echoes-shell-pages'));
+});

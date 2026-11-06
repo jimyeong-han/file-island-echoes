@@ -3,8 +3,10 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve, join, extname } from 'node:path';
 import { gzipSync } from 'node:zlib';
 
-const base = '/file-island-echoes/';
-const root = resolve('dist');
+import {deployment} from '../config/deployment.mjs';
+const target=deployment(process.argv[2]||'pages'),base=target.base;
+const root = resolve(process.argv[3]||'dist');
+assert.deepEqual(JSON.parse(readFileSync(join(root,'deployment.json'),'utf8')),target);
 const html = readFileSync(join(root, 'index.html'), 'utf8');
 assert.match(html, /<meta\s+name="robots"\s+content="noindex, nofollow, noarchive, nosnippet"\s*\/?\s*>/);
 assert.equal(readFileSync(join(root, 'robots.txt'), 'utf8').trim(), 'User-agent: *\nDisallow: /');
@@ -48,9 +50,9 @@ const audioManifest=JSON.parse(readFileSync('src/audio-manifest.json','utf8'));
 const audioBytes=Object.values(audioManifest).flatMap(c=>c.files).reduce((n,p)=>n+statSync(join(root,'assets/audio',p)).size,0);
 assert(audioBytes<15*1024*1024,'Audio exceeds the separate 15 MiB budget');
 assert(compressedBytes-audioBytes<10*1024*1024,'Non-audio deployment exceeds 10 MiB');
-assert.doesNotMatch(readFileSync(refs.find(r=>r.endsWith('.js')).replace(base,root+'/'),'utf8'),/data:audio\/.*base64/);
+assert.doesNotMatch(readFileSync(join(root,refs.find(r=>r.endsWith('.js')).slice(base.length)),'utf8'),/data:audio\/.*base64/);
 console.log('Audio checks: '+Object.keys(audioManifest).length+' cues / '+audioBytes+' bytes (both codecs).');
-console.log(`Pages checks passed: ${checked} files, ${images.length} manifest images; paths, crawler directives, common credential/path patterns. All files: ${rawBytes} raw bytes / ${compressedBytes} estimated transferred bytes.`);
+console.log(`${target.target} checks passed: ${checked} files, ${images.length} manifest images; paths, crawler directives, common credential/path patterns. All files: ${rawBytes} raw bytes / ${compressedBytes} estimated transferred bytes.`);
 
 // v0.8.2: guard the cascade as well as the emitted asset paths.
 const combatStyles=readFileSync('src/combat.css','utf8');

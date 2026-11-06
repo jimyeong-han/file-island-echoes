@@ -4,6 +4,7 @@ const escape=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 export function dataPanel(preview:SavePreview|null,message:string,reading:boolean){
  const slots=Object.values(preview?.save.runs??{}),a=preview?.save.archive;
  return `<h2>데이터 관리</h2><p>현재 브라우저의 기록을 파일로 보관하거나 다른 기기에서 이어갈 수 있습니다. 파일은 서버로 전송하지 않습니다.</p>
+ <details class="save-migration"><summary>다른 주소로 기록 옮기기</summary><ol><li>기존 게임 주소에서 저장 파일을 내보내세요.</li><li>새 주소의 설정 → 데이터 관리에서 JSON 파일을 고르세요.</li><li>8명 슬롯·도감·설정을 확인한 뒤 불러오기를 확정하세요.</li></ol><p>주소가 바뀌면 기록은 자동으로 이동하지 않습니다. 기존 주소의 기록은 남으며, 새 주소에 이미 있는 기록은 불러오기를 확정하면 교체됩니다. 필요하면 양쪽에서 먼저 백업하세요.</p><p>홈 화면 앱도 주소마다 별도입니다. 새 주소의 기록을 확인한 뒤 새 앱을 설치하세요.</p></details>
  <div class="data-actions"><button class="secondary wide" data-action="save-export">저장 파일 내보내기</button><p>8명의 슬롯과 전투·덱, 도감, 클리어·엔딩, 소리·접근성 설정을 JSON 파일로 내려받습니다.</p>
  <label class="file-label" for="save-import">저장 파일 불러오기 <small>JSON · 최대 8MB</small></label><input id="save-import" type="file" accept=".json,application/json" aria-describedby="file-note" ${reading?'disabled':''}/><p id="file-note">파일을 고르면 내용을 먼저 확인합니다. 확인 버튼을 누르기 전까지 현재 기록은 유지됩니다.</p></div>
  <p class="data-message" role="status" aria-live="polite">${escape(message)}</p>

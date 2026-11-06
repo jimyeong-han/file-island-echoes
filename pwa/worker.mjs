@@ -1,5 +1,7 @@
 export function createWorker(env, config) {
- const prefix='file-island-echoes-', shell=prefix+'shell-'+config.build, runtime=prefix+'runtime-v1';
+ // Preserve the existing Pages cache names; root installs have an independent namespace.
+ const prefix=config.base==='/'?'file-island-echoes-root-':'file-island-echoes-', shell=prefix+'shell-'+config.build, runtime=prefix+'runtime-v1';
+ const owned=name=>name.startsWith(prefix)&&(config.base==='/'||!name.startsWith('file-island-echoes-root-'));
  const base=new URL(config.base,env.location.origin), index=new URL('index.html',base).href;
  const music=config.music||[],pack=prefix+'music-'+config.build;
  const keyFor=path=>{const u=new URL(path,base);u.searchParams.set('__asset',config.revisions?.[u.pathname]||config.build);return u.href;};
@@ -13,7 +15,7 @@ export function createWorker(env, config) {
   }
  }catch(e){await env.caches.delete(shell);await env.caches.delete(pack);throw e;}}
  async function musicStatus(){try{const cache=await env.caches.open(pack);let count=0;for(const path of music)if((await cache.match(keyFor(path)))?.status===200)count++;return {ready:music.length>0&&count===music.length,count,total:music.length};}catch{return {ready:false,count:0,total:music.length};}}
- async function activate(){for(const name of await env.caches.keys())if(name.startsWith(prefix)&&![shell,runtime,pack].includes(name))await env.caches.delete(name);await env.clients.claim();}
+ async function activate(){for(const name of await env.caches.keys())if(owned(name)&&![shell,runtime,pack].includes(name))await env.caches.delete(name);await env.clients.claim();}
  async function fetchRequest(req){
   if(!eligible(req))return env.fetch(req);
   const core=await env.caches.open(shell);

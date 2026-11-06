@@ -1,0 +1,10 @@
+.git/
+.github/
+.env*
+test-results/
+dist/
+node_modules/
+/assets/
+/docs/
+/qa/
+**/__pycache__/

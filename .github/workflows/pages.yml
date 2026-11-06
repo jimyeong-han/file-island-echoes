@@ -35,6 +35,8 @@ jobs:
         run: npm ci
       - name: Run game tests
         run: npm test
+      - name: Verify Vercel root build
+        run: npm run build:vercel && npm run check:vercel
       - name: Build static game
         run: npm run build
       - name: Check Pages paths and sharing constraints

@@ -2,7 +2,7 @@
 
 플레이: https://jimyeong-han.github.io/file-island-echoes/
 
-1999년 TV 애니메이션 기반의 **비공식 팬메이드 웹게임 v0.13.0**입니다. 반복 현상, 사건, 육성 수치와 진화 조건은 이 게임의 창작 설정입니다. 원작 이미지·음원 추출물을 사용하지 않았습니다.
+1999년 TV 애니메이션 기반의 **비공식 팬메이드 웹게임 v0.14.0**입니다. 반복 현상, 사건, 육성 수치와 진화 조건은 이 게임의 창작 설정입니다. 원작 이미지·음원 추출물을 사용하지 않았습니다.
 
 개발자와 지인 1–2명이 URL로 테스트하는 소규모 비영리 팬 프로토타입입니다. 공개 홍보를 목적으로 하지 않으며 광고, 후원, 결제, 분석 도구, 사용자 추적 기능을 넣지 않습니다.
 
@@ -15,7 +15,7 @@
 
 ## 실행
 
-Node.js 22.12 이상 권장. 아트 재생성 명령은 Node.js 24에서 확인했습니다.
+Node.js 24를 사용합니다.
 
 ```sh
 npm ci
@@ -32,7 +32,7 @@ npm run check:pages # 빌드 경로·크롤러 지시·일반적인 비밀정보
 npm run preview  # http://127.0.0.1:3001/file-island-echoes/에서 dist 검증
 ```
 
-`dist/`만 정적 호스팅합니다. `base: '/file-island-echoes/'`이며 스크립트·CSS·이미지가 동일한 프로젝트 경로를 사용합니다. 폰트는 로컬 웹폰트, 음악과 효과음은 직접 제작한 로컬 압축 파일을 Web Audio로 재생하며 외부 주소가 없습니다. 게임 화면은 하나의 문서 내부 상태로 전환되며 `/battle` 같은 서버 경로를 만들지 않습니다. 프로젝트 URL 및 `/file-island-echoes/index.html` 직접 접근과 새로고침을 지원합니다. 새로고침 후 **이어서 탐험**으로 저장 상태를 불러옵니다.
+`dist/`만 정적 호스팅합니다. 기본 Pages 빌드는 `base: '/file-island-echoes/'`이며 스크립트·CSS·이미지가 동일한 프로젝트 경로를 사용합니다. 폰트는 로컬 웹폰트, 음악과 효과음은 직접 제작한 로컬 압축 파일을 Web Audio로 재생하며 외부 주소가 없습니다. 게임 화면은 하나의 문서 내부 상태로 전환되며 `/battle` 같은 서버 경로를 만들지 않습니다. 프로젝트 URL 및 `/file-island-echoes/index.html` 직접 접근과 새로고침을 지원합니다. 새로고침 후 **이어서 탐험**으로 저장 상태를 불러옵니다.
 
 ## 저장소 구성과 GitHub Pages
 
@@ -54,7 +54,7 @@ npm run preview  # http://127.0.0.1:3001/file-island-echoes/에서 dist 검증
 워크플로: [.github/workflows/pages.yml](.github/workflows/pages.yml). [GitHub의 Pages 공식 안내](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)에 따라 빌드와 배포 작업을 분리합니다.
 
 1. `main` push 또는 수동 실행으로 시작합니다. 수동으로 다른 브랜치를 선택하면 작업을 건너뜁니다.
-2. Node.js 24에서 `npm ci` → `npm test` → `npm run build` → `npm run check:pages`를 실행합니다. 이 검증이 모두 성공해야 다음 단계로 진행합니다.
+2. Node.js 24에서 `npm ci` → `npm test` → `npm run build:vercel` → `npm run check:vercel` → `npm run build` → `npm run check:pages`를 실행합니다. 이 검증이 모두 성공해야 다음 단계로 진행합니다.
 3. 저장소 Actions 변수 `PAGES_ENABLED`를 명시적으로 `true`로 설정한 경우에만 Pages 구성, 성공한 `dist/` 아티팩트 업로드와 배포를 수행합니다. `deploy`는 성공한 `build`를 필요로 하며 `github-pages` 환경을 사용합니다. 실패한 빌드나 다른 브랜치는 배포하지 않습니다.
 4. 기본 권한은 소스 읽기이며 Pages/OIDC 쓰기 권한은 배포 작업에만 부여합니다. 별도 PAT·API 키·사용자 비밀번호를 브라우저 코드나 저장소에 넣지 않습니다.
 
@@ -124,14 +124,14 @@ GitHub 프로젝트 페이지에서는 이 파일이 `/file-island-echoes/robots
 | `src/storage.ts` | 저장 검증·v1/v2 이관·8슬롯 원자 저장 |
 | `src/bug-report.ts`, `bug-report-ui.ts`, `bug-report.css` | 보고서·오류 정제·신고 입력과 내보내기 |
 | `src/main.ts`, `expansion.css` | 선택·상세·챕터·문장 HUD·게임 화면 |
-| `src/asset-manifest.json`, `src/art.ts` | Pages base를 적용한 이미지 연결·fallback |
+| `src/asset-manifest.json`, `src/art.ts` | 대상 base를 적용한 이미지 연결·fallback |
 | `public/assets/` | 배경·캐릭터·초상화·UI 에셋 |
 
 이번에 새 래스터 일러스트 41개와 SVG 캐릭터 2개를 추가했습니다. 총 66개 이미지입니다. 데미데블몬·츄몬은 이미지 생성 출력 실패로 직접 작성한 SVG를 사용하며 다른 캐릭터보다 표현이 단순합니다. [ASSETS.md](ASSETS.md)에 전체 파일·용량·교체 위치, [assets/ATTRIBUTION.md](assets/ATTRIBUTION.md)에 제작 방식과 프롬프트를 기록했습니다.
 
 ## 확인된 범위와 제한
 
-- 최신 버전은 175개 자동 테스트를 통과했습니다. Codex 앱 내 브라우저에서 신고·다운로드·모바일 입력·전투 유지 등을 확인했습니다. [v0.11 검증](docs/v0.11-validation.md)을 참조하세요. 초기 버전에서는 8명 모두의 3챕터 승리 가능성, 1,600회 전략 비교를 수행했습니다. [VALIDATION.md](VALIDATION.md)에 브라우저 조작과 결과를 기록했습니다.
+- 최신 버전은 211개 자동 테스트를 통과했습니다. Codex 앱 내 브라우저에서 신고·다운로드·모바일 입력·전투 유지 등을 확인했습니다. [v0.14 검증](docs/v0.14-validation.md)을 참조하세요. 초기 버전에서는 8명 모두의 3챕터 승리 가능성, 1,600회 전략 비교를 수행했습니다. [VALIDATION.md](VALIDATION.md)에 브라우저 조작과 결과를 기록했습니다.
 - 비오디오 Pages 전송량 약 5.4MiB, 타이틀 초기 리소스 약 0.4MiB입니다. 오디오는 입력 후 지연 로딩하며 별도 전체 용량은 13.82MiB입니다. 원본 PNG와 사용하지 않는 전체 이미지 묶음을 초기 로딩하지 않습니다.
 - 10~15분은 설계 목표이며 사람 대상 소요 시간·승률 조사는 아직 하지 않았습니다. 자동 전략에서 태일과 소라가 비교적 쉽습니다.
 - 세 챕터가 모두 플레이 가능하지만 개인 이벤트는 공통 틀 안의 3개 장면을 재사용합니다. 후속 챕터 전용 개인 장면과 4장은 추후 콘텐츠입니다.
@@ -190,3 +190,13 @@ UTF-8 JSON envelope는 `app`, `formatVersion: 1`, `appVersion`, `exportedAt`, `p
 ## v0.13 진화 연출
 
 8명의 모든 진화 단계와 강제 진화·빛의 공명에 디지바이스 신호, 데이터 전환, 전후 파트너와 문장을 표시한다. 5.6초 오리지널 음악 2곡과 시점을 맞추고 즉시 건너뛰기를 지원한다. 진화 결과는 먼저 한 번 저장되며 새로고침하면 결과 화면으로 돌아온다. 움직임 줄이기에서는 짧은 정적 전환을 사용한다. 음악·원본 제작법은 [AUDIO.md](AUDIO.md), 검증은 [v0.13 기록](docs/v0.13-validation.md)에 있다.
+
+## v0.14 · Vercel 이전
+
+Vercel은 루트 `/`, Pages는 `/file-island-echoes/`로 빌드합니다. `npm run build:vercel && npm run check:vercel` 후 `npm run preview:vercel`로 루트 배포를 확인합니다. 기본 `npm run build`는 계속 Pages입니다. 두 대상의 manifest와 service worker scope, 이미지·오디오 주소 및 캐시를 구분합니다.
+
+새 주소에는 기존 기록이 자동으로 나타나지 않습니다. 기존 Pages의 설정 → 데이터 관리에서 **JSON 내보내기** 후 Vercel에서 **불러오기 → 미리보기 → 확인**으로 8명 슬롯·도감·설정을 옮깁니다. 대상 주소에도 기록이 있다면 먼저 백업하세요. 원래 주소의 기록은 그대로 남고 홈 화면 앱도 별도 설치입니다.
+
+개인 Private 저장소는 Vercel Hobby로 배포할 수 있지만 조직 Private 저장소는 지원하지 않습니다. Private 자동 배포는 소유자의 연결된 Git 계정으로 커밋 작성자가 확인되어야 하며 GitHub App에도 저장소 권한이 필요합니다. Hobby는 개인·비상업 용도입니다. [Vercel Git 조건](https://vercel.com/docs/git), [Hobby 안내](https://vercel.com/docs/plans/hobby)
+
+**Private 저장소도 사이트 접근을 자동 제한하지 않습니다.** 현재 저장소는 공개 상태를 유지합니다. Vercel Authentication의 All Deployments는 Hobby에서도 production 보호를 지원하지만 외부 사용자 수 등 제한이 있습니다. 인증 정책은 임의 변경하지 않았습니다. 요금제·지인 접근 조건, 연결 순서와 환경별 명령은 [배포 안내](DEPLOYMENT.md), 실제 배포와 확인 결과는 [v0.14 검증](docs/v0.14-validation.md)을 참고하세요.

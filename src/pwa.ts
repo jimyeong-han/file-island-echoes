@@ -50,7 +50,8 @@ export class Pwa {
   if(!navigator.onLine){this.message='연결 후 오프라인 파일을 복구하세요.';this.changed();return;}
   try{
    // Keep the app shell: deleting it would break an offline reload or another open tab.
-   if('caches' in window)for(const key of await caches.keys())if(key==='file-island-echoes-runtime-v1')await caches.delete(key);
+   const runtime=(base==='/'?'file-island-echoes-root-':'file-island-echoes-')+'runtime-v1';
+   if('caches' in window)await caches.delete(runtime);
    await this.registration?.update();this.message='그림·소리 캐시를 비웠습니다. 기록과 앱 본체는 유지됩니다. 다음 화면에서 필요한 파일을 다시 받습니다.';
   }catch{this.message='파일 복구를 완료하지 못했습니다. 게임 기록은 유지됩니다.';}this.changed();
  }
