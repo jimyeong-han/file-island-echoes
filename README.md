@@ -1,6 +1,8 @@
 # 디지몬: 우리들의 모험
 
-플레이: https://jimyeong-han.github.io/file-island-echoes/
+플레이: https://file-island-echoes.vercel.app/
+
+기존 Pages: https://jimyeong-han.github.io/file-island-echoes/
 
 1999년 TV 애니메이션 기반의 **비공식 팬메이드 웹게임 v0.14.0**입니다. 반복 현상, 사건, 육성 수치와 진화 조건은 이 게임의 창작 설정입니다. 원작 이미지·음원 추출물을 사용하지 않았습니다.
 
@@ -45,7 +47,7 @@ npm run preview  # http://127.0.0.1:3001/file-island-echoes/에서 dist 검증
 | 설명 | `Small browser game prototype` |
 | 기본 브랜치 | `main` |
 | 공개 범위 | GitHub Free 공개 저장소 |
-| 호스팅 | GitHub Pages, GitHub Actions 빌드/배포 |
+| 호스팅 | Vercel 루트 자동 배포 + 기존 GitHub Pages 유지 |
 | Topics / Releases | 추가·발행하지 않음 |
 | Discussions / Wiki | 사용하지 않음, 비활성화 |
 | Issues | 버그 신고 수집함으로 사용 |
